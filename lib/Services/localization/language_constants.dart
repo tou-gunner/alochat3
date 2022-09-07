@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 const String LAGUAGE_CODE = 'languageCode';
 
 //languages code
+const String LAO = 'lo';
 const String ENGLISH = 'en';
 const String VIETNAMESE = 'vi';
 const String ARABIC = 'ar';
@@ -34,6 +35,7 @@ const String GEORGIAN = 'ka';
 const String MALAY = 'my';
 
 List languagelist = [
+  LAO,
   ENGLISH,
   // BANGLA,
   // ARABIC,
@@ -58,6 +60,7 @@ List languagelist = [
   // MALAY
 ];
 List<Locale> supportedlocale = [
+  Locale(LAO, "LA"),
   Locale(ENGLISH, "US"),
   // Locale(ARABIC, "SA"),
   // Locale(HINDI, "IN"),
@@ -99,6 +102,8 @@ Future<Locale> getLocale() async {
 
 Locale _locale(String languageCode) {
   switch (languageCode) {
+    case LAO:
+      return Locale(LAO, 'LA');
     case ENGLISH:
       return Locale(ENGLISH, 'US');
     case BANGLA:
