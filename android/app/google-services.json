@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "478743623644",
+    "project_id": "alochat-365",
+    "storage_bucket": "alochat-365.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:478743623644:android:f5ef88760f5c3721ab0119",
+        "android_client_info": {
+          "package_name": "com.alo.alochat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "478743623644-464853eeqtbf66k7menev8egek6p7fec.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.alo.alochat",
+            "certificate_hash": "9ad26b5540a1ec5840a924cb62b680f59636c1bf"
+          }
+        },
+        {
+          "client_id": "478743623644-a2hp34fftioh7t6jbqog9tjl56e4bmms.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDLREEeXRbSbKQKu0jqpkwpMB-XToBQuO0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "478743623644-a2hp34fftioh7t6jbqog9tjl56e4bmms.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
