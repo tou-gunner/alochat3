@@ -2,6 +2,8 @@
 
 import 'dart:async';
 import 'dart:io';
+import 'package:alochat/Services/Alomall/auth.dart';
+import 'package:alochat/Services/Alomall/user.dart';
 import 'package:android_id/android_id.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:alochat/Configs/Dbkeys.dart';
@@ -72,7 +74,7 @@ class LoginScreenState extends State<LoginScreen>
   bool isVerifyingCode = false;
   bool isCodeSent = false;
   dynamic isLoggedIn = false;
-  User? currentUser;
+  AloUser? currentUser;
   String? deviceid;
   var mapDeviceInfo = {};
   @override
@@ -183,16 +185,23 @@ class LoginScreenState extends State<LoginScreen>
     };
     print('Verify phone triggered');
     // try {
-    await firebaseAuth.verifyPhoneNumber(
-        phoneNumber: (phoneCode! + _phoneNo.text).trim(),
-        timeout: Duration(seconds: timeOutSeconds),
-        verificationCompleted: verificationCompleted,
-        verificationFailed: verificationFailed,
-        codeSent: codeSent,
-        codeAutoRetrievalTimeout: codeAutoRetrievalTimeout);
+    // await firebaseAuth.verifyPhoneNumber(
+    //     phoneNumber: (phoneCode! + _phoneNo.text).trim(),
+    //     timeout: Duration(seconds: timeOutSeconds),
+    //     verificationCompleted: verificationCompleted,
+    //     verificationFailed: verificationFailed,
+    //     codeSent: codeSent,
+    //     codeAutoRetrievalTimeout: codeAutoRetrievalTimeout);
     // } catch (e) {
     //   Fiberchat.toast('NEW CATCH' + e.toString());
     // }
+    await AloAuth.verifyPhoneNumber(
+      phoneNumber: (phoneCode! + _phoneNo.text).trim(),
+      timeout: Duration(seconds: timeOutSeconds),
+      verificationCompleted: verificationCompleted,
+      verificationFailed: verificationFailed,
+      codeSent: codeSent,
+      codeAutoRetrievalTimeout: codeAutoRetrievalTimeout);
   }
 
   subscribeToNotification(String currentUserNo, bool isFreshNewAccount) async {
@@ -256,18 +265,20 @@ class LoginScreenState extends State<LoginScreen>
     var phoneNo = (phoneCode! + _phoneNo.text).trim();
 
     try {
-      AuthCredential credential = PhoneAuthProvider.credential(
-          verificationId: verificationId!, smsCode: _code);
+      // AuthCredential credential = PhoneAuthProvider.credential(
+      //     verificationId: verificationId!, smsCode: _code);
 
-      UserCredential firebaseUser =
-          await firebaseAuth.signInWithCredential(credential);
+      // UserCredential firebaseUser =
+      //     await firebaseAuth.signInWithCredential(credential);
+
+      var aloUser = await AloAuth.login(verificationId!, _code);
 
       // ignore: unnecessary_null_comparison
-      if (firebaseUser != null) {
+      if (aloUser != null) {
         // Check is already sign up
         final QuerySnapshot result = await FirebaseFirestore.instance
             .collection(DbPaths.collectionusers)
-            .where(Dbkeys.id, isEqualTo: firebaseUser.user!.uid)
+            .where(Dbkeys.id, isEqualTo: aloUser.uid)
             .get();
         final List documents = result.docs;
         final pair = await e2ee.X25519().generateKeyPair();
@@ -286,8 +297,8 @@ class LoginScreenState extends State<LoginScreen>
               Dbkeys.privateKey: pair.secretKey.toBase64(),
               Dbkeys.countryCode: phoneCode,
               Dbkeys.nickname: _name.text.trim(),
-              Dbkeys.photoUrl: firebaseUser.user!.photoURL ?? '',
-              Dbkeys.id: firebaseUser.user!.uid,
+              Dbkeys.photoUrl: aloUser.photoURL ?? '',
+              Dbkeys.id: aloUser.uid,
               Dbkeys.phone: phoneNo,
               Dbkeys.phoneRaw: _phoneNo.text,
               Dbkeys.authenticationType: AuthenticationType.passcode.index,
@@ -313,7 +324,7 @@ class LoginScreenState extends State<LoginScreen>
               Dbkeys.phonenumbervariants: phoneNumberVariantsList(
                   countrycode: phoneCode, phonenumber: _phoneNo.text)
             }, SetOptions(merge: true));
-            currentUser = firebaseUser.user;
+            currentUser = aloUser;
             await FirebaseFirestore.instance
                 .collection(DbPaths.collectiondashboard)
                 .doc(DbPaths.docuserscount)
