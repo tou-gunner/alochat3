@@ -7,6 +7,9 @@ publish_to: none
 environment:
   sdk: ">=2.17.6 <3.0.0"
 
+dependency_overrides:
+  camera_android: 0.9.7+1
+
 dependencies:
   flutter_cache_manager: 3.3.0
   rxdart: 0.27.5

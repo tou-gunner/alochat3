@@ -44,7 +44,7 @@ void main() async {
   }
 
   try {
-    //cameras = await availableCameras();
+    cameras = await availableCameras();
   } on CameraException catch (e) {
     logError(e.code, e.description);
   }
