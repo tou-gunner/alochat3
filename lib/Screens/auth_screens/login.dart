@@ -64,7 +64,7 @@ class LoginScreenState extends State<LoginScreen>
   String _code = "";
   final _phoneNo = TextEditingController();
   int currentStatus = 0;
-  final _name = TextEditingController();
+  // final _name = TextEditingController();
   String? phoneCode = DEFAULT_COUNTTRYCODE_NUMBER;
   final storage = new FlutterSecureStorage();
   DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
@@ -82,7 +82,7 @@ class LoginScreenState extends State<LoginScreen>
     super.initState();
     setdeviceinfo();
     seletedlanguage = Language.languageList()
-        .where((element) => element.languageCode == 'en')
+        .where((element) => element.languageCode == 'lo')
         .toList()[0];
   }
 
@@ -196,7 +196,7 @@ class LoginScreenState extends State<LoginScreen>
     //   Fiberchat.toast('NEW CATCH' + e.toString());
     // }
     await AloAuth.verifyPhoneNumber(
-      phoneNumber: (phoneCode! + _phoneNo.text).trim(),
+      phoneNumber: (_phoneNo.text).trim(),
       timeout: Duration(seconds: timeOutSeconds),
       verificationCompleted: verificationCompleted,
       verificationFailed: verificationFailed,
@@ -296,7 +296,8 @@ class LoginScreenState extends State<LoginScreen>
               Dbkeys.publicKey: pair.publicKey.toBase64(),
               Dbkeys.privateKey: pair.secretKey.toBase64(),
               Dbkeys.countryCode: phoneCode,
-              Dbkeys.nickname: _name.text.trim(),
+              // Dbkeys.nickname: _name.text.trim(),
+              Dbkeys.nickname: aloUser.name,
               Dbkeys.photoUrl: aloUser.photoURL ?? '',
               Dbkeys.id: aloUser.uid,
               Dbkeys.phone: phoneNo,
@@ -311,7 +312,7 @@ class LoginScreenState extends State<LoginScreen>
               Dbkeys.actionmessage: widget.accountApprovalMessage,
               Dbkeys.lastLogin: DateTime.now().millisecondsSinceEpoch,
               Dbkeys.joinedOn: DateTime.now().millisecondsSinceEpoch,
-              Dbkeys.searchKey: _name.text.trim().substring(0, 1).toUpperCase(),
+              Dbkeys.searchKey: aloUser.name.trim().substring(0, 1).toUpperCase(),
               Dbkeys.videoCallMade: 0,
               Dbkeys.videoCallRecieved: 0,
               Dbkeys.audioCallMade: 0,
@@ -353,8 +354,8 @@ class LoginScreenState extends State<LoginScreen>
               Dbkeys.nOTIFICATIONxxdesc: widget
                           .isaccountapprovalbyadminneeded ==
                       true
-                  ? '${_name.text.trim()} has Joined $Appname. APPROVE the user account. You can view the user profile from All Users List.'
-                  : '${_name.text.trim()} has Joined $Appname. You can view the user profile from All Users List.',
+                  ? '${aloUser.name.trim()} has Joined $Appname. APPROVE the user account. You can view the user profile from All Users List.'
+                  : '${aloUser.name.trim()} has Joined $Appname. You can view the user profile from All Users List.',
               Dbkeys.nOTIFICATIONxxtitle: 'New User Joined',
               Dbkeys.nOTIFICATIONxximageurl: null,
               Dbkeys.nOTIFICATIONxxlastupdate: DateTime.now(),
@@ -365,8 +366,8 @@ class LoginScreenState extends State<LoginScreen>
                   Dbkeys.nOTIFICATIONxxdesc: widget
                               .isaccountapprovalbyadminneeded ==
                           true
-                      ? '${_name.text.trim()} has Joined $Appname. APPROVE the user account. You can view the user profile from All Users List.'
-                      : '${_name.text.trim()} has Joined $Appname. You can view the user profile from All Users List.',
+                      ? '${aloUser.name.trim()} has Joined $Appname. APPROVE the user account. You can view the user profile from All Users List.'
+                      : '${aloUser.name.trim()} has Joined $Appname. You can view the user profile from All Users List.',
                   Dbkeys.nOTIFICATIONxxtitle: 'New User Joined',
                   Dbkeys.nOTIFICATIONxximageurl: null,
                   Dbkeys.nOTIFICATIONxxlastupdate: DateTime.now(),
@@ -379,7 +380,7 @@ class LoginScreenState extends State<LoginScreen>
             // Write data to local
 
             await widget.prefs.setString(Dbkeys.id, currentUser!.uid);
-            await widget.prefs.setString(Dbkeys.nickname, _name.text.trim());
+            await widget.prefs.setString(Dbkeys.nickname, aloUser.name.trim());
             await widget.prefs
                 .setString(Dbkeys.photoUrl, currentUser!.photoURL ?? '');
             await widget.prefs.setString(Dbkeys.phone, phoneNo);
@@ -433,9 +434,9 @@ class LoginScreenState extends State<LoginScreen>
                               documents[0].data()![Dbkeys.lastSeen] != true
                                   ? documents[0].data()![Dbkeys.lastSeen]
                                   : DateTime.now().millisecondsSinceEpoch,
-                          Dbkeys.nickname: _name.text.trim(),
+                          Dbkeys.nickname: aloUser.name.trim(),
                           Dbkeys.searchKey:
-                              _name.text.trim().substring(0, 1).toUpperCase(),
+                          aloUser.name.trim().substring(0, 1).toUpperCase(),
                           Dbkeys.videoCallMade: 0,
                           Dbkeys.videoCallRecieved: 0,
                           Dbkeys.audioCallMade: 0,
@@ -452,8 +453,8 @@ class LoginScreenState extends State<LoginScreen>
                         }
                       : {
                           Dbkeys.searchKey:
-                              _name.text.trim().substring(0, 1).toUpperCase(),
-                          Dbkeys.nickname: _name.text.trim(),
+                          aloUser.name.trim().substring(0, 1).toUpperCase(),
+                          Dbkeys.nickname: aloUser.name.trim(),
                           Dbkeys.authenticationType:
                               AuthenticationType.passcode.index,
                           Dbkeys.lastLogin:
@@ -470,7 +471,7 @@ class LoginScreenState extends State<LoginScreen>
                 );
             // Write data to local
             await widget.prefs.setString(Dbkeys.id, documents[0][Dbkeys.id]);
-            await widget.prefs.setString(Dbkeys.nickname, _name.text.trim());
+            await widget.prefs.setString(Dbkeys.nickname, aloUser.name.trim());
             await widget.prefs.setString(
                 Dbkeys.photoUrl, documents[0][Dbkeys.photoUrl] ?? '');
             await widget.prefs
@@ -532,7 +533,7 @@ class LoginScreenState extends State<LoginScreen>
       child: Container(
         width: MediaQuery.of(context).size.width,
         padding: EdgeInsets.only(top: MediaQuery.of(this.context).padding.top),
-        height: 400,
+        height: 300,
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
@@ -540,82 +541,91 @@ class LoginScreenState extends State<LoginScreen>
             colors: [loginPageTopColor, loginPageBottomColor],
           ),
         ),
-        child: Column(
+        child: Stack(
+          fit: StackFit.loose,
+          alignment: AlignmentDirectional.center,
           children: <Widget>[
-            SizedBox(
-              height: Platform.isIOS ? 0 : 10,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(right: 10, left: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Language.languageList().length < 2
-                      ? SizedBox(
-                          height: 40,
-                        )
-                      : Container(
-                          alignment: Alignment.centerRight,
-                          margin: EdgeInsets.only(top: 4, right: 10),
-                          width: 190,
-                          padding: EdgeInsets.all(8),
-                          child: DropdownButton<Language>(
-                            underline: SizedBox(),
-                            icon: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.language_outlined,
-                                  color: DESIGN_TYPE == Themetype.whatsapp
-                                      ? fiberchatWhite
-                                      : fiberchatBlack.withOpacity(0.8),
-                                ),
-                                SizedBox(
-                                  width: 2,
-                                ),
-                                SizedBox(
-                                  width: 15,
-                                  child: Icon(
-                                    Icons.keyboard_arrow_down,
-                                    color: fiberchatLightGreen,
-                                    size: 27,
-                                  ),
-                                )
-                              ],
-                            ),
-                            onChanged: (Language? language) {
-                              _changeLanguage(language!);
-                            },
-                            items: Language.languageList()
-                                .map<DropdownMenuItem<Language>>(
-                                  (e) => DropdownMenuItem<Language>(
-                                    value: e,
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: <Widget>[
-                                        Text(
-                                            IsShowLanguageNameInNativeLanguage ==
-                                                    true
-                                                ? '' +
-                                                    e.name +
-                                                    '  ' +
-                                                    e.flag +
-                                                    ' '
-                                                : ' ' +
-                                                    e.languageNameInEnglish +
-                                                    '  ' +
-                                                    e.flag +
-                                                    ' '),
-                                      ],
-                                    ),
-                                  ),
-                                )
-                                .toList(),
-                          ),
-                        ),
+            // SizedBox(
+            //   height: Platform.isIOS ? 0 : 10,
+            // ),
+            Positioned(
+              top: 0,
+              right: 0,
+              child: Padding(
+                padding: const EdgeInsets.only(right: 10, left: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Language.languageList().length < 2
+                        ? SizedBox(
+                            height: 40,
+                          )
+                        : Container(
+                            alignment: Alignment.centerRight,
+                            margin: EdgeInsets.only(top: 4, right: 10),
+                            width: 190,
+                            padding: EdgeInsets.all(8),
+                            child: DropdownButton<Language>(
 
-                  //---- All localizations settings----
-                ],
+                              underline: SizedBox(),
+                              icon: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.language_outlined,
+                                    color: DESIGN_TYPE == Themetype.whatsapp
+                                        ? fiberchatWhite
+                                        : fiberchatBlack.withOpacity(0.8),
+                                  ),
+                                  SizedBox(
+                                    width: 2,
+                                  ),
+                                  SizedBox(
+                                    width: 15,
+                                    child: Icon(
+                                      Icons.keyboard_arrow_down,
+                                      color: DESIGN_TYPE == Themetype.whatsapp
+                                          ? fiberchatWhite
+                                          : fiberchatBlack.withOpacity(0.8),
+                                      size: 27,
+                                    ),
+                                  )
+                                ],
+                              ),
+                              onChanged: (Language? language) {
+                                _changeLanguage(language!);
+                              },
+                              items: Language.languageList()
+                                  .map<DropdownMenuItem<Language>>(
+                                    (e) => DropdownMenuItem<Language>(
+                                      value: e,
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.end,
+                                        children: <Widget>[
+                                          Text(
+                                              IsShowLanguageNameInNativeLanguage ==
+                                                      true
+                                                  ? '' +
+                                                      e.name +
+                                                      '  ' +
+                                                      e.flag +
+                                                      ' '
+                                                  : ' ' +
+                                                      e.languageNameInEnglish +
+                                                      '  ' +
+                                                      e.flag +
+                                                      ' '),
+                                        ],
+                                      ),
+                                    ),
+                                  )
+                                  .toList(),
+                            ),
+                          ),
+
+                    //---- All localizations settings----
+                  ],
+                ),
               ),
             ),
             SizedBox(
@@ -680,30 +690,30 @@ class LoginScreenState extends State<LoginScreen>
                       SizedBox(
                         height: 13,
                       ),
+                      // Container(
+                      //   margin: EdgeInsets.only(top: 10),
+                      //   padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                      //   // height: 63,
+                      //   height: 83,
+                      //   width: w / 1.24,
+                      //   child: InpuTextBox(
+                      //     inputFormatter: [
+                      //       LengthLimitingTextInputFormatter(25),
+                      //     ],
+                      //     controller: _name,
+                      //     leftrightmargin: 0,
+                      //     showIconboundary: false,
+                      //     boxcornerradius: 5.5,
+                      //     boxheight: 50,
+                      //     hinttext: getTranslated(this.context, 'name_hint'),
+                      //     prefixIconbutton: Icon(
+                      //       Icons.person,
+                      //       color: Colors.grey.withOpacity(0.5),
+                      //     ),
+                      //   ),
+                      // ),
                       Container(
                         margin: EdgeInsets.only(top: 10),
-                        padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                        // height: 63,
-                        height: 83,
-                        width: w / 1.24,
-                        child: InpuTextBox(
-                          inputFormatter: [
-                            LengthLimitingTextInputFormatter(25),
-                          ],
-                          controller: _name,
-                          leftrightmargin: 0,
-                          showIconboundary: false,
-                          boxcornerradius: 5.5,
-                          boxheight: 50,
-                          hinttext: getTranslated(this.context, 'name_hint'),
-                          prefixIconbutton: Icon(
-                            Icons.person,
-                            color: Colors.grey.withOpacity(0.5),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(top: 0),
                         // padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
                         // height: 63,
                         height: 63,
@@ -756,7 +766,8 @@ class LoginScreenState extends State<LoginScreen>
                                   setState(() {});
                                   RegExp e164 =
                                       new RegExp(r'^\+[1-9]\d{1,14}$');
-                                  if (_name.text.trim().isNotEmpty) {
+                                  // if (_name.text.trim().isNotEmpty) {
+                                  if (true) {
                                     String _phone =
                                         _phoneNo.text.toString().trim();
                                     if (_phone.isNotEmpty &&
