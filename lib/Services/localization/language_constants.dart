@@ -151,7 +151,7 @@ Locale _locale(String languageCode) {
       return Locale(MALAY, 'MY');
 
     default:
-      return Locale(ENGLISH, 'US');
+      return Locale(LAO, 'LA');
   }
 }
 

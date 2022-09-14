@@ -81,7 +81,7 @@ class LoginScreenState extends State<LoginScreen>
   void initState() {
     super.initState();
     setdeviceinfo();
-    seletedlanguage = Language.languageList()
+    selectedLanguage = Language.languageList()
         .where((element) => element.languageCode == 'lo')
         .toList()[0];
   }
@@ -521,13 +521,13 @@ class LoginScreenState extends State<LoginScreen>
     Locale _locale = await setLocale(language.languageCode);
     FiberchatWrapper.setLocale(this.context, _locale);
     setState(() {
-      seletedlanguage = language;
+      selectedLanguage = language;
     });
 
     await widget.prefs.setBool('islanguageselected', true);
   }
 
-  Language? seletedlanguage;
+  Language? selectedLanguage;
   customclippath(double w, double h) {
     return ClipPath(
       child: Container(
@@ -541,91 +541,85 @@ class LoginScreenState extends State<LoginScreen>
             colors: [loginPageTopColor, loginPageBottomColor],
           ),
         ),
-        child: Stack(
-          fit: StackFit.loose,
-          alignment: AlignmentDirectional.center,
+        child: Column(
           children: <Widget>[
-            // SizedBox(
-            //   height: Platform.isIOS ? 0 : 10,
-            // ),
-            Positioned(
-              top: 0,
-              right: 0,
-              child: Padding(
-                padding: const EdgeInsets.only(right: 10, left: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Language.languageList().length < 2
-                        ? SizedBox(
-                            height: 40,
-                          )
-                        : Container(
-                            alignment: Alignment.centerRight,
-                            margin: EdgeInsets.only(top: 4, right: 10),
-                            width: 190,
-                            padding: EdgeInsets.all(8),
-                            child: DropdownButton<Language>(
+            SizedBox(
+              height: Platform.isIOS ? 0 : 10,
+            ),
+            Container(
+              padding: const EdgeInsets.only(right: 10, left: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Language.languageList().length < 2
+                      ? SizedBox(
+                    height: 40,
+                  )
+                      : Container(
+                    alignment: Alignment.centerRight,
+                    margin: EdgeInsets.only(top: 4, right: 10),
+                    width: 190,
+                    padding: EdgeInsets.symmetric(horizontal: 8),
+                    child: DropdownButton<Language>(
 
-                              underline: SizedBox(),
-                              icon: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.language_outlined,
-                                    color: DESIGN_TYPE == Themetype.whatsapp
-                                        ? fiberchatWhite
-                                        : fiberchatBlack.withOpacity(0.8),
-                                  ),
-                                  SizedBox(
-                                    width: 2,
-                                  ),
-                                  SizedBox(
-                                    width: 15,
-                                    child: Icon(
-                                      Icons.keyboard_arrow_down,
-                                      color: DESIGN_TYPE == Themetype.whatsapp
-                                          ? fiberchatWhite
-                                          : fiberchatBlack.withOpacity(0.8),
-                                      size: 27,
-                                    ),
-                                  )
-                                ],
-                              ),
-                              onChanged: (Language? language) {
-                                _changeLanguage(language!);
-                              },
-                              items: Language.languageList()
-                                  .map<DropdownMenuItem<Language>>(
-                                    (e) => DropdownMenuItem<Language>(
-                                      value: e,
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.end,
-                                        children: <Widget>[
-                                          Text(
-                                              IsShowLanguageNameInNativeLanguage ==
-                                                      true
-                                                  ? '' +
-                                                      e.name +
-                                                      '  ' +
-                                                      e.flag +
-                                                      ' '
-                                                  : ' ' +
-                                                      e.languageNameInEnglish +
-                                                      '  ' +
-                                                      e.flag +
-                                                      ' '),
-                                        ],
-                                      ),
-                                    ),
-                                  )
-                                  .toList(),
-                            ),
+                      underline: SizedBox(),
+                      icon: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.language_outlined,
+                            color: DESIGN_TYPE == Themetype.whatsapp
+                                ? fiberchatWhite
+                                : fiberchatBlack.withOpacity(0.8),
                           ),
+                          SizedBox(
+                            width: 2,
+                          ),
+                          SizedBox(
+                            width: 15,
+                            child: Icon(
+                              Icons.keyboard_arrow_down,
+                              color: DESIGN_TYPE == Themetype.whatsapp
+                                  ? fiberchatWhite
+                                  : fiberchatBlack.withOpacity(0.8),
+                              size: 27,
+                            ),
+                          )
+                        ],
+                      ),
+                      onChanged: (Language? language) {
+                        _changeLanguage(language!);
+                      },
+                      items: Language.languageList()
+                          .map<DropdownMenuItem<Language>>(
+                            (e) => DropdownMenuItem<Language>(
+                          value: e,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: <Widget>[
+                              Text(
+                                  IsShowLanguageNameInNativeLanguage ==
+                                      true
+                                      ? '' +
+                                      e.name +
+                                      '  ' +
+                                      e.flag +
+                                      ' '
+                                      : ' ' +
+                                      e.languageNameInEnglish +
+                                      '  ' +
+                                      e.flag +
+                                      ' '),
+                            ],
+                          ),
+                        ),
+                      )
+                          .toList(),
+                    ),
+                  ),
 
-                    //---- All localizations settings----
-                  ],
-                ),
+                  //---- All localizations settings----
+                ],
               ),
             ),
             SizedBox(
@@ -634,11 +628,11 @@ class LoginScreenState extends State<LoginScreen>
             w < h
                 ? Image.asset(
                     AppLogoPath,
-                    width: w / 1.3,
+                    width: w / 2.6,
                   )
                 : Image.asset(
                     AppLogoPath,
-                    height: h / 6,
+                    height: h / 12,
                   ),
             SizedBox(
               height: 0,
@@ -734,7 +728,7 @@ class LoginScreenState extends State<LoginScreen>
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.all(17),
+                        padding: EdgeInsets.all(0),
                         child: Text(
                           getTranslated(this.context, 'sendsmscode'),
                           // 'Send a SMS Code to verify your number',

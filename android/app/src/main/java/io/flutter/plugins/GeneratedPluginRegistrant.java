@@ -171,9 +171,9 @@ public final class GeneratedPluginRegistrant {
       Log.e(TAG, "Error registering plugin image_cropper, vn.hunghd.flutter.plugins.imagecropper.ImageCropperPlugin", e);
     }
     try {
-      flutterEngine.getPlugins().add(new top.kikt.flutter_image_editor.FlutterImageEditorPlugin());
+      flutterEngine.getPlugins().add(new com.fluttercandies.image_editor.ImageEditorPlugin());
     } catch(Exception e) {
-      Log.e(TAG, "Error registering plugin image_editor, top.kikt.flutter_image_editor.FlutterImageEditorPlugin", e);
+      Log.e(TAG, "Error registering plugin image_editor, com.fluttercandies.image_editor.ImageEditorPlugin", e);
     }
     try {
       flutterEngine.getPlugins().add(new com.iyaffle.launchreview.LaunchReviewPlugin());

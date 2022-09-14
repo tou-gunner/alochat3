@@ -43,7 +43,8 @@ class Bubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool seen = getSeenStatus(SeenProvider.of(context).value);
+    final lastSeen = SeenProvider.of(context).value; // Seng add
+    final bool seen = lastSeen == null ? false : getSeenStatus(lastSeen); // Seng edit
     final bg = isMe ? fiberchatteagreen : fiberchatWhite;
     final align = isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start;
     dynamic icon = delivered is bool && delivered

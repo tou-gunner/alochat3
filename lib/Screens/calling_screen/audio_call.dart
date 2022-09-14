@@ -435,12 +435,12 @@ class _AudioCallState extends State<AudioCall> {
             color: DESIGN_TYPE == Themetype.messenger
                 ? fiberchatDeepGreen
                 : fiberchatDeepGreen,
-            height: h / 4,
+            height: h / 5,
             width: w,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                SizedBox(height: 9),
+                SizedBox(height: 6),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -460,12 +460,12 @@ class _AudioCallState extends State<AudioCall> {
                   ],
                 ),
                 // SizedBox(height: h / 35),
-                SizedBox(
-                  height: h / 9,
+                Container(
+                  height: h / 10,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      SizedBox(height: 7),
+                      // SizedBox(height: 7),
                       SizedBox(
                         width: w / 1.1,
                         child: Text(
@@ -484,7 +484,7 @@ class _AudioCallState extends State<AudioCall> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 7),
+                      SizedBox(height: 3),
                       Text(
                         IsRemovePhoneNumberFromCallingPageWhenOnCall == true
                             ? ''

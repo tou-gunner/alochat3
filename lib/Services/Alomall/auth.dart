@@ -6,6 +6,10 @@ import 'package:dio/dio.dart';
 
 class AloAuth {
 
+  static AloAuth instance() {
+    return AloAuth();
+  }
+
   static Future<void> verifyPhoneNumber({
     required String phoneNumber,
     required Duration timeout,
@@ -77,4 +81,9 @@ class AloAuth {
         photoURL: datas['member_avatar']
     );
   }
+
+  Future<void> logout() async {
+
+  }
+
 }
