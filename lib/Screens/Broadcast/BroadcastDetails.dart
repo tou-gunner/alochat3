@@ -1,6 +1,7 @@
 //*************   © Copyrighted by Thinkcreative_Technologies. An Exclusive item of Envato market. Make sure you have purchased a Regular License OR Extended license for the Source Code from Envato to use this product. See the License Defination attached with source code. *********************
 
 import 'dart:io';
+import 'package:alochat/widgets/ImagePicker/image_picker.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:alochat/Configs/Dbkeys.dart';
@@ -19,7 +20,6 @@ import 'package:alochat/Services/Providers/AvailableContactsProvider.dart';
 import 'package:alochat/Services/Providers/Observer.dart';
 import 'package:alochat/Services/localization/language_constants.dart';
 import 'package:alochat/Utils/utils.dart';
-import 'package:alochat/widgets/ImagePicker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';

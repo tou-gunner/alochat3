@@ -7,7 +7,7 @@ import 'dart:typed_data';
 
 import 'package:http/http.dart' as http show readBytes;
 
-import './base.dart';
+import 'base.dart';
 
 /// A PickedFile that works on web.
 ///

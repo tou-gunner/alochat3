@@ -9,11 +9,10 @@ import 'package:alochat/Services/localization/language_constants.dart';
 import 'package:alochat/Utils/open_settings.dart';
 import 'package:alochat/Utils/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
-
-import '../ImagePicker/Package/image_picker.dart';
 
 class HybridVideoPicker extends StatefulWidget {
   final String title;

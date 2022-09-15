@@ -5734,7 +5734,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                               ),
                                             ),
                                             SizedBox(
-                                              height: 4,
+                                              height: 0,
                                             ),
                                             chatId != null
                                                 ? Text(
