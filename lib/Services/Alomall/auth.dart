@@ -59,7 +59,7 @@ class AloAuth {
     }
     var token = data['datas']['token'];
 
-    return await verifyToken(token);
+    return verifyToken(token);
   }
 
   static Future<AloUser?> verifyToken(String token) async {
