@@ -9,7 +9,7 @@ import 'package:alochat/Utils/open_settings.dart';
 import 'package:alochat/Utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_video_info/flutter_video_info.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:image_picker_plus/image_picker_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
@@ -31,7 +31,6 @@ class _StatusVideoEditorState extends State<StatusVideoEditor> {
   File? _video;
   final videoInfo = FlutterVideoInfo();
 
-  ImagePicker picker = ImagePicker();
   final TextEditingController textEditingController =
       new TextEditingController();
   late VideoPlayerController _videoPlayerController;
@@ -41,9 +40,10 @@ class _StatusVideoEditorState extends State<StatusVideoEditor> {
   _pickVideo() async {
     final observer = Provider.of<Observer>(this.context, listen: false);
     error = null;
-    XFile? pickedFile = await (picker.pickVideo(source: ImageSource.gallery));
+    ImagePickerPlus picker = ImagePickerPlus(context);
+    var pickedFile = await (picker.pickVideo(source: ImageSource.gallery));
 
-    _video = File(pickedFile!.path);
+    _video = File(pickedFile!.selectedFiles.first.selectedFile.path);
 
     if (_video!.lengthSync() / 1000000 > observer.maxFileSizeAllowedInMB) {
       error =
@@ -53,7 +53,7 @@ class _StatusVideoEditorState extends State<StatusVideoEditor> {
         _video = null;
       });
     } else {
-      info = await videoInfo.getVideoInfo(pickedFile.path);
+      info = await videoInfo.getVideoInfo(pickedFile.selectedFiles.first.selectedFile.path);
 
       setState(() {});
       _videoPlayerController = VideoPlayerController.file(_video!)
@@ -68,9 +68,10 @@ class _StatusVideoEditorState extends State<StatusVideoEditor> {
   _pickVideoFromCamera() async {
     final observer = Provider.of<Observer>(this.context, listen: false);
     error = null;
-    XFile? pickedFile = await (picker.pickVideo(source: ImageSource.camera));
+    ImagePickerPlus picker = ImagePickerPlus(context);
+    var pickedFile = await (picker.pickVideo(source: ImageSource.camera));
 
-    _video = File(pickedFile!.path);
+    _video = File(pickedFile!.selectedFiles.first.selectedFile.path);
 
     if (_video!.lengthSync() / 1000000 > observer.maxFileSizeAllowedInMB) {
       error =
@@ -80,7 +81,7 @@ class _StatusVideoEditorState extends State<StatusVideoEditor> {
         _video = null;
       });
     } else {
-      info = await videoInfo.getVideoInfo(pickedFile.path);
+      info = await videoInfo.getVideoInfo(pickedFile.selectedFiles.first.selectedFile.path);
 
       setState(() {});
       _videoPlayerController = VideoPlayerController.file(_video!)

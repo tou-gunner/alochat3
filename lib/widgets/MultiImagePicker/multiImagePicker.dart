@@ -9,7 +9,7 @@ import 'package:alochat/Services/localization/language_constants.dart';
 import 'package:alochat/Utils/open_settings.dart';
 import 'package:alochat/Utils/utils.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:image_picker_plus/image_picker_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
@@ -32,11 +32,10 @@ class MultiImagePicker extends StatefulWidget {
 }
 
 class _MultiImagePickerState extends State<MultiImagePicker> {
-  ImagePicker picker = ImagePicker();
   bool isLoading = false;
   String? error;
   String mode = 'single';
-  List<XFile> selectedImages = [];
+  List<File> selectedImages = [];
   int currentUploadingIndex = 0;
 
   @override
@@ -69,7 +68,8 @@ class _MultiImagePickerState extends State<MultiImagePicker> {
     final observer = Provider.of<Observer>(this.context, listen: false);
     error = null;
     try {
-      XFile? pickedImage = await (picker.pickImage(source: captureMode));
+      ImagePickerPlus picker = ImagePickerPlus(context);
+      var pickedImage = (await (picker.pickImage(source: captureMode)))?.selectedFiles.first.selectedFile;
       if (pickedImage != null) {
         if (File(pickedImage.path).lengthSync() / 1000000 >
             observer.maxFileSizeAllowedInMB) {
@@ -94,13 +94,14 @@ class _MultiImagePickerState extends State<MultiImagePicker> {
     final observer = Provider.of<Observer>(this.context, listen: false);
     error = null;
     try {
+      ImagePickerPlus picker = ImagePickerPlus(context);
       if (isAddOnly) {
         //--- Is adding to already selected images list.
-        List<XFile>? images = await picker.pickMultiImage();
+        var images = (await picker.pickImage(source: ImageSource.gallery, multiImages: true))?.selectedFiles;
         if (images!.length > 0) {
           images.forEach((image) {
             if (!selectedImages.contains(image)) {
-              selectedImages.add(image);
+              selectedImages.add(image.selectedFile);
             }
           });
 
@@ -110,7 +111,7 @@ class _MultiImagePickerState extends State<MultiImagePicker> {
         }
       } else {
         //--- Is adding to empty selected image list.
-        List<XFile>? images = await picker.pickMultiImage();
+        var images = (await picker.pickImage(source: ImageSource.gallery, multiImages: true))?.selectedFiles.map((e) => e.selectedFile).toList();
         if (images!.length > 1) {
           selectedImages = images;
           mode = 'multi';

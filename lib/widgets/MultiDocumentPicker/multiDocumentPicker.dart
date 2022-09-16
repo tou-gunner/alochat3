@@ -10,7 +10,6 @@ import 'package:alochat/Utils/open_settings.dart';
 import 'package:alochat/Utils/utils.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
@@ -34,7 +33,6 @@ class MultiDocumentPicker extends StatefulWidget {
 }
 
 class _MultiDocumentPickerState extends State<MultiDocumentPicker> {
-  ImagePicker picker = ImagePicker();
   bool isLoading = false;
   String? error;
   String mode = 'single';

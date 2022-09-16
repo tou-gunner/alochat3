@@ -9,7 +9,7 @@ import 'package:alochat/Services/localization/language_constants.dart';
 import 'package:alochat/Utils/open_settings.dart';
 import 'package:alochat/Utils/utils.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:image_picker_plus/image_picker_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
@@ -29,7 +29,6 @@ class StatusImageEditor extends StatefulWidget {
 
 class _StatusImageEditorState extends State<StatusImageEditor> {
   File? _imageFile;
-  ImagePicker picker = ImagePicker();
   bool isLoading = false;
   String? error;
   @override
@@ -43,9 +42,10 @@ class _StatusImageEditorState extends State<StatusImageEditor> {
     final observer = Provider.of<Observer>(this.context, listen: false);
     error = null;
     try {
-      XFile? pickedImage = await (picker.pickImage(source: captureMode));
+      ImagePickerPlus picker = ImagePickerPlus(context);
+      var pickedImage = await (picker.pickImage(source: captureMode));
       if (pickedImage != null) {
-        _imageFile = File(pickedImage.path);
+        _imageFile = File(pickedImage.selectedFiles.first.selectedFile.path);
 
         if (_imageFile!.lengthSync() / 1000000 >
             observer.maxFileSizeAllowedInMB) {

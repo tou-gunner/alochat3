@@ -9,7 +9,7 @@ import 'package:alochat/Services/localization/language_constants.dart';
 import 'package:alochat/Utils/open_settings.dart';
 import 'package:alochat/Utils/utils.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:image_picker_plus/image_picker_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
@@ -29,17 +29,16 @@ class _HybridVideoPickerState extends State<HybridVideoPicker> {
   // File _video;
   String? error;
 
-  ImagePicker picker = ImagePicker();
-
   late VideoPlayerController _videoPlayerController;
 
   // This funcion will helps you to pick a Video File
   _pickVideo() async {
     final observer = Provider.of<Observer>(this.context, listen: false);
     error = null;
-    XFile? pickedFile = await (picker.pickVideo(source: ImageSource.gallery));
+    ImagePickerPlus picker = ImagePickerPlus(context);
+    var pickedFile = await (picker.pickVideo(source: ImageSource.gallery));
 
-    _video = File(pickedFile!.path);
+    _video = File(pickedFile!.selectedFiles.first.selectedFile.path);
 
     if (_video!.lengthSync() / 1000000 > observer.maxFileSizeAllowedInMB) {
       error =
@@ -62,9 +61,10 @@ class _HybridVideoPickerState extends State<HybridVideoPicker> {
   _pickVideoFromCamera() async {
     final observer = Provider.of<Observer>(this.context, listen: false);
     error = null;
-    XFile? pickedFile = await (picker.pickVideo(source: ImageSource.camera));
+    ImagePickerPlus picker = ImagePickerPlus(context);
+    var pickedFile = await (picker.pickVideo(source: ImageSource.camera));
 
-    _video = File(pickedFile!.path);
+    _video = File(pickedFile!.selectedFiles.first.selectedFile.path);
 
     if (_video!.lengthSync() / 1000000 > observer.maxFileSizeAllowedInMB) {
       error =
