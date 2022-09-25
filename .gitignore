@@ -7,3 +7,5 @@ functions/
 .flutter-plugins
 .flutter-plugins-dependencies
 pubspec.lock
+/key/
+/android/app/release/

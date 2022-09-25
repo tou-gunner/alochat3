@@ -130,7 +130,7 @@ class _AudioRecordState extends State<AudioRecord> {
       setStateIfMounted(() {
         streamController!.done;
         streamController!.close();
-        timerSubscription!.cancel();
+        timerSubscription?.cancel();
       });
     });
   }

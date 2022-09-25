@@ -60,7 +60,7 @@ class _AudioCallState extends State<AudioCall> {
 
     streamController!.done;
     streamController!.close();
-    timerSubscription!.cancel();
+    timerSubscription?.cancel();
 
     super.dispose();
   }

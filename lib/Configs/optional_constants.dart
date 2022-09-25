@@ -67,7 +67,7 @@ const IsRemovePhoneNumberFromCallingPageWhenOnCall =
 const OnlyPeerWhoAreSavedInmyContactCanMessageOrCallMe =
     false; //If this is true, then only contacts saved in my device can send a message or call me.
 const DEFAULT_LANGUAGE_FILE_CODE =
-    'en'; //default language code if file is present is localization folder example-> en.json
+    'lo'; //default language code if file is present is localization folder example-> en.json
 const IsShowLanguageNameInNativeLanguage =
     false; // if "true", users can see the language name in respective language
 const IsAdaptiveWidthTab =

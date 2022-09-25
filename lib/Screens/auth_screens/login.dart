@@ -64,7 +64,7 @@ class LoginScreenState extends State<LoginScreen>
   String _code = "";
   final _phoneNo = TextEditingController();
   int currentStatus = 0;
-  // final _name = TextEditingController();
+  final _name = TextEditingController();
   String? phoneCode = DEFAULT_COUNTTRYCODE_NUMBER;
   final storage = new FlutterSecureStorage();
   DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
@@ -289,6 +289,7 @@ class LoginScreenState extends State<LoginScreen>
             await storage.write(
                 key: Dbkeys.privateKey, value: pair.secretKey.toBase64());
             // Update data to server if new user
+            var name = _name.text.trim() != '' ? _name.text.trim() : aloUser.name;
             await FirebaseFirestore.instance
                 .collection(DbPaths.collectionusers)
                 .doc(phoneNo)
@@ -297,7 +298,7 @@ class LoginScreenState extends State<LoginScreen>
               Dbkeys.privateKey: pair.secretKey.toBase64(),
               Dbkeys.countryCode: phoneCode,
               // Dbkeys.nickname: _name.text.trim(),
-              Dbkeys.nickname: aloUser.name,
+              Dbkeys.nickname: name,
               Dbkeys.photoUrl: aloUser.photoURL ?? '',
               Dbkeys.id: aloUser.uid,
               Dbkeys.phone: phoneNo,
@@ -312,7 +313,7 @@ class LoginScreenState extends State<LoginScreen>
               Dbkeys.actionmessage: widget.accountApprovalMessage,
               Dbkeys.lastLogin: DateTime.now().millisecondsSinceEpoch,
               Dbkeys.joinedOn: DateTime.now().millisecondsSinceEpoch,
-              Dbkeys.searchKey: aloUser.name.trim().substring(0, 1).toUpperCase(),
+              Dbkeys.searchKey: name.substring(0, 1).toUpperCase(),
               Dbkeys.videoCallMade: 0,
               Dbkeys.videoCallRecieved: 0,
               Dbkeys.audioCallMade: 0,
@@ -380,7 +381,7 @@ class LoginScreenState extends State<LoginScreen>
             // Write data to local
 
             await widget.prefs.setString(Dbkeys.id, currentUser!.uid);
-            await widget.prefs.setString(Dbkeys.nickname, aloUser.name.trim());
+            await widget.prefs.setString(Dbkeys.nickname, name);
             await widget.prefs
                 .setString(Dbkeys.photoUrl, currentUser!.photoURL ?? '');
             await widget.prefs.setString(Dbkeys.phone, phoneNo);
@@ -415,6 +416,7 @@ class LoginScreenState extends State<LoginScreen>
             await storage.write(
                 key: Dbkeys.privateKey, value: documents[0][Dbkeys.privateKey]);
 
+            var name = _name.text.trim() != '' ? _name.text.trim() : aloUser.name;
             await FirebaseFirestore.instance
                 .collection(DbPaths.collectionusers)
                 .doc(phoneNo)
@@ -434,9 +436,8 @@ class LoginScreenState extends State<LoginScreen>
                               documents[0].data()![Dbkeys.lastSeen] != true
                                   ? documents[0].data()![Dbkeys.lastSeen]
                                   : DateTime.now().millisecondsSinceEpoch,
-                          Dbkeys.nickname: aloUser.name.trim(),
-                          Dbkeys.searchKey:
-                          aloUser.name.trim().substring(0, 1).toUpperCase(),
+                          Dbkeys.nickname: name,
+                          Dbkeys.searchKey: name.substring(0, 1).toUpperCase(),
                           Dbkeys.videoCallMade: 0,
                           Dbkeys.videoCallRecieved: 0,
                           Dbkeys.audioCallMade: 0,
@@ -452,9 +453,8 @@ class LoginScreenState extends State<LoginScreen>
                           Dbkeys.notificationTokens: [fcmToken],
                         }
                       : {
-                          Dbkeys.searchKey:
-                          aloUser.name.trim().substring(0, 1).toUpperCase(),
-                          Dbkeys.nickname: aloUser.name.trim(),
+                          Dbkeys.searchKey: name.substring(0, 1).toUpperCase(),
+                          Dbkeys.nickname: name,
                           Dbkeys.authenticationType:
                               AuthenticationType.passcode.index,
                           Dbkeys.lastLogin:
@@ -471,7 +471,7 @@ class LoginScreenState extends State<LoginScreen>
                 );
             // Write data to local
             await widget.prefs.setString(Dbkeys.id, documents[0][Dbkeys.id]);
-            await widget.prefs.setString(Dbkeys.nickname, aloUser.name.trim());
+            await widget.prefs.setString(Dbkeys.nickname, name);
             await widget.prefs.setString(
                 Dbkeys.photoUrl, documents[0][Dbkeys.photoUrl] ?? '');
             await widget.prefs
@@ -684,28 +684,28 @@ class LoginScreenState extends State<LoginScreen>
                       SizedBox(
                         height: 13,
                       ),
-                      // Container(
-                      //   margin: EdgeInsets.only(top: 10),
-                      //   padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                      //   // height: 63,
-                      //   height: 83,
-                      //   width: w / 1.24,
-                      //   child: InpuTextBox(
-                      //     inputFormatter: [
-                      //       LengthLimitingTextInputFormatter(25),
-                      //     ],
-                      //     controller: _name,
-                      //     leftrightmargin: 0,
-                      //     showIconboundary: false,
-                      //     boxcornerradius: 5.5,
-                      //     boxheight: 50,
-                      //     hinttext: getTranslated(this.context, 'name_hint'),
-                      //     prefixIconbutton: Icon(
-                      //       Icons.person,
-                      //       color: Colors.grey.withOpacity(0.5),
-                      //     ),
-                      //   ),
-                      // ),
+                      Container(
+                        margin: EdgeInsets.only(top: 10),
+                        padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                        // height: 63,
+                        height: 83,
+                        width: w / 1.24,
+                        child: InpuTextBox(
+                          inputFormatter: [
+                            LengthLimitingTextInputFormatter(25),
+                          ],
+                          controller: _name,
+                          leftrightmargin: 0,
+                          showIconboundary: false,
+                          boxcornerradius: 5.5,
+                          boxheight: 50,
+                          hinttext: getTranslated(this.context, 'name_hint'),
+                          prefixIconbutton: Icon(
+                            Icons.person,
+                            color: Colors.grey.withOpacity(0.5),
+                          ),
+                        ),
+                      ),
                       Container(
                         margin: EdgeInsets.only(top: 10),
                         // padding: EdgeInsets.fromLTRB(10, 0, 10, 0),

@@ -149,8 +149,8 @@ class HomepageState extends State<Homepage>
     listenToSharingintent();
     listenToNotification();
     super.initState();
-    getSignedInUserOrRedirect();
-    setdeviceinfo();
+    // getSignedInUserOrRedirect();
+    setdeviceinfo().then((value) => getSignedInUserOrRedirect());
     registerNotification();
 
     controllerIfcallallowed = TabController(length: 3, vsync: this);
@@ -364,7 +364,7 @@ class HomepageState extends State<Homepage>
     );
   }
 
-  setdeviceinfo() async {
+  Future<void> setdeviceinfo() async {
     if (Platform.isAndroid == true) {
       AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
       const _androidIdPlugin = AndroidId();

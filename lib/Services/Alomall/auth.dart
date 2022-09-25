@@ -78,7 +78,7 @@ class AloAuth {
         uid: datas['member_id'],
         name: datas['member_name'],
         phone: datas['member_mobile'],
-        photoURL: datas['member_avatar']
+        photoURL: "https://alomall.la/demo/system/upfiles/shop/avatar/${datas['member_avatar']}"
     );
   }
 

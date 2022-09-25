@@ -59,7 +59,7 @@ class _VideoCallState extends State<VideoCall> {
     _engine.destroy();
     streamController!.done;
     streamController!.close();
-    timerSubscription!.cancel();
+    timerSubscription?.cancel();
 
     super.dispose();
   }
