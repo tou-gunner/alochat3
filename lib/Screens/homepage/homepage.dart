@@ -3,6 +3,7 @@
 import 'dart:async';
 import 'dart:core';
 import 'dart:io';
+import 'package:alochat/Screens/alomall/alomall.dart';
 import 'package:alochat/Services/Alomall/auth.dart';
 import 'package:android_id/android_id.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -153,9 +154,9 @@ class HomepageState extends State<Homepage>
     setdeviceinfo().then((value) => getSignedInUserOrRedirect());
     registerNotification();
 
-    controllerIfcallallowed = TabController(length: 3, vsync: this);
+    controllerIfcallallowed = TabController(length: 4, vsync: this);
     controllerIfcallallowed!.index = 0;
-    controllerIfcallNotallowed = TabController(length: 2, vsync: this);
+    controllerIfcallNotallowed = TabController(length: 3, vsync: this);
     controllerIfcallNotallowed!.index = 0;
 
     Fiberchat.internetLookUp();
@@ -1602,6 +1603,15 @@ class HomepageState extends State<Homepage>
                                                         FONTFAMILY_NAME),
                                               ),
                                             ),
+                                            Tab(
+                                              child: Text(
+                                                'ALOMALL',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                    fontFamily:
+                                                    FONTFAMILY_NAME),
+                                              ),
+                                            ),
                                           ]
                                         : <Widget>[
                                             Tab(
@@ -1621,6 +1631,15 @@ class HomepageState extends State<Homepage>
                                                 style: TextStyle(
                                                     fontFamily:
                                                         FONTFAMILY_NAME),
+                                              ),
+                                            ),
+                                            Tab(
+                                              child: Text(
+                                                'ALOMALL',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                    fontFamily:
+                                                    FONTFAMILY_NAME),
                                               ),
                                             ),
                                           ],
@@ -1659,6 +1678,7 @@ class HomepageState extends State<Homepage>
                                           userphone: widget.currentUserNo,
                                           prefs: widget.prefs,
                                         ),
+                                        Alomall()
                                       ]
                                     : <Widget>[
                                         IsShowLastMessageInChatTileWithTime ==
@@ -1682,6 +1702,7 @@ class HomepageState extends State<Homepage>
                                             model: _cachedModel,
                                             biometricEnabled: biometricEnabled,
                                             prefs: widget.prefs),
+                                        Alomall()
                                       ],
                               )),
                         )));
