@@ -8,8 +8,10 @@ import 'package:alochat/Services/Providers/Observer.dart';
 import 'package:alochat/Services/localization/language_constants.dart';
 import 'package:alochat/Utils/open_settings.dart';
 import 'package:alochat/Utils/utils.dart';
+import 'package:alochat/widgets/MultiDocumentPicker/multiDocumentPicker.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker_plus/image_picker_plus.dart';
+import 'package:path/path.dart' as path;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
@@ -62,6 +64,47 @@ class _SingleImagePickerState extends State<SingleImagePicker> {
         }
       }
     } catch (e) {}
+  }
+
+  Future<String> getFileData(File image, {int? timestamp, int? totalFiles}) async {
+    // final observer = Provider.of<Observer>(this.context, listen: false);
+
+    if (mounted) {
+      setState(() {
+        _imageFile = image;
+      });
+    }
+
+    return Future.value('');
+
+    // return observer.isPercentProgressShowWhileUploading
+    //     ? (totalFiles == null
+    //     ? uploadFileWithProgressIndicator(
+    //   false,
+    //   timestamp: timestamp,
+    // )
+    //     : totalFiles == 1
+    //     ? uploadFileWithProgressIndicator(
+    //   false,
+    //   timestamp: timestamp,
+    // )
+    //     : uploadFile(false, timestamp: timestamp))
+    //     : uploadFile(false, timestamp: timestamp);
+  }
+
+  void captureFile() async {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MultiDocumentPicker(
+          title: getTranslated(this.context, 'takeimage'),
+          callback: getFileData,
+          writeMessage: (fileUrl, messageTime) async {
+
+          },
+        )
+      )
+    );
   }
 
   Widget _buildImage() {
@@ -168,6 +211,22 @@ class _SingleImagePickerState extends State<SingleImagePicker> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
+              // _buildActionButton(new Key('storage'), Icons.file_copy, () {
+              //   Fiberchat.checkAndRequestPermission(Platform.isIOS
+              //       ? Permission.mediaLibrary
+              //       : Permission.storage)
+              //       .then((res) {
+              //     if (res) {
+              //       captureFile();
+              //     } else {
+              //       Fiberchat.showRationale(getTranslated(context, 'pgi'));
+              //       Navigator.pushReplacement(
+              //           context,
+              //           new MaterialPageRoute(
+              //               builder: (context) => OpenSettings()));
+              //     }
+              //   });
+              // }),
               _buildActionButton(new Key('retake'), Icons.photo_library, () {
                 Fiberchat.checkAndRequestPermission(Permission.photos)
                     .then((res) {

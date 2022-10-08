@@ -28,6 +28,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:alochat/Models/E2EE/e2ee.dart' as e2ee;
@@ -275,6 +276,17 @@ class LoginScreenState extends State<LoginScreen>
 
       // ignore: unnecessary_null_comparison
       if (aloUser != null) {
+        //set token for Alomall webview
+        CookieManager _cookieManager = CookieManager.instance();
+        await _cookieManager.setCookie(
+          url: Uri.parse('https://alomall.la/demo/mobile'),
+          name: "key",
+          value: aloUser.token,
+          domain: "alomall.la",
+          expiresDate: DateTime.now().add(Duration(days: 9999)).millisecondsSinceEpoch,
+          isSecure: true,
+        );
+
         // Check is already sign up
         final QuerySnapshot result = await FirebaseFirestore.instance
             .collection(DbPaths.collectionusers)
@@ -296,6 +308,7 @@ class LoginScreenState extends State<LoginScreen>
                 .set({
               Dbkeys.publicKey: pair.publicKey.toBase64(),
               Dbkeys.privateKey: pair.secretKey.toBase64(),
+              'alo_token': aloUser.token,
               Dbkeys.countryCode: phoneCode,
               // Dbkeys.nickname: _name.text.trim(),
               Dbkeys.nickname: name,
@@ -423,6 +436,7 @@ class LoginScreenState extends State<LoginScreen>
                 .update(
                   !documents[0].data().containsKey(Dbkeys.deviceDetails)
                       ? {
+                          'alo_token': aloUser.token,
                           Dbkeys.authenticationType:
                               AuthenticationType.passcode.index,
                           Dbkeys.accountstatus:
@@ -453,6 +467,7 @@ class LoginScreenState extends State<LoginScreen>
                           Dbkeys.notificationTokens: [fcmToken],
                         }
                       : {
+                          'alo_token': aloUser.token,
                           Dbkeys.searchKey: name.substring(0, 1).toUpperCase(),
                           Dbkeys.nickname: name,
                           Dbkeys.authenticationType:

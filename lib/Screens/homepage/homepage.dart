@@ -28,6 +28,7 @@ import 'package:alochat/Services/localization/language.dart';
 import 'package:alochat/Utils/custom_url_launcher.dart';
 import 'package:alochat/Utils/error_codes.dart';
 import 'package:alochat/Utils/phonenumberVariantsGenerator.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart'
     as local;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -1580,6 +1581,7 @@ class HomepageState extends State<Homepage>
                                                 getTranslated(context, 'chats'),
                                                 textAlign: TextAlign.center,
                                                 style: TextStyle(
+                                                    fontSize: 12,
                                                     fontFamily:
                                                         FONTFAMILY_NAME),
                                               ),
@@ -1590,6 +1592,7 @@ class HomepageState extends State<Homepage>
                                                     context, 'status'),
                                                 textAlign: TextAlign.center,
                                                 style: TextStyle(
+                                                    fontSize: 12,
                                                     fontFamily:
                                                         FONTFAMILY_NAME),
                                               ),
@@ -1599,6 +1602,7 @@ class HomepageState extends State<Homepage>
                                                 getTranslated(context, 'calls'),
                                                 textAlign: TextAlign.center,
                                                 style: TextStyle(
+                                                    fontSize: 12,
                                                     fontFamily:
                                                         FONTFAMILY_NAME),
                                               ),
@@ -1608,6 +1612,7 @@ class HomepageState extends State<Homepage>
                                                 'ALOMALL',
                                                 textAlign: TextAlign.center,
                                                 style: TextStyle(
+                                                    fontSize: 12,
                                                     fontFamily:
                                                     FONTFAMILY_NAME),
                                               ),
@@ -1619,6 +1624,7 @@ class HomepageState extends State<Homepage>
                                                 getTranslated(context, 'chats'),
                                                 textAlign: TextAlign.center,
                                                 style: TextStyle(
+                                                    fontSize: 12,
                                                     fontFamily:
                                                         FONTFAMILY_NAME),
                                               ),
@@ -1629,6 +1635,7 @@ class HomepageState extends State<Homepage>
                                                     context, 'status'),
                                                 textAlign: TextAlign.center,
                                                 style: TextStyle(
+                                                    fontSize: 12,
                                                     fontFamily:
                                                         FONTFAMILY_NAME),
                                               ),
@@ -1638,6 +1645,7 @@ class HomepageState extends State<Homepage>
                                                 'ALOMALL',
                                                 textAlign: TextAlign.center,
                                                 style: TextStyle(
+                                                    fontSize: 12,
                                                     fontFamily:
                                                     FONTFAMILY_NAME),
                                               ),

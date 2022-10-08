@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:alochat/Services/Alomall/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 class AloAuth {
 
@@ -78,12 +79,14 @@ class AloAuth {
         uid: datas['member_id'],
         name: datas['member_name'],
         phone: datas['member_mobile'],
+        token: token,
+        refreshToken: '',
         photoURL: "https://alomall.la/demo/system/upfiles/shop/avatar/${datas['member_avatar']}"
     );
   }
 
   Future<void> logout() async {
-
+    CookieManager.instance().deleteAllCookies();
   }
 
 }

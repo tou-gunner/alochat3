@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -16,10 +18,23 @@ class _AlomallState extends State<Alomall> {
   Uri? _url;
   late PullToRefreshController _pullToRefreshController;
   double progress = 0;
+  // CookieManager _cookieManager = CookieManager.instance();
+
+  Future<void> initialize() async {
+    // await _cookieManager.setCookie(
+    //   url: Uri.parse('https://alomall.la/demo/mobile'),
+    //   name: "key",
+    //   value: "2e16b9ca8dcea0f4f437adc93b034515",
+    //   domain: "alomall.la",
+    //   expiresDate: DateTime.now().add(Duration(days: 9999)).millisecondsSinceEpoch,
+    //   isSecure: true,
+    // );
+  }
 
   @override
   void initState() {
     super.initState();
+    initialize();
     _pullToRefreshController = PullToRefreshController(
       options: PullToRefreshOptions(
         color: Colors.blue,
@@ -38,13 +53,17 @@ class _AlomallState extends State<Alomall> {
   @override
   Widget build(BuildContext context) {
     return InAppWebView(
+      gestureRecognizers: {
+        Factory<VerticalDragGestureRecognizer>(() => VerticalDragGestureRecognizer())
+      },
       initialUrlRequest: URLRequest(
-        url: Uri.parse('https://alomall.la/mobile/')
+        url: Uri.parse('https://alomall.la/demo/mobile/')
       ),
       initialOptions: InAppWebViewGroupOptions(
           crossPlatform: InAppWebViewOptions(
             useShouldOverrideUrlLoading: true,
             mediaPlaybackRequiresUserGesture: false,
+            javaScriptEnabled: true
           ),
           android: AndroidInAppWebViewOptions(
             useHybridComposition: true,
