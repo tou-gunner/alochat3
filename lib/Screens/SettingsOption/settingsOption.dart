@@ -1,6 +1,7 @@
 //*************   © Copyrighted by Thinkcreative_Technologies. An Exclusive item of Envato market. Make sure you have purchased a Regular License OR Extended license for the Source Code from Envato to use this product. See the License Defination attached with source code. *********************
 
 import 'dart:io';
+import 'package:alochat/main.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:alochat/Configs/Dbkeys.dart';
 import 'package:alochat/Configs/Dbpaths.dart';
@@ -16,7 +17,6 @@ import 'package:alochat/Services/localization/language_constants.dart';
 import 'package:alochat/Utils/custom_url_launcher.dart';
 import 'package:alochat/Utils/utils.dart';
 import 'package:alochat/widgets/MyElevatedButton/MyElevatedButton.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -164,7 +164,7 @@ class _SettingsOptionState extends State<SettingsOption> {
                                               isLoading = true;
                                             });
                                             //subscribe to token
-                                            await FirebaseMessaging.instance
+                                            await awesomeFcm
                                                 .subscribeToTopic(
                                                     '${widget.currentUserNo.replaceFirst(new RegExp(r'\+'), '')}')
                                                 .catchError((err) {
@@ -172,7 +172,7 @@ class _SettingsOptionState extends State<SettingsOption> {
                                                   'ERROR SUBSCRIBING NOTIFICATION' +
                                                       err.toString());
                                             });
-                                            await FirebaseMessaging.instance
+                                            await awesomeFcm
                                                 .subscribeToTopic(
                                                     Dbkeys.topicUSERS)
                                                 .catchError((err) {
@@ -180,7 +180,7 @@ class _SettingsOptionState extends State<SettingsOption> {
                                                   'ERROR SUBSCRIBING NOTIFICATION' +
                                                       err.toString());
                                             });
-                                            await FirebaseMessaging.instance
+                                            await awesomeFcm
                                                 .subscribeToTopic(Platform
                                                         .isAndroid
                                                     ? Dbkeys.topicUSERSandroid
@@ -193,8 +193,8 @@ class _SettingsOptionState extends State<SettingsOption> {
                                                       err.toString());
                                             });
                                             String? fcmToken =
-                                                await FirebaseMessaging.instance
-                                                    .getToken();
+                                                await awesomeFcm
+                                                    .requestFirebaseAppToken();
                                             await FirebaseFirestore.instance
                                                 .collection(
                                                     DbPaths.collectionusers)
@@ -212,24 +212,24 @@ class _SettingsOptionState extends State<SettingsOption> {
                                               isLoading = true;
                                             });
 
-                                            await FirebaseMessaging.instance
-                                                .unsubscribeFromTopic(
+                                            await awesomeFcm
+                                                .unsubscribeToTopic(
                                                     '${widget.currentUserNo.replaceFirst(new RegExp(r'\+'), '')}')
                                                 .catchError((err) {
                                               print(
                                                   'ERROR SUBSCRIBING NOTIFICATION' +
                                                       err.toString());
                                             });
-                                            await FirebaseMessaging.instance
-                                                .unsubscribeFromTopic(
+                                            await awesomeFcm
+                                                .unsubscribeToTopic(
                                                     Dbkeys.topicUSERS)
                                                 .catchError((err) {
                                               print(
                                                   'ERROR SUBSCRIBING NOTIFICATION' +
                                                       err.toString());
                                             });
-                                            await FirebaseMessaging.instance
-                                                .unsubscribeFromTopic(Platform
+                                            await awesomeFcm
+                                                .unsubscribeToTopic(Platform
                                                         .isAndroid
                                                     ? Dbkeys.topicUSERSandroid
                                                     : Platform.isIOS

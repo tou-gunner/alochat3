@@ -12,11 +12,12 @@
 		</intent>
 	</queries>
 	<application
-   android:label="Alochat"
-        android:name="${applicationName}"
-     android:icon="@mipmap/ic_launcher"
-     android:allowBackup="false"
-     android:fullBackupOnly="false"
+	 android:label="Alochat"
+	 android:name="${applicationName}"
+	 android:icon="@mipmap/ic_launcher"
+	 android:allowBackup="false"
+	 android:fullBackupOnly="false"
+	 android:networkSecurityConfig="@xml/network_security_config"
           >
 		<meta-data
         android:name="com.google.firebase.messaging.default_notification_icon"

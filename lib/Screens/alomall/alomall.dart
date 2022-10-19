@@ -12,7 +12,7 @@ class Alomall extends StatefulWidget {
   State<Alomall> createState() => _AlomallState();
 }
 
-class _AlomallState extends State<Alomall> {
+class _AlomallState extends State<Alomall> with AutomaticKeepAliveClientMixin<Alomall> {
   InAppWebViewController? _controller;
   final _urlController = TextEditingController();
   Uri? _url;
@@ -30,6 +30,9 @@ class _AlomallState extends State<Alomall> {
     //   isSecure: true,
     // );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -52,12 +55,13 @@ class _AlomallState extends State<Alomall> {
   
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return InAppWebView(
       gestureRecognizers: {
         Factory<VerticalDragGestureRecognizer>(() => VerticalDragGestureRecognizer())
       },
       initialUrlRequest: URLRequest(
-        url: Uri.parse('https://alomall.la/demo/mobile/')
+        url: Uri.parse('http://167.172.79.134/mobile/')
       ),
       initialOptions: InAppWebViewGroupOptions(
           crossPlatform: InAppWebViewOptions(

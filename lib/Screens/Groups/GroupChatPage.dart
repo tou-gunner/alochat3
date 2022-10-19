@@ -1,5 +1,6 @@
 //*************   © Copyrighted by Thinkcreative_Technologies. An Exclusive item of Envato market. Make sure you have purchased a Regular License OR Extended license for the Source Code from Envato to use this product. See the License Defination attached with source code. *********************
 
+import 'package:alochat/main.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:alochat/Configs/app_constants.dart';
@@ -31,7 +32,6 @@ import 'package:alochat/widgets/InfiniteList/InfiniteCOLLECTIONListViewWidget.da
 import 'package:alochat/widgets/MultiDocumentPicker/multiDocumentPicker.dart';
 import 'package:alochat/widgets/MyElevatedButton/MyElevatedButton.dart';
 import 'package:alochat/widgets/VideoEditor/video_editor.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -4388,8 +4388,8 @@ class _GroupChatPageState extends State<GroupChatPage>
                                                 !isCurrentUserMuted;
                                           });
 
-                                          FirebaseMessaging.instance
-                                              .unsubscribeFromTopic(
+                                          awesomeFcm
+                                              .unsubscribeToTopic(
                                                   "GROUP${widget.groupID.replaceAll(RegExp('-'), '').substring(1, widget.groupID.replaceAll(RegExp('-'), '').toString().length)}")
                                               .then((value) {
                                             FirebaseFirestore.instance
@@ -4424,7 +4424,7 @@ class _GroupChatPageState extends State<GroupChatPage>
                                                 !isCurrentUserMuted;
                                           });
 
-                                          FirebaseMessaging.instance
+                                          awesomeFcm
                                               .subscribeToTopic(
                                                   "GROUP${widget.groupID.replaceAll(RegExp('-'), '').substring(1, widget.groupID.replaceAll(RegExp('-'), '').toString().length)}")
                                               .then((value) {

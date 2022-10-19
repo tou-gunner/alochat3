@@ -1,6 +1,7 @@
 //*************   © Copyrighted by Thinkcreative_Technologies. An Exclusive item of Envato market. Make sure you have purchased a Regular License OR Extended license for the Source Code from Envato to use this product. See the License Defination attached with source code. *********************
 
 import 'package:agora_rtc_engine/rtc_engine.dart';
+import 'package:alochat/main.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:alochat/Configs/Dbpaths.dart';
@@ -198,7 +199,8 @@ class PickupScreen extends StatelessWidget {
                           children: <Widget>[
                             RawMaterialButton(
                               onPressed: () async {
-                                flutterLocalNotificationsPlugin.cancelAll();
+                                // flutterLocalNotificationsPlugin.cancelAll();
+                                awesomeNotifications.cancelAll();
                                 await callMethods.endCall(call: call);
                                 FirebaseFirestore.instance
                                     .collection(DbPaths.collectionusers)
@@ -266,7 +268,8 @@ class PickupScreen extends StatelessWidget {
                                         .orderBy('TIME', descending: true)
                                         .limit(14),
                                     true);
-                                flutterLocalNotificationsPlugin.cancelAll();
+                                // flutterLocalNotificationsPlugin.cancelAll();
+                                awesomeNotifications.cancelAll();
                               },
                               child: Icon(
                                 Icons.call_end,
@@ -281,7 +284,8 @@ class PickupScreen extends StatelessWidget {
                             SizedBox(width: 45),
                             RawMaterialButton(
                               onPressed: () async {
-                                flutterLocalNotificationsPlugin.cancelAll();
+                                // flutterLocalNotificationsPlugin.cancelAll();
+                                awesomeNotifications.cancelAll();
                                 await Permissions
                                         .cameraAndMicrophonePermissionsGranted()
                                     .then((isgranted) async {
@@ -410,7 +414,8 @@ class PickupScreen extends StatelessWidget {
                           children: <Widget>[
                             RawMaterialButton(
                               onPressed: () async {
-                                flutterLocalNotificationsPlugin.cancelAll();
+                                // flutterLocalNotificationsPlugin.cancelAll();
+                                awesomeNotifications.cancelAll();
                                 await callMethods.endCall(call: call);
                                 FirebaseFirestore.instance
                                     .collection(DbPaths.collectionusers)
@@ -462,7 +467,8 @@ class PickupScreen extends StatelessWidget {
                                         .orderBy('TIME', descending: true)
                                         .limit(14),
                                     true);
-                                flutterLocalNotificationsPlugin.cancelAll();
+                                // flutterLocalNotificationsPlugin.cancelAll();
+                                awesomeNotifications.cancelAll();
                               },
                               child: Icon(
                                 Icons.call_end,
@@ -477,7 +483,8 @@ class PickupScreen extends StatelessWidget {
                             SizedBox(width: 45),
                             RawMaterialButton(
                               onPressed: () async {
-                                flutterLocalNotificationsPlugin.cancelAll();
+                                // flutterLocalNotificationsPlugin.cancelAll();
+                                awesomeNotifications.cancelAll();
                                 await Permissions
                                         .cameraAndMicrophonePermissionsGranted()
                                     .then((isgranted) async {

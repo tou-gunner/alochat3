@@ -370,7 +370,8 @@
     "deleteaccount": "Delete Account",
     "raiserequest": "Request account deletion",
     "raiserequestdesc": "Submit a request to Administrator to delete the Account. Your account will be deleted within 5 days.",
-    "requestsubmitted": "Account Deletion Request Submitted successfully !"
+    "requestsubmitted": "Account Deletion Request Submitted successfully !",
 
+    "selectlanguage": "Select Language"
 
 }

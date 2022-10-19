@@ -5,6 +5,8 @@ import 'dart:io';
 import 'package:alochat/Services/Alomall/auth.dart';
 import 'package:alochat/Services/Alomall/user.dart';
 import 'package:android_id/android_id.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:awesome_notifications_fcm/awesome_notifications_fcm.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:alochat/Configs/Dbkeys.dart';
 import 'package:alochat/Configs/Dbpaths.dart';
@@ -17,7 +19,6 @@ import 'package:alochat/Utils/custom_url_launcher.dart';
 import 'package:alochat/Utils/phonenumberVariantsGenerator.dart';
 import 'package:alochat/widgets/PhoneField/intl_phone_field.dart';
 import 'package:alochat/widgets/PhoneField/phone_number.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:alochat/Configs/app_constants.dart';
 import 'package:alochat/Services/localization/language.dart';
 import 'package:alochat/Services/localization/language_constants.dart';
@@ -206,23 +207,44 @@ class LoginScreenState extends State<LoginScreen>
   }
 
   subscribeToNotification(String currentUserNo, bool isFreshNewAccount) async {
-    await FirebaseMessaging.instance
+    // await FirebaseMessaging.instance
+    //     .subscribeToTopic(
+    //         '${currentUserNo.replaceFirst(new RegExp(r'\+'), '')}')
+    //     .catchError((err) {
+    //   print('ERROR SUBSCRIBING NOTIFICATION' + err.toString());
+    // });
+    // await FirebaseMessaging.instance
+    //     .subscribeToTopic(Dbkeys.topicUSERS)
+    //     .catchError((err) {
+    //   print('ERROR SUBSCRIBING NOTIFICATION' + err.toString());
+    // });
+    // await FirebaseMessaging.instance
+    //     .subscribeToTopic(Platform.isAndroid
+    //         ? Dbkeys.topicUSERSandroid
+    //         : Platform.isIOS
+    //             ? Dbkeys.topicUSERSios
+    //             : Dbkeys.topicUSERSweb)
+    //     .catchError((err) {
+    //   print('ERROR SUBSCRIBING NOTIFICATION' + err.toString());
+    // });
+
+    await awesomeFcm
         .subscribeToTopic(
-            '${currentUserNo.replaceFirst(new RegExp(r'\+'), '')}')
+        '${currentUserNo.replaceFirst(new RegExp(r'\+'), '')}')
         .catchError((err) {
       print('ERROR SUBSCRIBING NOTIFICATION' + err.toString());
     });
-    await FirebaseMessaging.instance
+    await awesomeFcm
         .subscribeToTopic(Dbkeys.topicUSERS)
         .catchError((err) {
       print('ERROR SUBSCRIBING NOTIFICATION' + err.toString());
     });
-    await FirebaseMessaging.instance
+    await awesomeFcm
         .subscribeToTopic(Platform.isAndroid
-            ? Dbkeys.topicUSERSandroid
-            : Platform.isIOS
-                ? Dbkeys.topicUSERSios
-                : Dbkeys.topicUSERSweb)
+        ? Dbkeys.topicUSERSandroid
+        : Platform.isIOS
+        ? Dbkeys.topicUSERSios
+        : Dbkeys.topicUSERSweb)
         .catchError((err) {
       print('ERROR SUBSCRIBING NOTIFICATION' + err.toString());
     });
@@ -238,17 +260,29 @@ class LoginScreenState extends State<LoginScreen>
             if (doc.data().containsKey(Dbkeys.groupMUTEDMEMBERS)) {
               if (doc[Dbkeys.groupMUTEDMEMBERS].contains(currentUserNo)) {
               } else {
-                await FirebaseMessaging.instance
+                // await FirebaseMessaging.instance
+                //     .subscribeToTopic(
+                //         "GROUP${doc[Dbkeys.groupID].replaceAll(RegExp('-'), '').substring(1, doc[Dbkeys.groupID].replaceAll(RegExp('-'), '').toString().length)}")
+                //     .catchError((err) {
+                //   print('ERROR SUBSCRIBING NOTIFICATION' + err.toString());
+                // });
+                await awesomeFcm
                     .subscribeToTopic(
-                        "GROUP${doc[Dbkeys.groupID].replaceAll(RegExp('-'), '').substring(1, doc[Dbkeys.groupID].replaceAll(RegExp('-'), '').toString().length)}")
+                    "GROUP${doc[Dbkeys.groupID].replaceAll(RegExp('-'), '').substring(1, doc[Dbkeys.groupID].replaceAll(RegExp('-'), '').toString().length)}")
                     .catchError((err) {
                   print('ERROR SUBSCRIBING NOTIFICATION' + err.toString());
                 });
               }
             } else {
-              await FirebaseMessaging.instance
+              // await FirebaseMessaging.instance
+              //     .subscribeToTopic(
+              //         "GROUP${doc[Dbkeys.groupID].replaceAll(RegExp('-'), '').substring(1, doc[Dbkeys.groupID].replaceAll(RegExp('-'), '').toString().length)}")
+              //     .catchError((err) {
+              //   print('ERROR SUBSCRIBING NOTIFICATION' + err.toString());
+              // });
+              await awesomeFcm
                   .subscribeToTopic(
-                      "GROUP${doc[Dbkeys.groupID].replaceAll(RegExp('-'), '').substring(1, doc[Dbkeys.groupID].replaceAll(RegExp('-'), '').toString().length)}")
+                  "GROUP${doc[Dbkeys.groupID].replaceAll(RegExp('-'), '').substring(1, doc[Dbkeys.groupID].replaceAll(RegExp('-'), '').toString().length)}")
                   .catchError((err) {
                 print('ERROR SUBSCRIBING NOTIFICATION' + err.toString());
               });
@@ -296,7 +330,8 @@ class LoginScreenState extends State<LoginScreen>
         final pair = await e2ee.X25519().generateKeyPair();
 
         if (documents.length == 0) {
-          String? fcmTokenn = await FirebaseMessaging.instance.getToken();
+          // String? fcmTokenn = await FirebaseMessaging.instance.getToken();
+          String? fcmTokenn = await awesomeFcm.requestFirebaseAppToken();
           if (fcmTokenn != null) {
             await storage.write(
                 key: Dbkeys.privateKey, value: pair.secretKey.toBase64());
@@ -424,7 +459,8 @@ class LoginScreenState extends State<LoginScreen>
             Fiberchat.toast("Failed to Login ! Please try again. ");
           }
         } else {
-          String? fcmToken = await FirebaseMessaging.instance.getToken();
+          // String? fcmToken = await FirebaseMessaging.instance.getToken();
+          String? fcmToken = await awesomeFcm.requestFirebaseAppToken();
           if (fcmToken != null) {
             await storage.write(
                 key: Dbkeys.privateKey, value: documents[0][Dbkeys.privateKey]);

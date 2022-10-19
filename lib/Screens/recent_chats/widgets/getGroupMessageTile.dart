@@ -1,3 +1,4 @@
+import 'package:alochat/main.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:alochat/Configs/Dbkeys.dart';
 import 'package:alochat/Configs/Dbpaths.dart';
@@ -13,7 +14,6 @@ import 'package:alochat/Services/Providers/AvailableContactsProvider.dart';
 import 'package:alochat/Services/localization/language_constants.dart';
 import 'package:alochat/Utils/unawaited.dart';
 import 'package:alochat/Utils/late_load.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -50,7 +50,7 @@ Widget groupMessageTile(
                 : FieldValue.arrayUnion([currentUserNo]),
           }).then((value) async {
             if (isGroupChatMuted == true) {
-              await FirebaseMessaging.instance
+              await awesomeFcm
                   .subscribeToTopic(
                       "GROUP${streamDocSnap[index][Dbkeys.groupID].replaceAll(RegExp('-'), '').substring(1, streamDocSnap[index][Dbkeys.groupID].replaceAll(RegExp('-'), '').toString().length)}")
                   .catchError((err) {
@@ -64,8 +64,8 @@ Widget groupMessageTile(
                 });
               });
             } else {
-              await FirebaseMessaging.instance
-                  .unsubscribeFromTopic(
+              await awesomeFcm
+                  .unsubscribeToTopic(
                       "GROUP${streamDocSnap[index][Dbkeys.groupID].replaceAll(RegExp('-'), '').substring(1, streamDocSnap[index][Dbkeys.groupID].replaceAll(RegExp('-'), '').toString().length)}")
                   .catchError((err) {
                 FirebaseFirestore.instance

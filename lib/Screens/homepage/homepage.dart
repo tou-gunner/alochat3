@@ -4,8 +4,10 @@ import 'dart:async';
 import 'dart:core';
 import 'dart:io';
 import 'package:alochat/Screens/alomall/alomall.dart';
+import 'package:alochat/Screens/alomall/alomall_setting.dart';
 import 'package:alochat/Services/Alomall/auth.dart';
 import 'package:android_id/android_id.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:alochat/Configs/Dbkeys.dart';
@@ -29,9 +31,9 @@ import 'package:alochat/Utils/custom_url_launcher.dart';
 import 'package:alochat/Utils/error_codes.dart';
 import 'package:alochat/Utils/phonenumberVariantsGenerator.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart'
-    as local;
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+// import 'package:flutter_local_notifications/flutter_local_notifications.dart'
+//     as local;
+import 'package:awesome_notifications/awesome_notifications.dart' as awesome;
 import 'package:alochat/Configs/app_constants.dart';
 import 'package:alochat/Screens/auth_screens/login.dart';
 import 'package:alochat/Services/Providers/currentchat_peer.dart';
@@ -53,7 +55,6 @@ import 'package:provider/provider.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:local_auth/local_auth.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:alochat/Configs/Enum.dart';
 import 'package:alochat/Utils/unawaited.dart';
 
@@ -155,9 +156,9 @@ class HomepageState extends State<Homepage>
     setdeviceinfo().then((value) => getSignedInUserOrRedirect());
     registerNotification();
 
-    controllerIfcallallowed = TabController(length: 4, vsync: this);
+    controllerIfcallallowed = TabController(length: 5, vsync: this);
     controllerIfcallallowed!.index = 0;
-    controllerIfcallNotallowed = TabController(length: 3, vsync: this);
+    controllerIfcallNotallowed = TabController(length: 4, vsync: this);
     controllerIfcallNotallowed!.index = 0;
 
     Fiberchat.internetLookUp();
@@ -188,6 +189,18 @@ class HomepageState extends State<Homepage>
               contactsProvider.alreadyJoinedUsersPhoneNameAsInServer);
         }
       });
+    });
+
+    // Seng add
+    controllerIfcallallowed?.animation!.addListener(() {
+      if (controllerIfcallallowed!.indexIsChanging) {
+        setState(() {});
+      }
+    });
+    controllerIfcallNotallowed?.animation!.addListener(() {
+      if (controllerIfcallNotallowed!.indexIsChanging) {
+        setState(() {});
+      }
     });
   }
 
@@ -337,32 +350,56 @@ class HomepageState extends State<Homepage>
 
   unsubscribeToNotification(String? userphone) async {
     if (userphone != null) {
-      await FirebaseMessaging.instance.unsubscribeFromTopic(
+      // await FirebaseMessaging.instance.unsubscribeFromTopic(
+      //     '${userphone.replaceFirst(new RegExp(r'\+'), '')}');
+      await awesomeFcm.unsubscribeToTopic(
           '${userphone.replaceFirst(new RegExp(r'\+'), '')}');
     }
 
-    await FirebaseMessaging.instance
-        .unsubscribeFromTopic(Dbkeys.topicUSERS)
+    // await FirebaseMessaging.instance
+    //     .unsubscribeFromTopic(Dbkeys.topicUSERS)
+    //     .catchError((err) {
+    //   print(err.toString());
+    // });
+    // await FirebaseMessaging.instance
+    //     .unsubscribeFromTopic(Platform.isAndroid
+    //         ? Dbkeys.topicUSERSandroid
+    //         : Platform.isIOS
+    //             ? Dbkeys.topicUSERSios
+    //             : Dbkeys.topicUSERSweb)
+    //     .catchError((err) {
+    //   print(err.toString());
+    // });
+    await awesomeFcm
+        .unsubscribeToTopic(Dbkeys.topicUSERS)
         .catchError((err) {
       print(err.toString());
     });
-    await FirebaseMessaging.instance
-        .unsubscribeFromTopic(Platform.isAndroid
-            ? Dbkeys.topicUSERSandroid
-            : Platform.isIOS
-                ? Dbkeys.topicUSERSios
-                : Dbkeys.topicUSERSweb)
+    await awesomeFcm
+        .unsubscribeToTopic(Platform.isAndroid
+        ? Dbkeys.topicUSERSandroid
+        : Platform.isIOS
+        ? Dbkeys.topicUSERSios
+        : Dbkeys.topicUSERSweb)
         .catchError((err) {
       print(err.toString());
     });
   }
 
   void registerNotification() async {
-    await FirebaseMessaging.instance.requestPermission(
-      alert: true,
-      badge: true,
-      provisional: false,
-      sound: true,
+    // await FirebaseMessaging.instance.requestPermission(
+    //   alert: true,
+    //   badge: true,
+    //   provisional: false,
+    //   sound: true,
+    // );
+    await awesomeNotifications.requestPermissionToSendNotifications(
+      permissions: [
+        NotificationPermission.Alert,
+        NotificationPermission.Badge,
+        NotificationPermission.Provisional,
+        NotificationPermission.Sound
+      ]
     );
   }
 
@@ -462,69 +499,225 @@ class HomepageState extends State<Homepage>
   void listenToNotification() async {
     //FOR ANDROID  background notification is handled here whereas for iOS it is handled at the very top of main.dart ------
     if (Platform.isAndroid) {
-      FirebaseMessaging.onBackgroundMessage(myBackgroundMessageHandlerAndroid);
+      // FirebaseMessaging.onBackgroundMessage(myBackgroundMessageHandlerAndroid);
     }
     //ANDROID & iOS  OnMessage callback
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
-      // ignore: unnecessary_null_comparison
-      flutterLocalNotificationsPlugin..cancelAll();
+    // FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+    //   // ignore: unnecessary_null_comparison
+    //   // flutterLocalNotificationsPlugin..cancelAll();
+    //   awesomeNotifications..cancelAll();
+    //
+    //   if (message.data['title'] != 'Call Ended' &&
+    //       message.data['title'] != 'Missed Call' &&
+    //       message.data['title'] != 'You have new message(s)' &&
+    //       message.data['title'] != 'Incoming Video Call...' &&
+    //       message.data['title'] != 'Incoming Audio Call...' &&
+    //       message.data['title'] != 'Incoming Call ended' &&
+    //       message.data['title'] != 'New message in Group') {
+    //     Fiberchat.toast(getTranslated(this.context, 'newnotifications'));
+    //   } else {
+    //     if (message.data['title'] == 'New message in Group') {
+    //       // var currentpeer =
+    //       //     Provider.of<CurrentChatPeer>(this.context, listen: false);
+    //       // if (currentpeer.groupChatId != message.data['groupid']) {
+    //       //   flutterLocalNotificationsPlugin..cancelAll();
+    //
+    //       //   showOverlayNotification((context) {
+    //       //     return Card(
+    //       //       margin: const EdgeInsets.symmetric(horizontal: 4),
+    //       //       child: SafeArea(
+    //       //         child: ListTile(
+    //       //           title: Text(
+    //       //             message.data['titleMultilang'],
+    //       //             maxLines: 1,
+    //       //             overflow: TextOverflow.ellipsis,
+    //       //           ),
+    //       //           subtitle: Text(
+    //       //             message.data['bodyMultilang'],
+    //       //             maxLines: 2,
+    //       //             overflow: TextOverflow.ellipsis,
+    //       //           ),
+    //       //           trailing: IconButton(
+    //       //               icon: Icon(Icons.close),
+    //       //               onPressed: () {
+    //       //                 OverlaySupportEntry.of(context)!.dismiss();
+    //       //               }),
+    //       //         ),
+    //       //       ),
+    //       //     );
+    //       //   }, duration: Duration(milliseconds: 2000));
+    //       // }
+    //     } else if (message.data['title'] == 'Call Ended') {
+    //       // flutterLocalNotificationsPlugin..cancelAll();
+    //       awesomeNotifications..cancelAll();
+    //     } else {
+    //       if (message.data['title'] == 'Incoming Audio Call...' ||
+    //           message.data['title'] == 'Incoming Video Call...') {
+    //         final data = message.data;
+    //         final title = data['title'];
+    //         final body = data['body'];
+    //         final titleMultilang = data['titleMultilang'];
+    //         final bodyMultilang = data['bodyMultilang'];
+    //         await _showNotificationWithDefaultSound(
+    //             title, body, titleMultilang, bodyMultilang);
+    //       } else if (message.data['title'] == 'You have new message(s)') {
+    //         var currentpeer =
+    //             Provider.of<CurrentChatPeer>(this.context, listen: false);
+    //         if (currentpeer.peerid != message.data['peerid']) {
+    //           // FlutterRingtonePlayer.playNotification();
+    //           showOverlayNotification((context) {
+    //             return Card(
+    //               margin: const EdgeInsets.symmetric(horizontal: 4),
+    //               child: SafeArea(
+    //                 child: ListTile(
+    //                   title: Text(
+    //                     message.data['titleMultilang'],
+    //                     maxLines: 1,
+    //                     overflow: TextOverflow.ellipsis,
+    //                   ),
+    //                   subtitle: Text(
+    //                     message.data['bodyMultilang'],
+    //                     maxLines: 2,
+    //                     overflow: TextOverflow.ellipsis,
+    //                   ),
+    //                   trailing: IconButton(
+    //                       icon: Icon(Icons.close),
+    //                       onPressed: () {
+    //                         OverlaySupportEntry.of(context)!.dismiss();
+    //                       }),
+    //                 ),
+    //               ),
+    //             );
+    //           }, duration: Duration(milliseconds: 2000));
+    //         }
+    //       } else {
+    //         showOverlayNotification((context) {
+    //           return Card(
+    //             margin: const EdgeInsets.symmetric(horizontal: 4),
+    //             child: SafeArea(
+    //               child: ListTile(
+    //                 leading: message.data.containsKey("image")
+    //                     ? SizedBox()
+    //                     : message.data["image"] == null
+    //                         ? SizedBox()
+    //                         : Image.network(
+    //                             message.data['image'],
+    //                             width: 50,
+    //                             height: 70,
+    //                             fit: BoxFit.cover,
+    //                           ),
+    //                 title: Text(
+    //                   message.data['titleMultilang'],
+    //                   maxLines: 1,
+    //                   overflow: TextOverflow.ellipsis,
+    //                 ),
+    //                 subtitle: Text(
+    //                   message.data['bodyMultilang'],
+    //                   maxLines: 2,
+    //                   overflow: TextOverflow.ellipsis,
+    //                 ),
+    //                 trailing: IconButton(
+    //                     icon: Icon(Icons.close),
+    //                     onPressed: () {
+    //                       OverlaySupportEntry.of(context)!.dismiss();
+    //                     }),
+    //               ),
+    //             ),
+    //           );
+    //         }, duration: Duration(milliseconds: 2000));
+    //       }
+    //     }
+    //   }
+    // });
 
-      if (message.data['title'] != 'Call Ended' &&
-          message.data['title'] != 'Missed Call' &&
-          message.data['title'] != 'You have new message(s)' &&
-          message.data['title'] != 'Incoming Video Call...' &&
-          message.data['title'] != 'Incoming Audio Call...' &&
-          message.data['title'] != 'Incoming Call ended' &&
-          message.data['title'] != 'New message in Group') {
+    //ANDROID & iOS  onMessageOpenedApp callback
+    // FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
+      // flutterLocalNotificationsPlugin..cancelAll();
+    //   awesomeNotifications..cancelAll();
+    //   Map<String, dynamic> notificationData = message.data;
+    //   AndroidNotification? android = message.notification?.android;
+    //   if (android != null) {
+    //     if (notificationData['title'] == 'Call Ended') {
+    //       // flutterLocalNotificationsPlugin..cancelAll();
+    //       awesomeNotifications..cancelAll();
+    //     } else if (notificationData['title'] != 'Call Ended' &&
+    //         notificationData['title'] != 'You have new message(s)' &&
+    //         notificationData['title'] != 'Missed Call' &&
+    //         notificationData['title'] != 'Incoming Video Call...' &&
+    //         notificationData['title'] != 'Incoming Audio Call...' &&
+    //         notificationData['title'] != 'Incoming Call ended' &&
+    //         notificationData['title'] != 'New message in Group') {
+    //       // flutterLocalNotificationsPlugin..cancelAll();
+    //       awesomeNotifications..cancelAll();
+    //
+    //       Navigator.push(
+    //           context,
+    //           new MaterialPageRoute(
+    //               builder: (context) => AllNotifications(
+    //                     prefs: widget.prefs,
+    //                   )));
+    //     } else {
+    //       // flutterLocalNotificationsPlugin..cancelAll();
+    //       awesomeNotifications..cancelAll();
+    //     }
+    //   }
+    // });
+
+    // FirebaseMessaging.instance.getInitialMessage().then((message) {
+    //   if (message != null) {
+    //     // flutterLocalNotificationsPlugin..cancelAll();
+    //     awesomeNotifications..cancelAll();
+    //     Map<String, dynamic>? notificationData = message.data;
+    //     if (notificationData['title'] != 'Call Ended' &&
+    //         notificationData['title'] != 'You have new message(s)' &&
+    //         notificationData['title'] != 'Missed Call' &&
+    //         notificationData['title'] != 'Incoming Video Call...' &&
+    //         notificationData['title'] != 'Incoming Audio Call...' &&
+    //         notificationData['title'] != 'Incoming Call ended' &&
+    //         notificationData['title'] != 'New message in Group') {
+    //       // flutterLocalNotificationsPlugin..cancelAll();
+    //       awesomeNotifications..cancelAll();
+    //
+    //       Navigator.push(
+    //           context,
+    //           new MaterialPageRoute(
+    //               builder: (context) => AllNotifications(
+    //                     prefs: widget.prefs,
+    //                   )));
+    //     }
+    //   }
+    // });
+
+    awesomeNotifications.setListeners(onActionReceivedMethod: (ReceivedAction receivedAction) async {
+      // ignore: unnecessary_null_comparison
+      awesomeNotifications..cancelAll();
+
+      final data = receivedAction.payload!;
+      if (data['title'] != 'Call Ended' &&
+          data['title'] != 'Missed Call' &&
+          data['title'] != 'You have new message(s)' &&
+          data['title'] != 'Incoming Video Call...' &&
+          data['title'] != 'Incoming Audio Call...' &&
+          data['title'] != 'Incoming Call ended' &&
+          data['title'] != 'New message in Group') {
         Fiberchat.toast(getTranslated(this.context, 'newnotifications'));
       } else {
-        if (message.data['title'] == 'New message in Group') {
-          // var currentpeer =
-          //     Provider.of<CurrentChatPeer>(this.context, listen: false);
-          // if (currentpeer.groupChatId != message.data['groupid']) {
-          //   flutterLocalNotificationsPlugin..cancelAll();
-
-          //   showOverlayNotification((context) {
-          //     return Card(
-          //       margin: const EdgeInsets.symmetric(horizontal: 4),
-          //       child: SafeArea(
-          //         child: ListTile(
-          //           title: Text(
-          //             message.data['titleMultilang'],
-          //             maxLines: 1,
-          //             overflow: TextOverflow.ellipsis,
-          //           ),
-          //           subtitle: Text(
-          //             message.data['bodyMultilang'],
-          //             maxLines: 2,
-          //             overflow: TextOverflow.ellipsis,
-          //           ),
-          //           trailing: IconButton(
-          //               icon: Icon(Icons.close),
-          //               onPressed: () {
-          //                 OverlaySupportEntry.of(context)!.dismiss();
-          //               }),
-          //         ),
-          //       ),
-          //     );
-          //   }, duration: Duration(milliseconds: 2000));
-          // }
-        } else if (message.data['title'] == 'Call Ended') {
-          flutterLocalNotificationsPlugin..cancelAll();
+        if (data['title'] == 'New message in Group') {
+        } else if (data['title'] == 'Call Ended') {
+          awesomeNotifications..cancelAll();
         } else {
-          if (message.data['title'] == 'Incoming Audio Call...' ||
-              message.data['title'] == 'Incoming Video Call...') {
-            final data = message.data;
+          if (data['title'] == 'Incoming Audio Call...' ||
+              data['title'] == 'Incoming Video Call...') {
             final title = data['title'];
             final body = data['body'];
             final titleMultilang = data['titleMultilang'];
             final bodyMultilang = data['bodyMultilang'];
             await _showNotificationWithDefaultSound(
                 title, body, titleMultilang, bodyMultilang);
-          } else if (message.data['title'] == 'You have new message(s)') {
+          } else if (data['title'] == 'You have new message(s)') {
             var currentpeer =
-                Provider.of<CurrentChatPeer>(this.context, listen: false);
-            if (currentpeer.peerid != message.data['peerid']) {
+            Provider.of<CurrentChatPeer>(this.context, listen: false);
+            if (currentpeer.peerid != data['peerid']) {
               // FlutterRingtonePlayer.playNotification();
               showOverlayNotification((context) {
                 return Card(
@@ -532,12 +725,12 @@ class HomepageState extends State<Homepage>
                   child: SafeArea(
                     child: ListTile(
                       title: Text(
-                        message.data['titleMultilang'],
+                        data['titleMultilang']!,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
                       subtitle: Text(
-                        message.data['bodyMultilang'],
+                        data['bodyMultilang']!,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -557,23 +750,23 @@ class HomepageState extends State<Homepage>
                 margin: const EdgeInsets.symmetric(horizontal: 4),
                 child: SafeArea(
                   child: ListTile(
-                    leading: message.data.containsKey("image")
+                    leading: data.containsKey("image")
                         ? SizedBox()
-                        : message.data["image"] == null
-                            ? SizedBox()
-                            : Image.network(
-                                message.data['image'],
-                                width: 50,
-                                height: 70,
-                                fit: BoxFit.cover,
-                              ),
+                        : data["image"] == null
+                        ? SizedBox()
+                        : Image.network(
+                      data['image']!,
+                      width: 50,
+                      height: 70,
+                      fit: BoxFit.cover,
+                    ),
                     title: Text(
-                      message.data['titleMultilang'],
+                      data['titleMultilang']!,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                     subtitle: Text(
-                      message.data['bodyMultilang'],
+                      data['bodyMultilang']!,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -590,38 +783,12 @@ class HomepageState extends State<Homepage>
         }
       }
     });
-    //ANDROID & iOS  onMessageOpenedApp callback
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
-      flutterLocalNotificationsPlugin..cancelAll();
-      Map<String, dynamic> notificationData = message.data;
-      AndroidNotification? android = message.notification?.android;
-      if (android != null) {
-        if (notificationData['title'] == 'Call Ended') {
-          flutterLocalNotificationsPlugin..cancelAll();
-        } else if (notificationData['title'] != 'Call Ended' &&
-            notificationData['title'] != 'You have new message(s)' &&
-            notificationData['title'] != 'Missed Call' &&
-            notificationData['title'] != 'Incoming Video Call...' &&
-            notificationData['title'] != 'Incoming Audio Call...' &&
-            notificationData['title'] != 'Incoming Call ended' &&
-            notificationData['title'] != 'New message in Group') {
-          flutterLocalNotificationsPlugin..cancelAll();
 
-          Navigator.push(
-              context,
-              new MaterialPageRoute(
-                  builder: (context) => AllNotifications(
-                        prefs: widget.prefs,
-                      )));
-        } else {
-          flutterLocalNotificationsPlugin..cancelAll();
-        }
-      }
-    });
-    FirebaseMessaging.instance.getInitialMessage().then((message) {
-      if (message != null) {
-        flutterLocalNotificationsPlugin..cancelAll();
-        Map<String, dynamic>? notificationData = message.data;
+    awesomeNotifications.getInitialNotificationAction().then((receivedAction) {
+      if (receivedAction != null) {
+        // flutterLocalNotificationsPlugin..cancelAll();
+        awesomeNotifications..cancelAll();
+        Map<String, dynamic>? notificationData = receivedAction.payload!;
         if (notificationData['title'] != 'Call Ended' &&
             notificationData['title'] != 'You have new message(s)' &&
             notificationData['title'] != 'Missed Call' &&
@@ -629,14 +796,15 @@ class HomepageState extends State<Homepage>
             notificationData['title'] != 'Incoming Audio Call...' &&
             notificationData['title'] != 'Incoming Call ended' &&
             notificationData['title'] != 'New message in Group') {
-          flutterLocalNotificationsPlugin..cancelAll();
+          // flutterLocalNotificationsPlugin..cancelAll();
+          awesomeNotifications..cancelAll();
 
           Navigator.push(
               context,
               new MaterialPageRoute(
                   builder: (context) => AllNotifications(
-                        prefs: widget.prefs,
-                      )));
+                    prefs: widget.prefs,
+                  )));
         }
       }
     });
@@ -1111,7 +1279,7 @@ class HomepageState extends State<Homepage>
 
   StreamController<String> _userQuery =
       new StreamController<String>.broadcast();
-  void _changeLanguage(Language language) async {
+  Future<void> _changeLanguage(Language language) async {
     Locale _locale = await setLocale(language.languageCode);
     FiberchatWrapper.setLocale(context, _locale);
     if (widget.currentUserNo != null) {
@@ -1150,6 +1318,220 @@ class HomepageState extends State<Homepage>
     super.build(context);
 
     final observer = Provider.of<Observer>(context, listen: true);
+    final tabController = observer.isCallFeatureTotallyHide == false
+        ? controllerIfcallallowed
+        : controllerIfcallNotallowed;
+
+    final settings = <_SettingItem>[
+      _SettingItem(
+        icon: Icons.group_add_outlined,
+        caption: getTranslated(context, 'newgroup'),
+        ontap: () {
+          if (observer
+              .isAllowCreatingGroups ==
+              false) {
+            Fiberchat.showRationale(
+                getTranslated(this.context,
+                    'disabled'));
+          } else {
+            final AvailableContactsProvider
+            dbcontactsProvider =
+            Provider.of<
+                AvailableContactsProvider>(
+                context,
+                listen: false);
+            dbcontactsProvider
+                .fetchContacts(
+                context,
+                _cachedModel,
+                widget.currentUserNo!,
+                widget.prefs);
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        AddContactsToGroup(
+                          currentUserNo: widget
+                              .currentUserNo,
+                          model:
+                          _cachedModel,
+                          biometricEnabled:
+                          false,
+                          prefs:
+                          widget.prefs,
+                          isAddingWhileCreatingGroup:
+                          true,
+                        )));
+          }
+        },
+      ),
+      _SettingItem(
+        icon: Icons.notification_add,
+        caption: getTranslated(context, 'newbroadcast'),
+        ontap: () async {
+          if (observer
+              .isAllowCreatingBroadcasts ==
+              false) {
+            Fiberchat.showRationale(
+                getTranslated(this.context,
+                    'disabled'));
+          } else {
+            final AvailableContactsProvider
+            dbcontactsProvider =
+            Provider.of<
+                AvailableContactsProvider>(
+                context,
+                listen: false);
+            dbcontactsProvider
+                .fetchContacts(
+                context,
+                _cachedModel,
+                widget.currentUserNo!,
+                widget.prefs);
+            await Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        AddContactsToBroadcast(
+                          currentUserNo: widget
+                              .currentUserNo,
+                          model:
+                          _cachedModel,
+                          biometricEnabled:
+                          false,
+                          prefs:
+                          widget.prefs,
+                          isAddingWhileCreatingBroadcast:
+                          true,
+                        )));
+          }
+        },
+      ),
+      _SettingItem(
+        icon: Icons.book,
+        caption: getTranslated(context, 'tutorials'),
+        ontap: () =>
+            showDialog(
+                context: context,
+                builder: (context) {
+                  return SimpleDialog(
+                    contentPadding:
+                    EdgeInsets.all(20),
+                    children: <Widget>[
+                      ListTile(
+                        title: Text(
+                          getTranslated(
+                              context,
+                              'swipeview'),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      ListTile(
+                          title: Text(
+                            getTranslated(context,
+                                'swipehide'),
+                          )),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      ListTile(
+                          title: Text(
+                            getTranslated(context,
+                                'lp_setalias'),
+                          ))
+                    ],
+                  );
+                }),
+      ),
+      _SettingItem(
+        icon: Icons.settings,
+        caption: getTranslated(context, 'settingsoption'),
+        ontap: () =>
+            Navigator.push(
+                context,
+                new MaterialPageRoute(
+                    builder:
+                        (context) =>
+                        SettingsOption(
+                          prefs: widget
+                              .prefs,
+                          onTapLogout:
+                              () async {
+                            await logout(
+                                context);
+                          },
+                          onTapEditProfile:
+                              () {
+                            Navigator.push(
+                                context,
+                                new MaterialPageRoute(
+                                    builder: (context) => ProfileSetting(
+                                      prefs: widget.prefs,
+                                      biometricEnabled: biometricEnabled,
+                                      type: Fiberchat.getAuthenticationType(biometricEnabled, _cachedModel),
+                                    )));
+                          },
+                          currentUserNo:
+                          widget
+                              .currentUserNo!,
+                          biometricEnabled:
+                          biometricEnabled,
+                          type: Fiberchat
+                              .getAuthenticationType(
+                              biometricEnabled,
+                              _cachedModel),
+                        ))),
+      ),
+      _SettingItem(
+        icon: Icons.language,
+        caption: getTranslated(context, 'selectlanguage'),
+        ontap: () async {
+          var lang = await getLocale();
+          Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) {
+            return Scaffold(
+              appBar: AppBar(
+                backgroundColor: fiberchatDeepGreen,
+                title: Text(getTranslated(context, 'selectlanguage'))
+              ),
+              body: Column(
+                children: [
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Expanded(
+                    child: ListView(
+                      children: Language.languageList().map((e) {
+                        return Ink(
+                          child: ListTile(
+                            leading: Text(e.flag),
+                            title: Text(e.name),
+                            //trailing: Icon(Icons.more_vert),
+                            tileColor: lang.languageCode == e.languageCode ? fiberchatgreen : null,
+                            onTap: () => _changeLanguage(e).then((_) {
+                              if (mounted) {
+                                setState(() {
+                                  lang = Locale(e.languageCode);
+                                });
+                              }
+                            }),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          })
+        );
+        },
+      ),
+    ];
+
     return isNotAllowEmulator == true
         ? errorScreen(
             'Emulator Not Allowed.', ' Please use any real device & Try again.')
@@ -1167,586 +1549,510 @@ class HomepageState extends State<Homepage>
                           onWillPop: onWillPop,
                           child: Scaffold(
                               backgroundColor: Colors.white,
-                              appBar: AppBar(
-                                  elevation: DESIGN_TYPE == Themetype.messenger
-                                      ? 0.4
-                                      : 1,
-                                  backgroundColor:
-                                      DESIGN_TYPE == Themetype.whatsapp
-                                          ? fiberchatDeepGreen
-                                          : fiberchatWhite,
-                                  title: Text(
-                                    Appname,
-                                    style: TextStyle(
-                                      color: DESIGN_TYPE == Themetype.whatsapp
-                                          ? fiberchatWhite
-                                          : fiberchatBlack,
-                                      fontSize: 20.0,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  // title: Align(
-                                  //   alignment: Alignment.centerLeft,
-                                  //   child: Image.asset(
-                                  //       'assets/images/applogo.png',
-                                  //       height: 80,
-                                  //       width: 140,
-                                  //       fit: BoxFit.fitHeight),
-                                  // ),
-                                  // titleSpacing: 14,
-                                  actions: <Widget>[
+//                               appBar: AppBar(
+//                                   elevation: DESIGN_TYPE == Themetype.messenger
+//                                       ? 0.4
+//                                       : 1,
+//                                   backgroundColor:
+//                                       DESIGN_TYPE == Themetype.whatsapp
+//                                           ? fiberchatDeepGreen
+//                                           : fiberchatWhite,
+//                                   title: Text(
+//                                     Appname,
+//                                     style: TextStyle(
+//                                       color: DESIGN_TYPE == Themetype.whatsapp
+//                                           ? fiberchatWhite
+//                                           : fiberchatBlack,
+//                                       fontSize: 20.0,
+//                                       fontWeight: FontWeight.w600,
+//                                     ),
+//                                   ),
+//                                   // title: Align(
+//                                   //   alignment: Alignment.centerLeft,
+//                                   //   child: Image.asset(
+//                                   //       'assets/images/applogo.png',
+//                                   //       height: 80,
+//                                   //       width: 140,
+//                                   //       fit: BoxFit.fitHeight),
+//                                   // ),
+//                                   // titleSpacing: 14,
+//                                   actions: <Widget>[
+// //
+//                                     Language.languageList().length < 2
+//                                         ? SizedBox()
+//                                         : Container(
+//                                             alignment: Alignment.centerRight,
+//                                             margin: EdgeInsets.only(top: 4),
+//                                             width: 120,
+//                                             child: DropdownButton<Language>(
+//                                               // iconSize: 40,
 //
-                                    Language.languageList().length < 2
-                                        ? SizedBox()
-                                        : Container(
-                                            alignment: Alignment.centerRight,
-                                            margin: EdgeInsets.only(top: 4),
-                                            width: 120,
-                                            child: DropdownButton<Language>(
-                                              // iconSize: 40,
-
-                                              isExpanded: true,
-                                              underline: SizedBox(),
-                                              icon: Container(
-                                                width: 60,
-                                                height: 30,
-                                                child: Row(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.center,
-                                                  children: [
-                                                    Icon(
-                                                      Icons.language_outlined,
-                                                      color: DESIGN_TYPE ==
-                                                              Themetype.whatsapp
-                                                          ? fiberchatWhite
-                                                          : fiberchatBlack
-                                                              .withOpacity(0.7),
-                                                      size: 22,
-                                                    ),
-                                                    SizedBox(
-                                                      width: 4,
-                                                    ),
-                                                    Icon(
-                                                      Icons.keyboard_arrow_down,
-                                                      color: DESIGN_TYPE ==
-                                                              Themetype.whatsapp
-                                                          ? fiberchatLightGreen
-                                                          : fiberchatLightGreen,
-                                                      size: 27,
-                                                    )
-                                                  ],
-                                                ),
-                                              ),
-                                              onChanged: (Language? language) {
-                                                _changeLanguage(language!);
-                                              },
-                                              items: Language.languageList()
-                                                  .map<
-                                                      DropdownMenuItem<
-                                                          Language>>(
-                                                    (e) => DropdownMenuItem<
-                                                        Language>(
-                                                      value: e,
-                                                      child: Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .end,
-                                                        children: <Widget>[
-                                                          Text(
-                                                            IsShowLanguageNameInNativeLanguage ==
-                                                                    true
-                                                                ? '' +
-                                                                    e.name +
-                                                                    '  ' +
-                                                                    e.flag +
-                                                                    ' '
-                                                                : ' ' +
-                                                                    e.languageNameInEnglish +
-                                                                    '  ' +
-                                                                    e.flag +
-                                                                    ' ',
-                                                            style: TextStyle(
-                                                                fontSize: 15),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  )
-                                                  .toList(),
-                                            ),
-                                          ),
-// // //---- All localizations settings----
-                                    PopupMenuButton(
-                                        padding: EdgeInsets.all(0),
-                                        icon: Padding(
-                                          padding:
-                                              const EdgeInsets.only(right: 1),
-                                          child: Icon(
-                                            Icons.more_vert_outlined,
-                                            color: DESIGN_TYPE ==
-                                                    Themetype.whatsapp
-                                                ? fiberchatWhite
-                                                : fiberchatBlack,
-                                          ),
-                                        ),
-                                        color: fiberchatWhite,
-                                        onSelected: (dynamic val) async {
-                                          switch (val) {
-                                            case 'rate':
-                                              break;
-                                            case 'tutorials':
-                                              showDialog(
-                                                  context: context,
-                                                  builder: (context) {
-                                                    return SimpleDialog(
-                                                      contentPadding:
-                                                          EdgeInsets.all(20),
-                                                      children: <Widget>[
-                                                        ListTile(
-                                                          title: Text(
-                                                            getTranslated(
-                                                                context,
-                                                                'swipeview'),
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                          height: 10,
-                                                        ),
-                                                        ListTile(
-                                                            title: Text(
-                                                          getTranslated(context,
-                                                              'swipehide'),
-                                                        )),
-                                                        SizedBox(
-                                                          height: 10,
-                                                        ),
-                                                        ListTile(
-                                                            title: Text(
-                                                          getTranslated(context,
-                                                              'lp_setalias'),
-                                                        ))
-                                                      ],
-                                                    );
-                                                  });
-                                              break;
-                                            case 'privacy':
-                                              break;
-                                            case 'tnc':
-                                              break;
-                                            case 'share':
-                                              break;
-                                            case 'notifications':
-                                              Navigator.push(
-                                                  context,
-                                                  new MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          AllNotifications(
-                                                            prefs: widget.prefs,
-                                                          )));
-
-                                              break;
-                                            case 'feedback':
-                                              break;
-                                            case 'logout':
-                                              break;
-                                            case 'settings':
-                                              Navigator.push(
-                                                  context,
-                                                  new MaterialPageRoute(
-                                                      builder:
-                                                          (context) =>
-                                                              SettingsOption(
-                                                                prefs: widget
-                                                                    .prefs,
-                                                                onTapLogout:
-                                                                    () async {
-                                                                  await logout(
-                                                                      context);
-                                                                },
-                                                                onTapEditProfile:
-                                                                    () {
-                                                                  Navigator.push(
-                                                                      context,
-                                                                      new MaterialPageRoute(
-                                                                          builder: (context) => ProfileSetting(
-                                                                                prefs: widget.prefs,
-                                                                                biometricEnabled: biometricEnabled,
-                                                                                type: Fiberchat.getAuthenticationType(biometricEnabled, _cachedModel),
-                                                                              )));
-                                                                },
-                                                                currentUserNo:
-                                                                    widget
-                                                                        .currentUserNo!,
-                                                                biometricEnabled:
-                                                                    biometricEnabled,
-                                                                type: Fiberchat
-                                                                    .getAuthenticationType(
-                                                                        biometricEnabled,
-                                                                        _cachedModel),
-                                                              )));
-
-                                              break;
-                                            case 'group':
-                                              if (observer
-                                                      .isAllowCreatingGroups ==
-                                                  false) {
-                                                Fiberchat.showRationale(
-                                                    getTranslated(this.context,
-                                                        'disabled'));
-                                              } else {
-                                                final AvailableContactsProvider
-                                                    dbcontactsProvider =
-                                                    Provider.of<
-                                                            AvailableContactsProvider>(
-                                                        context,
-                                                        listen: false);
-                                                dbcontactsProvider
-                                                    .fetchContacts(
-                                                        context,
-                                                        _cachedModel,
-                                                        widget.currentUserNo!,
-                                                        widget.prefs);
-                                                Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            AddContactsToGroup(
-                                                              currentUserNo: widget
-                                                                  .currentUserNo,
-                                                              model:
-                                                                  _cachedModel,
-                                                              biometricEnabled:
-                                                                  false,
-                                                              prefs:
-                                                                  widget.prefs,
-                                                              isAddingWhileCreatingGroup:
-                                                                  true,
-                                                            )));
-                                              }
-                                              break;
-
-                                            case 'broadcast':
-                                              if (observer
-                                                      .isAllowCreatingBroadcasts ==
-                                                  false) {
-                                                Fiberchat.showRationale(
-                                                    getTranslated(this.context,
-                                                        'disabled'));
-                                              } else {
-                                                final AvailableContactsProvider
-                                                    dbcontactsProvider =
-                                                    Provider.of<
-                                                            AvailableContactsProvider>(
-                                                        context,
-                                                        listen: false);
-                                                dbcontactsProvider
-                                                    .fetchContacts(
-                                                        context,
-                                                        _cachedModel,
-                                                        widget.currentUserNo!,
-                                                        widget.prefs);
-                                                await Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            AddContactsToBroadcast(
-                                                              currentUserNo: widget
-                                                                  .currentUserNo,
-                                                              model:
-                                                                  _cachedModel,
-                                                              biometricEnabled:
-                                                                  false,
-                                                              prefs:
-                                                                  widget.prefs,
-                                                              isAddingWhileCreatingBroadcast:
-                                                                  true,
-                                                            )));
-                                              }
-                                              break;
-                                          }
-                                        },
-                                        itemBuilder: (context) =>
-                                            <PopupMenuItem<String>>[
-                                              PopupMenuItem<String>(
-                                                  value: 'group',
-                                                  child: Text(
-                                                    getTranslated(
-                                                        context, 'newgroup'),
-                                                  )),
-                                              PopupMenuItem<String>(
-                                                  value: 'broadcast',
-                                                  child: Text(
-                                                    getTranslated(context,
-                                                        'newbroadcast'),
-                                                  )),
-                                              PopupMenuItem<String>(
-                                                value: 'tutorials',
-                                                child: Text(
-                                                  getTranslated(
-                                                      context, 'tutorials'),
-                                                ),
-                                              ),
-                                              PopupMenuItem<String>(
-                                                  value: 'settings',
-                                                  child: Text(
-                                                    getTranslated(context,
-                                                        'settingsoption'),
-                                                  )),
-                                            ]),
-                                  ],
-                                  bottom: TabBar(
-                                    isScrollable: IsAdaptiveWidthTab == true
-                                        ? true
-                                        : DEFAULT_LANGUAGE_FILE_CODE == "en" &&
-                                                (widget.prefs.getString(
-                                                            LAGUAGE_CODE) ==
-                                                        null ||
-                                                    widget.prefs
-                                                            .getString(
-                                                                LAGUAGE_CODE) ==
-                                                        "en")
-                                            ? false
-                                            : widget
-                                                            .prefs
-                                                            .getString(
-                                                                LAGUAGE_CODE) ==
-                                                        'pt' ||
-                                                    widget
-                                                            .prefs
-                                                            .getString(
-                                                                LAGUAGE_CODE) ==
-                                                        'my' ||
-                                                    widget
-                                                            .prefs
-                                                            .getString(
-                                                                LAGUAGE_CODE) ==
-                                                        'nl' ||
-                                                    widget
-                                                            .prefs
-                                                            .getString(
-                                                                LAGUAGE_CODE) ==
-                                                        'vi' ||
-                                                    widget
-                                                            .prefs
-                                                            .getString(
-                                                                LAGUAGE_CODE) ==
-                                                        'tr' ||
-                                                    widget
-                                                            .prefs
-                                                            .getString(
-                                                                LAGUAGE_CODE) ==
-                                                        'id' ||
-                                                    widget.prefs.getString(
-                                                            LAGUAGE_CODE) ==
-                                                        'ka' ||
-                                                    widget.prefs.getString(
-                                                            LAGUAGE_CODE) ==
-                                                        'fr' ||
-                                                    widget.prefs.getString(
-                                                            LAGUAGE_CODE) ==
-                                                        'es'
-                                                ? true
-                                                : false,
-                                    labelStyle: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontFamily: FONTFAMILY_NAME,
-                                    ),
-                                    unselectedLabelStyle: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontFamily: FONTFAMILY_NAME,
-                                    ),
-                                    labelColor:
-                                        DESIGN_TYPE == Themetype.whatsapp
-                                            ? fiberchatWhite
-                                            : fiberchatBlack,
-                                    unselectedLabelColor:
-                                        DESIGN_TYPE == Themetype.whatsapp
-                                            ? fiberchatWhite.withOpacity(0.6)
-                                            : fiberchatBlack.withOpacity(0.6),
-                                    indicatorWeight: 3,
-                                    indicatorColor:
-                                        DESIGN_TYPE == Themetype.whatsapp
-                                            ? fiberchatWhite
-                                            : fiberchatgreen,
-                                    controller:
-                                        observer.isCallFeatureTotallyHide ==
-                                                false
-                                            ? controllerIfcallallowed
-                                            : controllerIfcallNotallowed,
-                                    tabs: observer.isCallFeatureTotallyHide ==
-                                            false
-                                        ? <Widget>[
-                                            Tab(
-                                              child: Text(
-                                                getTranslated(context, 'chats'),
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                    fontSize: 12,
-                                                    fontFamily:
-                                                        FONTFAMILY_NAME),
-                                              ),
-                                            ),
-                                            Tab(
-                                              child: Text(
-                                                getTranslated(
-                                                    context, 'status'),
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                    fontSize: 12,
-                                                    fontFamily:
-                                                        FONTFAMILY_NAME),
-                                              ),
-                                            ),
-                                            Tab(
-                                              child: Text(
-                                                getTranslated(context, 'calls'),
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                    fontSize: 12,
-                                                    fontFamily:
-                                                        FONTFAMILY_NAME),
-                                              ),
-                                            ),
-                                            Tab(
-                                              child: Text(
-                                                'ALOMALL',
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                    fontSize: 12,
-                                                    fontFamily:
-                                                    FONTFAMILY_NAME),
-                                              ),
-                                            ),
-                                          ]
-                                        : <Widget>[
-                                            Tab(
-                                              child: Text(
-                                                getTranslated(context, 'chats'),
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                    fontSize: 12,
-                                                    fontFamily:
-                                                        FONTFAMILY_NAME),
-                                              ),
-                                            ),
-                                            Tab(
-                                              child: Text(
-                                                getTranslated(
-                                                    context, 'status'),
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                    fontSize: 12,
-                                                    fontFamily:
-                                                        FONTFAMILY_NAME),
-                                              ),
-                                            ),
-                                            Tab(
-                                              child: Text(
-                                                'ALOMALL',
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                    fontSize: 12,
-                                                    fontFamily:
-                                                    FONTFAMILY_NAME),
-                                              ),
-                                            ),
-                                          ],
-                                  )),
-                              body: TabBarView(
-                                controller:
-                                    observer.isCallFeatureTotallyHide == false
-                                        ? controllerIfcallallowed
-                                        : controllerIfcallNotallowed,
-                                children: observer.isCallFeatureTotallyHide ==
-                                        false
-                                    ? <Widget>[
-                                        IsShowLastMessageInChatTileWithTime ==
-                                                false
-                                            ? RecentChatsWithoutLastMessage(
-                                                prefs: widget.prefs,
-                                                currentUserNo:
-                                                    widget.currentUserNo,
-                                                isSecuritySetupDone: false)
-                                            : RecentChats(
-                                                prefs: widget.prefs,
-                                                currentUserNo:
-                                                    widget.currentUserNo,
-                                                isSecuritySetupDone: false),
-                                        Status(
-                                            currentUserFullname: userFullname,
-                                            currentUserPhotourl: userPhotourl,
-                                            phoneNumberVariants:
-                                                this.phoneNumberVariants,
-                                            currentUserNo: widget.currentUserNo,
+//                                               isExpanded: true,
+//                                               underline: SizedBox(),
+//                                               icon: Container(
+//                                                 width: 60,
+//                                                 height: 30,
+//                                                 child: Row(
+//                                                   crossAxisAlignment:
+//                                                       CrossAxisAlignment.center,
+//                                                   children: [
+//                                                     Icon(
+//                                                       Icons.language_outlined,
+//                                                       color: DESIGN_TYPE ==
+//                                                               Themetype.whatsapp
+//                                                           ? fiberchatWhite
+//                                                           : fiberchatBlack
+//                                                               .withOpacity(0.7),
+//                                                       size: 22,
+//                                                     ),
+//                                                     SizedBox(
+//                                                       width: 4,
+//                                                     ),
+//                                                     Icon(
+//                                                       Icons.keyboard_arrow_down,
+//                                                       color: DESIGN_TYPE ==
+//                                                               Themetype.whatsapp
+//                                                           ? fiberchatLightGreen
+//                                                           : fiberchatLightGreen,
+//                                                       size: 27,
+//                                                     )
+//                                                   ],
+//                                                 ),
+//                                               ),
+//                                               onChanged: (Language? language) {
+//                                                 _changeLanguage(language!);
+//                                               },
+//                                               items: Language.languageList()
+//                                                   .map<
+//                                                       DropdownMenuItem<
+//                                                           Language>>(
+//                                                     (e) => DropdownMenuItem<
+//                                                         Language>(
+//                                                       value: e,
+//                                                       child: Row(
+//                                                         mainAxisAlignment:
+//                                                             MainAxisAlignment
+//                                                                 .end,
+//                                                         children: <Widget>[
+//                                                           Text(
+//                                                             IsShowLanguageNameInNativeLanguage ==
+//                                                                     true
+//                                                                 ? '' +
+//                                                                     e.name +
+//                                                                     '  ' +
+//                                                                     e.flag +
+//                                                                     ' '
+//                                                                 : ' ' +
+//                                                                     e.languageNameInEnglish +
+//                                                                     '  ' +
+//                                                                     e.flag +
+//                                                                     ' ',
+//                                                             style: TextStyle(
+//                                                                 fontSize: 15),
+//                                                           ),
+//                                                         ],
+//                                                       ),
+//                                                     ),
+//                                                   )
+//                                                   .toList(),
+//                                             ),
+//                                           ),
+// // // //---- All localizations settings----
+//                                     PopupMenuButton(
+//                                         padding: EdgeInsets.all(0),
+//                                         icon: Padding(
+//                                           padding:
+//                                               const EdgeInsets.only(right: 1),
+//                                           child: Icon(
+//                                             Icons.more_vert_outlined,
+//                                             color: DESIGN_TYPE ==
+//                                                     Themetype.whatsapp
+//                                                 ? fiberchatWhite
+//                                                 : fiberchatBlack,
+//                                           ),
+//                                         ),
+//                                         color: fiberchatWhite,
+//                                         onSelected: (dynamic val) async {
+//                                           switch (val) {
+//                                             case 'rate':
+//                                               break;
+//                                             case 'tutorials':
+//                                               showDialog(
+//                                                   context: context,
+//                                                   builder: (context) {
+//                                                     return SimpleDialog(
+//                                                       contentPadding:
+//                                                           EdgeInsets.all(20),
+//                                                       children: <Widget>[
+//                                                         ListTile(
+//                                                           title: Text(
+//                                                             getTranslated(
+//                                                                 context,
+//                                                                 'swipeview'),
+//                                                           ),
+//                                                         ),
+//                                                         SizedBox(
+//                                                           height: 10,
+//                                                         ),
+//                                                         ListTile(
+//                                                             title: Text(
+//                                                           getTranslated(context,
+//                                                               'swipehide'),
+//                                                         )),
+//                                                         SizedBox(
+//                                                           height: 10,
+//                                                         ),
+//                                                         ListTile(
+//                                                             title: Text(
+//                                                           getTranslated(context,
+//                                                               'lp_setalias'),
+//                                                         ))
+//                                                       ],
+//                                                     );
+//                                                   });
+//                                               break;
+//                                             case 'privacy':
+//                                               break;
+//                                             case 'tnc':
+//                                               break;
+//                                             case 'share':
+//                                               break;
+//                                             case 'notifications':
+//                                               Navigator.push(
+//                                                   context,
+//                                                   new MaterialPageRoute(
+//                                                       builder: (context) =>
+//                                                           AllNotifications(
+//                                                             prefs: widget.prefs,
+//                                                           )));
+//
+//                                               break;
+//                                             case 'feedback':
+//                                               break;
+//                                             case 'logout':
+//                                               break;
+//                                             case 'settings':
+//                                               Navigator.push(
+//                                                   context,
+//                                                   new MaterialPageRoute(
+//                                                       builder:
+//                                                           (context) =>
+//                                                               SettingsOption(
+//                                                                 prefs: widget
+//                                                                     .prefs,
+//                                                                 onTapLogout:
+//                                                                     () async {
+//                                                                   await logout(
+//                                                                       context);
+//                                                                 },
+//                                                                 onTapEditProfile:
+//                                                                     () {
+//                                                                   Navigator.push(
+//                                                                       context,
+//                                                                       new MaterialPageRoute(
+//                                                                           builder: (context) => ProfileSetting(
+//                                                                                 prefs: widget.prefs,
+//                                                                                 biometricEnabled: biometricEnabled,
+//                                                                                 type: Fiberchat.getAuthenticationType(biometricEnabled, _cachedModel),
+//                                                                               )));
+//                                                                 },
+//                                                                 currentUserNo:
+//                                                                     widget
+//                                                                         .currentUserNo!,
+//                                                                 biometricEnabled:
+//                                                                     biometricEnabled,
+//                                                                 type: Fiberchat
+//                                                                     .getAuthenticationType(
+//                                                                         biometricEnabled,
+//                                                                         _cachedModel),
+//                                                               )));
+//
+//                                               break;
+//                                             case 'group':
+//                                               if (observer
+//                                                       .isAllowCreatingGroups ==
+//                                                   false) {
+//                                                 Fiberchat.showRationale(
+//                                                     getTranslated(this.context,
+//                                                         'disabled'));
+//                                               } else {
+//                                                 final AvailableContactsProvider
+//                                                     dbcontactsProvider =
+//                                                     Provider.of<
+//                                                             AvailableContactsProvider>(
+//                                                         context,
+//                                                         listen: false);
+//                                                 dbcontactsProvider
+//                                                     .fetchContacts(
+//                                                         context,
+//                                                         _cachedModel,
+//                                                         widget.currentUserNo!,
+//                                                         widget.prefs);
+//                                                 Navigator.push(
+//                                                     context,
+//                                                     MaterialPageRoute(
+//                                                         builder: (context) =>
+//                                                             AddContactsToGroup(
+//                                                               currentUserNo: widget
+//                                                                   .currentUserNo,
+//                                                               model:
+//                                                                   _cachedModel,
+//                                                               biometricEnabled:
+//                                                                   false,
+//                                                               prefs:
+//                                                                   widget.prefs,
+//                                                               isAddingWhileCreatingGroup:
+//                                                                   true,
+//                                                             )));
+//                                               }
+//                                               break;
+//
+//                                             case 'broadcast':
+//                                               if (observer
+//                                                       .isAllowCreatingBroadcasts ==
+//                                                   false) {
+//                                                 Fiberchat.showRationale(
+//                                                     getTranslated(this.context,
+//                                                         'disabled'));
+//                                               } else {
+//                                                 final AvailableContactsProvider
+//                                                     dbcontactsProvider =
+//                                                     Provider.of<
+//                                                             AvailableContactsProvider>(
+//                                                         context,
+//                                                         listen: false);
+//                                                 dbcontactsProvider
+//                                                     .fetchContacts(
+//                                                         context,
+//                                                         _cachedModel,
+//                                                         widget.currentUserNo!,
+//                                                         widget.prefs);
+//                                                 await Navigator.push(
+//                                                     context,
+//                                                     MaterialPageRoute(
+//                                                         builder: (context) =>
+//                                                             AddContactsToBroadcast(
+//                                                               currentUserNo: widget
+//                                                                   .currentUserNo,
+//                                                               model:
+//                                                                   _cachedModel,
+//                                                               biometricEnabled:
+//                                                                   false,
+//                                                               prefs:
+//                                                                   widget.prefs,
+//                                                               isAddingWhileCreatingBroadcast:
+//                                                                   true,
+//                                                             )));
+//                                               }
+//                                               break;
+//                                           }
+//                                         },
+//                                         itemBuilder: (context) =>
+//                                             <PopupMenuItem<String>>[
+//                                               PopupMenuItem<String>(
+//                                                   value: 'group',
+//                                                   child: Text(
+//                                                     getTranslated(
+//                                                         context, 'newgroup'),
+//                                                   )),
+//                                               PopupMenuItem<String>(
+//                                                   value: 'broadcast',
+//                                                   child: Text(
+//                                                     getTranslated(context,
+//                                                         'newbroadcast'),
+//                                                   )),
+//                                               PopupMenuItem<String>(
+//                                                 value: 'tutorials',
+//                                                 child: Text(
+//                                                   getTranslated(
+//                                                       context, 'tutorials'),
+//                                                 ),
+//                                               ),
+//                                               PopupMenuItem<String>(
+//                                                   value: 'settings',
+//                                                   child: Text(
+//                                                     getTranslated(context,
+//                                                         'settingsoption'),
+//                                                   )),
+//                                             ]),
+//                                   ],
+//                               ),
+                              body: SafeArea(
+                                child: TabBarView(
+                                  controller: tabController,
+                                  children: observer.isCallFeatureTotallyHide ==
+                                          false
+                                      ? <Widget>[
+                                          IsShowLastMessageInChatTileWithTime ==
+                                                  false
+                                              ? RecentChatsWithoutLastMessage(
+                                                  prefs: widget.prefs,
+                                                  currentUserNo:
+                                                      widget.currentUserNo,
+                                                  isSecuritySetupDone: false)
+                                              : RecentChats(
+                                                  prefs: widget.prefs,
+                                                  currentUserNo:
+                                                      widget.currentUserNo,
+                                                  isSecuritySetupDone: false),
+                                          Status(
+                                              currentUserFullname: userFullname,
+                                              currentUserPhotourl: userPhotourl,
+                                              phoneNumberVariants:
+                                                  this.phoneNumberVariants,
+                                              currentUserNo: widget.currentUserNo,
+                                              model: _cachedModel,
+                                              biometricEnabled: biometricEnabled,
+                                              prefs: widget.prefs),
+                                          CallHistory(
                                             model: _cachedModel,
-                                            biometricEnabled: biometricEnabled,
-                                            prefs: widget.prefs),
-                                        CallHistory(
-                                          model: _cachedModel,
-                                          userphone: widget.currentUserNo,
-                                          prefs: widget.prefs,
-                                        ),
-                                        Alomall()
-                                      ]
-                                    : <Widget>[
-                                        IsShowLastMessageInChatTileWithTime ==
-                                                false
-                                            ? RecentChatsWithoutLastMessage(
-                                                prefs: widget.prefs,
-                                                currentUserNo:
-                                                    widget.currentUserNo,
-                                                isSecuritySetupDone: false)
-                                            : RecentChats(
-                                                prefs: widget.prefs,
-                                                currentUserNo:
-                                                    widget.currentUserNo,
-                                                isSecuritySetupDone: false),
-                                        Status(
-                                            currentUserFullname: userFullname,
-                                            currentUserPhotourl: userPhotourl,
-                                            phoneNumberVariants:
-                                                this.phoneNumberVariants,
-                                            currentUserNo: widget.currentUserNo,
-                                            model: _cachedModel,
-                                            biometricEnabled: biometricEnabled,
-                                            prefs: widget.prefs),
-                                        Alomall()
-                                      ],
-                              )),
+                                            userphone: widget.currentUserNo,
+                                            prefs: widget.prefs,
+                                          ),
+                                          Alomall(),
+                                          SettingTab(items: settings),
+                                        ]
+                                      : <Widget>[
+                                          IsShowLastMessageInChatTileWithTime ==
+                                                  false
+                                              ? RecentChatsWithoutLastMessage(
+                                                  prefs: widget.prefs,
+                                                  currentUserNo:
+                                                      widget.currentUserNo,
+                                                  isSecuritySetupDone: false)
+                                              : RecentChats(
+                                                  prefs: widget.prefs,
+                                                  currentUserNo:
+                                                      widget.currentUserNo,
+                                                  isSecuritySetupDone: false),
+                                          Status(
+                                              currentUserFullname: userFullname,
+                                              currentUserPhotourl: userPhotourl,
+                                              phoneNumberVariants:
+                                                  this.phoneNumberVariants,
+                                              currentUserNo: widget.currentUserNo,
+                                              model: _cachedModel,
+                                              biometricEnabled: biometricEnabled,
+                                              prefs: widget.prefs),
+                                          Alomall(),
+                                          SettingTab(items: settings),
+                                        ],
+                                ),
+                              ),
+                              bottomNavigationBar: _CustomBottomBar(
+                                isCallFeatureTotallyHide: observer.isCallFeatureTotallyHide,
+                                tabController: tabController!,
+                              ),
+                          ),
                         )));
   }
 }
 
-Future<dynamic> myBackgroundMessageHandlerAndroid(RemoteMessage message) async {
-  if (message.data['title'] == 'Call Ended' ||
-      message.data['title'] == 'Missed Call') {
-    flutterLocalNotificationsPlugin..cancelAll();
-    final data = message.data;
-    final titleMultilang = data['titleMultilang'];
-    final bodyMultilang = data['bodyMultilang'];
+class _CustomBottomBar extends StatefulWidget {
+  final bool isCallFeatureTotallyHide;
+  final TabController tabController;
+  const _CustomBottomBar({Key? key, required this.isCallFeatureTotallyHide, required this.tabController}) : super(key: key);
 
-    await _showNotificationWithDefaultSound(
-        'Missed Call', 'You have Missed a Call', titleMultilang, bodyMultilang);
-  } else {
-    if (message.data['title'] == 'You have new message(s)' ||
-        message.data['title'] == 'New message in Group') {
-      //-- need not to do anythig for these message type as it will be automatically popped up.
-
-    } else if (message.data['title'] == 'Incoming Audio Call...' ||
-        message.data['title'] == 'Incoming Video Call...') {
-      final data = message.data;
-      final title = data['title'];
-      final body = data['body'];
-      final titleMultilang = data['titleMultilang'];
-      final bodyMultilang = data['bodyMultilang'];
-
-      await _showNotificationWithDefaultSound(
-          title, body, titleMultilang, bodyMultilang);
-    }
-  }
-
-  return Future<void>.value();
+  @override
+  State<_CustomBottomBar> createState() => _CustomBottomBarState();
 }
+
+class _CustomBottomBarState extends State<_CustomBottomBar> {
+
+  @override
+  Widget build(BuildContext context) {
+    return BottomNavigationBar(
+      selectedLabelStyle: TextStyle(
+        fontWeight: FontWeight.bold,
+        fontFamily: FONTFAMILY_NAME,
+      ),
+      items: widget.isCallFeatureTotallyHide ==
+          false
+          ? [
+        BottomNavigationBarItem(
+          icon: Icon(Icons.chat),
+          label: getTranslated(context, 'chats'),
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.feed),
+          label: getTranslated(context, 'status'),
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.call),
+          label: getTranslated(context, 'calls'),
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.newspaper),
+          label: 'Discovery',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.settings),
+          label: 'ຕັ້ງຄ່າ',
+        ),
+      ]
+          : [
+        BottomNavigationBarItem(
+          icon: Icon(Icons.chat),
+          label: getTranslated(context, 'chats'),
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.feed),
+          label: getTranslated(context, 'status'),
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.newspaper),
+          label: 'Discovery',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.settings),
+          label: 'ຕັ້ງຄ່າ',
+        ),
+      ],
+      currentIndex: widget.tabController.index,
+      selectedItemColor: fiberchatgreen,
+      unselectedItemColor: Colors.grey,
+      onTap: (i) {
+        widget.tabController.index = i;
+        setState(() {
+
+        });
+      },
+    );
+  }
+}
+
+
+// Future<dynamic> myBackgroundMessageHandlerAndroid(RemoteMessage message) async {
+//   if (message.data['title'] == 'Call Ended' ||
+//       message.data['title'] == 'Missed Call') {
+//     // flutterLocalNotificationsPlugin..cancelAll();
+//     awesomeNotifications.cancelAll();
+//     final data = message.data;
+//     final titleMultilang = data['titleMultilang'];
+//     final bodyMultilang = data['bodyMultilang'];
+//
+//     await _showNotificationWithDefaultSound(
+//         'Missed Call', 'You have Missed a Call', titleMultilang, bodyMultilang);
+//   } else {
+//     if (message.data['title'] == 'You have new message(s)' ||
+//         message.data['title'] == 'New message in Group') {
+//       //-- need not to do anythig for these message type as it will be automatically popped up.
+//
+//     } else if (message.data['title'] == 'Incoming Audio Call...' ||
+//         message.data['title'] == 'Incoming Video Call...') {
+//       final data = message.data;
+//       final title = data['title'];
+//       final body = data['body'];
+//       final titleMultilang = data['titleMultilang'];
+//       final bodyMultilang = data['bodyMultilang'];
+//
+//       await _showNotificationWithDefaultSound(
+//           title, body, titleMultilang, bodyMultilang);
+//     }
+//   }
+//
+//   return Future<void>.value();
+// }
 
 // Future<dynamic> myBackgroundMessageHandlerIos(RemoteMessage message) async {
 //   await Firebase.initializeApp();
@@ -1776,59 +2082,119 @@ Future<dynamic> myBackgroundMessageHandlerAndroid(RemoteMessage message) async {
 //   return Future<void>.value();
 // }
 
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
+// final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+//     FlutterLocalNotificationsPlugin();
 Future _showNotificationWithDefaultSound(String? title, String? message,
     String? titleMultilang, String? bodyMultilang) async {
   if (Platform.isAndroid) {
-    flutterLocalNotificationsPlugin.cancelAll();
+    // flutterLocalNotificationsPlugin.cancelAll();
+    awesomeNotifications.cancelAll();
   }
 
-  var initializationSettingsAndroid =
-      new AndroidInitializationSettings('@mipmap/ic_launcher');
-  var initializationSettingsIOS = IOSInitializationSettings();
-  var initializationSettings = InitializationSettings(
-      android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
-  flutterLocalNotificationsPlugin.initialize(initializationSettings);
-  var androidPlatformChannelSpecifics =
-      title == 'Missed Call' || title == 'Call Ended'
-          ? local.AndroidNotificationDetails('channel_id', 'channel_name',
-              importance: local.Importance.max,
-              priority: local.Priority.high,
-              sound: RawResourceAndroidNotificationSound('whistle2'),
-              playSound: true,
-              ongoing: true,
-              visibility: NotificationVisibility.public,
-              timeoutAfter: 28000)
-          : local.AndroidNotificationDetails('channel_id', 'channel_name',
-              sound: RawResourceAndroidNotificationSound('ringtone'),
-              playSound: true,
-              ongoing: true,
-              importance: local.Importance.max,
-              priority: local.Priority.high,
-              visibility: NotificationVisibility.public,
-              timeoutAfter: 28000);
-  var iOSPlatformChannelSpecifics = local.IOSNotificationDetails(
-    presentAlert: true,
-    presentBadge: true,
-    sound:
-        title == 'Missed Call' || title == 'Call Ended' ? '' : 'ringtone.caf',
-    presentSound: true,
+  // var initializationSettingsAndroid =
+  //     new AndroidInitializationSettings('@mipmap/ic_launcher');
+  // var initializationSettingsIOS = IOSInitializationSettings();
+  // var initializationSettings = InitializationSettings(
+  //     android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
+  // flutterLocalNotificationsPlugin.initialize(initializationSettings);
+  // var androidPlatformChannelSpecifics =
+  //     title == 'Missed Call' || title == 'Call Ended'
+  //         ? local.AndroidNotificationDetails('channel_id', 'channel_name',
+  //             importance: local.Importance.max,
+  //             priority: local.Priority.high,
+  //             sound: RawResourceAndroidNotificationSound('whistle2'),
+  //             playSound: true,
+  //             ongoing: true,
+  //             visibility: NotificationVisibility.public,
+  //             timeoutAfter: 28000)
+  //
+  //         : local.AndroidNotificationDetails('channel_id', 'channel_name',
+  //             sound: RawResourceAndroidNotificationSound('ringtone'),
+  //             playSound: true,
+  //             ongoing: true,
+  //             importance: local.Importance.max,
+  //             priority: local.Priority.high,
+  //             visibility: NotificationVisibility.public,
+  //             timeoutAfter: 28000);
+  // var iOSPlatformChannelSpecifics = local.IOSNotificationDetails(
+  //   presentAlert: true,
+  //   presentBadge: true,
+  //   sound:
+  //       title == 'Missed Call' || title == 'Call Ended' ? '' : 'ringtone.caf',
+  //   presentSound: true,
+  // );
+  // var platformChannelSpecifics = local.NotificationDetails(
+  //     android: androidPlatformChannelSpecifics,
+  //     iOS: iOSPlatformChannelSpecifics);
+  // await flutterLocalNotificationsPlugin
+  //     .show(
+  //   0,
+  //   '$titleMultilang',
+  //   '$bodyMultilang',
+  //   platformChannelSpecifics,
+  //   payload: 'payload',
+  // )
+  //     .catchError((err) {
+  //   print('ERROR DISPLAYING NOTIFICATION: $err');
+  // });
+
+  // Seng Edit
+  if (title == 'Missed Call' || title == 'Call Ended') {
+    await awesome.AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        id: 0,
+        channelKey: 'channel_id',
+        title: '$titleMultilang',
+        body: '$bodyMultilang',
+        criticalAlert: true,
+        wakeUpScreen: true,
+        // customSound: 'whistle2'
+      ),
+    );
+  } else {
+    await awesome.AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        id: 0,
+        channelKey: 'channel_id',
+        title: '$titleMultilang',
+        body: '$bodyMultilang',
+        criticalAlert: true,
+        wakeUpScreen: true,
+        // customSound: 'ringtone'
+      ),
+      actionButtons: <NotificationActionButton>[
+        NotificationActionButton(key: 'yes', label: 'Accept'),
+        NotificationActionButton(key: 'no', label: 'Reject'),
+      ],
+    );
+  }
+  await awesome.AwesomeNotifications().createNotification(
+    content: title == 'Missed Call' || title == 'Call Ended'
+    ? NotificationContent(
+      id: 0,
+      channelKey: 'channel_id',
+      title: '$titleMultilang',
+      body: '$bodyMultilang',
+      criticalAlert: true,
+      wakeUpScreen: true,
+      customSound: 'whistle2'
+    )
+    : NotificationContent(
+      id: 0,
+      channelKey: 'channel_id',
+      title: '$titleMultilang',
+      body: '$bodyMultilang',
+      criticalAlert: true,
+      wakeUpScreen: true,
+      customSound: 'ringtone'
+    ),
+    actionButtons: title == 'Missed Call' || title == 'Call Ended'
+    ? null
+    : <NotificationActionButton>[
+      NotificationActionButton(key: 'yes', label: 'Accept'),
+      NotificationActionButton(key: 'no', label: 'Reject'),
+    ],
   );
-  var platformChannelSpecifics = local.NotificationDetails(
-      android: androidPlatformChannelSpecifics,
-      iOS: iOSPlatformChannelSpecifics);
-  await flutterLocalNotificationsPlugin
-      .show(
-    0,
-    '$titleMultilang',
-    '$bodyMultilang',
-    platformChannelSpecifics,
-    payload: 'payload',
-  )
-      .catchError((err) {
-    print('ERROR DISPLAYING NOTIFICATION: $err');
-  });
 }
 
 Widget errorScreen(String? title, String? subtitle) {
@@ -1873,4 +2239,34 @@ Widget errorScreen(String? title, String? subtitle) {
       ),
     ),
   );
+}
+
+class _SettingItem extends StatelessWidget {
+  final IconData icon;
+  final String caption;
+  final VoidCallback ontap;
+  const _SettingItem({Key? key, required this.icon, required this.caption, required this.ontap}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: ontap,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: fiberchatgreen, size: 50),
+            SizedBox(height: 10),
+            Text(caption,
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14
+                )
+            )
+          ],
+        ),
+      ),
+    );
+  }
 }

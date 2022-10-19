@@ -1,6 +1,9 @@
 //*************   © Copyrighted by Thinkcreative_Technologies. An Exclusive item of Envato market. Make sure you have purchased a Regular License OR Extended license for the Source Code from Envato to use this product. See the License Defination attached with source code. *********************
 
 import 'dart:core';
+import 'dart:isolate';
+import 'dart:ui';
+import 'package:alochat/notification_controller.dart';
 import 'package:alochat/widgets/Camera/camera.dart';
 import 'package:alochat/Configs/Dbkeys.dart';
 import 'package:alochat/Configs/app_constants.dart';
@@ -21,6 +24,8 @@ import 'package:alochat/Services/Providers/DownloadInfoProvider.dart';
 import 'package:alochat/Services/Providers/call_history_provider.dart';
 import 'package:alochat/Services/Providers/user_provider.dart';
 import 'package:alochat/Utils/setStatusBarColor.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:awesome_notifications_fcm/awesome_notifications_fcm.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -30,6 +35,8 @@ import 'package:overlay_support/overlay_support.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+final awesomeFcm = AwesomeNotificationsFcm();
+final awesomeNotifications = AwesomeNotifications();
 List<CameraDescription> cameras = <CameraDescription>[];
 
 void main() async {
@@ -48,6 +55,33 @@ void main() async {
   } on CameraException catch (e) {
     logError(e.code, e.description);
   }
+
+  // Seng add
+  await awesomeNotifications.initialize(
+    // set the icon to null if you want to use the default app icon
+    null,
+    [
+      NotificationChannel(
+        channelGroupKey: 'channel_group_key',
+        channelKey: 'channel_id',
+        channelName: 'channel_name',
+        channelDescription: 'channel_description',
+        importance: NotificationImportance.Max,
+      )
+    ],
+    debug: true,
+  );
+
+  ReceivedAction? receivedAction = await awesomeNotifications.getInitialNotificationAction(
+      removeFromActionEvents: false
+  );
+  // if(receivedAction?.channelKey == 'call_channel') {
+  //   setInitialPageToCallPage();
+  // } else {
+  //   setInitialPageToHomePage();
+  // }
+
+  await NotificationController.initialize();
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {

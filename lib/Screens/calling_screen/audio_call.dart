@@ -2,6 +2,7 @@
 
 import 'dart:async';
 import 'package:agora_rtc_engine/rtc_engine.dart';
+import 'package:alochat/main.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -1328,7 +1329,8 @@ class _AudioCallState extends State<AudioCall> {
         minutesStr = ((newTick / 60) % 60).floor().toString().padLeft(2, '0');
         secondsStr = (newTick % 60).floor().toString().padLeft(2, '0');
       });
-      flutterLocalNotificationsPlugin.cancelAll();
+      // flutterLocalNotificationsPlugin.cancelAll();
+      awesomeNotifications.cancelAll();
     });
   }
 

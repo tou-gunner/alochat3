@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:agora_rtc_engine/rtc_local_view.dart' as RtcLocalView;
 import 'package:agora_rtc_engine/rtc_remote_view.dart' as RtcRemoteView;
+import 'package:alochat/main.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:alochat/Configs/Dbkeys.dart';
@@ -193,7 +194,8 @@ class _VideoCallState extends State<VideoCall> {
         _playCallingTone();
       }
       Wakelock.enable();
-      flutterLocalNotificationsPlugin.cancelAll();
+      // flutterLocalNotificationsPlugin.cancelAll();
+      awesomeNotifications.cancelAll();
     }, leaveChannel: (stats) {
       _stopCallingSound();
       setState(() {
@@ -975,7 +977,8 @@ class _VideoCallState extends State<VideoCall> {
         minutesStr = ((newTick / 60) % 60).floor().toString().padLeft(2, '0');
         secondsStr = (newTick % 60).floor().toString().padLeft(2, '0');
       });
-      flutterLocalNotificationsPlugin.cancelAll();
+      // flutterLocalNotificationsPlugin.cancelAll();
+      awesomeNotifications.cancelAll();
     });
   }
 
