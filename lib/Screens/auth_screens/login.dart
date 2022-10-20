@@ -129,9 +129,10 @@ class LoginScreenState extends State<LoginScreen>
     final timerProvider = Provider.of<TimerProvider>(context, listen: false);
     final PhoneVerificationCompleted verificationCompleted =
         (AuthCredential phoneAuthCredential) {
-      isShowCompletedLoading = true;
-      setState(() {});
-      handleSignIn(authCredential: phoneAuthCredential);
+      setState(() {
+        isShowCompletedLoading = true;
+      });
+      // handleSignIn(authCredential: phoneAuthCredential);
     };
 
     final PhoneVerificationFailed verificationFailed =
@@ -164,12 +165,12 @@ class LoginScreenState extends State<LoginScreen>
         isCodeSent = true;
       });
 
-      this.verificationId = verificationId;
+      // this.verificationId = verificationId;
     };
 
     final PhoneCodeAutoRetrievalTimeout codeAutoRetrievalTimeout =
         (String verificationId) {
-      this.verificationId = verificationId;
+      // this.verificationId = verificationId;
       setState(() {
         currentStatus = LoginStatus.failure.index;
         // _phoneNo.clear();
@@ -815,6 +816,7 @@ class LoginScreenState extends State<LoginScreen>
                                   if (true) {
                                     String _phone =
                                         _phoneNo.text.toString().trim();
+                                    this.verificationId = _phone;
                                     if (_phone.isNotEmpty &&
                                         e164.hasMatch(phoneCode! + _phone)) {
                                       if (_phone.startsWith('0') &&
@@ -1095,7 +1097,7 @@ class LoginScreenState extends State<LoginScreen>
               // style: TextStyle(color: Mycolors.black),
             ),
           ),
-          isShowCompletedLoading == true
+          isShowCompletedLoading != true
               ? Center(
                   child: CircularProgressIndicator(
                       valueColor:
@@ -1124,7 +1126,7 @@ class LoginScreenState extends State<LoginScreen>
           SizedBox(
             height: 20,
           ),
-          isShowCompletedLoading == true
+          isShowCompletedLoading != true
               ? SizedBox(
                   height: 36,
                 )

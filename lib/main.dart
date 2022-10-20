@@ -81,8 +81,6 @@ void main() async {
   //   setInitialPageToHomePage();
   // }
 
-  await NotificationController.initialize();
-
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
     runApp(OverlaySupport(child: FiberchatWrapper()));
@@ -109,7 +107,19 @@ class _FiberchatWrapperState extends State<FiberchatWrapper> {
     });
   }
 
-  final Future<FirebaseApp> _initialization = Firebase.initializeApp();
+  Future<void> _initialization = Future<void>(() async {
+    await Firebase.initializeApp();
+    await awesomeFcm.initialize(
+        onFcmSilentDataHandle: NotificationController.onSilentDataHandle,
+        onFcmTokenHandle: NotificationController.onFcmTokenHandle,
+        onNativeTokenHandle: NotificationController.onNativeTokenHandle,
+        // This license key is necessary only to remove the watermark for
+        // push notifications in release mode. To know more about it, please
+        // visit http://awesome-notifications.carda.me#prices
+        licenseKey: null,
+        debug: true
+    );
+  });
   @override
   void didChangeDependencies() {
     getLocale().then((locale) {

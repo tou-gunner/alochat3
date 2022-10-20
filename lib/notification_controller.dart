@@ -1,44 +1,35 @@
-import 'dart:isolate';
-import 'dart:ui';
-
 import 'package:awesome_notifications/awesome_notifications.dart';
-
-bool _initialized = false;
+import 'package:awesome_notifications_fcm/awesome_notifications_fcm.dart';
+import 'package:flutter/material.dart';
 
 class NotificationController {
+  //  *********************************************
+  ///     REMOTE NOTIFICATION EVENTS
+  ///  *********************************************
 
-  static Future<void> onSilentActionHandle(ReceivedAction received) async {
-    print('On new background action received: ${received.toMap()}');
+  /// Use this method to execute on background when a silent data arrives
+  /// (even while terminated)
+  @pragma("vm:entry-point")
+  static Future<void> onSilentDataHandle(FcmSilentData silentData) async {
+    print('"SilentData": ${silentData.toString()}');
 
-    if (!_initialized) {
-      SendPort? uiSendPort = IsolateNameServer.lookupPortByName('background_notification_action');
-      if (uiSendPort != null) {
-        print('Background action running on parallel isolate without valid context. Redirecting execution');
-        uiSendPort.send(received);
-        return;
-      }
+    if (silentData.createdLifeCycle != NotificationLifeCycle.Foreground) {
+      print("bg");
+    } else {
+      print("FOREGROUND");
     }
 
-    print('Background action running on main isolate');
-    await _handleBackgroundAction(received);
   }
 
-  static Future<void> _handleBackgroundAction(ReceivedAction received) async {
-    // Your background action handle
+  /// Use this method to detect when a new fcm token is received
+  @pragma("vm:entry-point")
+  static Future<void> onFcmTokenHandle(String token) async {
+    debugPrint('FCM Token:"$token"');
   }
 
-  static Future<void> initialize() async {
-    ReceivePort port = ReceivePort();
-    IsolateNameServer.registerPortWithName(
-      port.sendPort,
-      'background_notification_action',
-    );
-
-    port.listen((var received) async {
-      _handleBackgroundAction(received);
-    });
-
-    _initialized = true;
+  /// Use this method to detect when a new native token is received
+  @pragma("vm:entry-point")
+  static Future<void> onNativeTokenHandle(String token) async {
+    debugPrint('Native Token:"$token"');
   }
-
 }
