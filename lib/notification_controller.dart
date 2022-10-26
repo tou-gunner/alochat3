@@ -344,14 +344,29 @@ class NotificationController with ChangeNotifier {
         null,
         [
           NotificationChannel(
-              channelKey: 'alerts',
-              channelName: 'Alerts',
-              channelDescription: 'Notification alerts',
+            channelGroupKey: 'call_channel',
+            channelKey: 'video_call',
+            channelName: 'Video Call',
+            channelDescription: 'Video Call',
+            importance: NotificationImportance.Max,
+            playSound: true,
+            soundSource: 'resource://raw/ringtone'
+          ),
+          NotificationChannel(
+              channelGroupKey: 'call_channel',
+              channelKey: 'missed_call',
+              channelName: 'Missed Call',
+              channelDescription: 'Missed Call',
               importance: NotificationImportance.Max,
-              defaultColor: Color(0xFF9D50DD),
-              ledColor: Color.fromARGB(255, 190, 56, 56),
-              groupKey: 'alerts',
-              channelShowBadge: true)
+              playSound: true,
+              soundSource: 'resource://raw/whistle'
+          )
+        ],
+        channelGroups:[
+          NotificationChannelGroup(
+          channelGroupKey: 'call_channel',
+          channelGroupName: 'Call Channel'
+          ),
         ],
         debug: debug);
   }
