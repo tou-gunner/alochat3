@@ -82,6 +82,11 @@ android {
       packagingOptions {
     pickFirst '**/*.so'
     }
+
+    lintOptions {
+        //If you want to continue even if errors found use following line
+        abortOnError false
+    }
 }
 
 flutter {

@@ -42,6 +42,10 @@ List<CameraDescription> cameras = <CameraDescription>[];
 void main() async {
   final WidgetsBinding binding = WidgetsFlutterBinding.ensureInitialized();
 
+  await NotificationController.initializeLocalNotifications(debug: true);
+  await NotificationController.initializeRemoteNotifications(debug: true);
+  await NotificationController.getInitialNotificationAction();
+
   binding.renderView.automaticSystemUiAdjustment = false;
   setStatusBarColor();
   if (IsBannerAdShow == true ||
@@ -55,22 +59,6 @@ void main() async {
   } on CameraException catch (e) {
     logError(e.code, e.description);
   }
-
-  // Seng add
-  await awesomeNotifications.initialize(
-    // set the icon to null if you want to use the default app icon
-    null,
-    [
-      NotificationChannel(
-        channelGroupKey: 'channel_group_key',
-        channelKey: 'channel_id',
-        channelName: 'channel_name',
-        channelDescription: 'channel_description',
-        importance: NotificationImportance.Max,
-      )
-    ],
-    debug: true,
-  );
 
   ReceivedAction? receivedAction = await awesomeNotifications.getInitialNotificationAction(
       removeFromActionEvents: false
@@ -88,6 +76,8 @@ void main() async {
 }
 
 class FiberchatWrapper extends StatefulWidget {
+  static ReceivedAction? initialCallAction;
+
   const FiberchatWrapper({Key? key}) : super(key: key);
   static void setLocale(BuildContext context, Locale newLocale) {
     _FiberchatWrapperState state =
@@ -107,19 +97,58 @@ class _FiberchatWrapperState extends State<FiberchatWrapper> {
     });
   }
 
-  Future<void> _initialization = Future<void>(() async {
-    await Firebase.initializeApp();
-    await awesomeFcm.initialize(
-        onFcmSilentDataHandle: NotificationController.onSilentDataHandle,
-        onFcmTokenHandle: NotificationController.onFcmTokenHandle,
-        onNativeTokenHandle: NotificationController.onNativeTokenHandle,
-        // This license key is necessary only to remove the watermark for
-        // push notifications in release mode. To know more about it, please
-        // visit http://awesome-notifications.carda.me#prices
-        licenseKey: null,
-        debug: true
-    );
-  });
+  Future<void> _initialization() async {
+
+    await NotificationController.initializeNotificationListeners();
+    // await Firebase.initializeApp();
+    // await NotificationController.initialize();
+    // await awesomeNotifications.initialize(
+    //   // set the icon to null if you want to use the default app icon
+    //   null,
+    //   [
+    //     NotificationChannel(
+    //       channelGroupKey: 'call_channel',
+    //       channelKey: 'video_call',
+    //       channelName: 'Video Call',
+    //       channelDescription: 'Video Call',
+    //       importance: NotificationImportance.Max,
+    //       playSound: true,
+    //       soundSource: 'resource://raw/ringtone'
+    //     ),
+    //     NotificationChannel(
+    //         channelGroupKey: 'call_channel',
+    //         channelKey: 'missed_call',
+    //         channelName: 'Missed Call',
+    //         channelDescription: 'Missed Call',
+    //         importance: NotificationImportance.Max,
+    //         playSound: true,
+    //         soundSource: 'resource://raw/whistle'
+    //     )
+    //   ],
+    //   channelGroups:[
+    //     NotificationChannelGroup(
+    //     channelGroupKey: 'call_channel',
+    //     channelGroupName: 'Call Channel'
+    //     ),
+    //   ],
+    //   debug: true,
+    // );
+    // await awesomeNotifications.setListeners(
+    //   onActionReceivedMethod: NotificationController.onActionReceivedMethod,
+    //   onDismissActionReceivedMethod: NotificationController.onDismissActionReceivedMethod
+    // );
+    // await awesomeFcm.initialize(
+    //     onFcmSilentDataHandle: NotificationController.onSilentDataHandle,
+    //     onFcmTokenHandle: NotificationController.onFcmTokenHandle,
+    //     onNativeTokenHandle: NotificationController.onNativeTokenHandle,
+    //     // This license key is necessary only to remove the watermark for
+    //     // push notifications in release mode. To know more about it, please
+    //     // visit http://awesome-notifications.carda.me#prices
+    //     licenseKey: null,
+    //     debug: true
+    // );
+  }
+
   @override
   void didChangeDependencies() {
     getLocale().then((locale) {
@@ -142,7 +171,7 @@ class _FiberchatWrapperState extends State<FiberchatWrapper> {
       );
     } else {
       return FutureBuilder(
-          future: _initialization,
+          future: _initialization(),
           builder: (context, snapshot) {
             if (snapshot.hasError) {
               return MaterialApp(

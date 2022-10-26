@@ -688,126 +688,126 @@ class HomepageState extends State<Homepage>
     //   }
     // });
 
-    awesomeNotifications.setListeners(onActionReceivedMethod: (ReceivedAction receivedAction) async {
-      // ignore: unnecessary_null_comparison
-      awesomeNotifications..cancelAll();
-
-      final data = receivedAction.payload!;
-      if (data['title'] != 'Call Ended' &&
-          data['title'] != 'Missed Call' &&
-          data['title'] != 'You have new message(s)' &&
-          data['title'] != 'Incoming Video Call...' &&
-          data['title'] != 'Incoming Audio Call...' &&
-          data['title'] != 'Incoming Call ended' &&
-          data['title'] != 'New message in Group') {
-        Fiberchat.toast(getTranslated(this.context, 'newnotifications'));
-      } else {
-        if (data['title'] == 'New message in Group') {
-        } else if (data['title'] == 'Call Ended') {
-          awesomeNotifications..cancelAll();
-        } else {
-          if (data['title'] == 'Incoming Audio Call...' ||
-              data['title'] == 'Incoming Video Call...') {
-            final title = data['title'];
-            final body = data['body'];
-            final titleMultilang = data['titleMultilang'];
-            final bodyMultilang = data['bodyMultilang'];
-            await _showNotificationWithDefaultSound(
-                title, body, titleMultilang, bodyMultilang);
-          } else if (data['title'] == 'You have new message(s)') {
-            var currentpeer =
-            Provider.of<CurrentChatPeer>(this.context, listen: false);
-            if (currentpeer.peerid != data['peerid']) {
-              // FlutterRingtonePlayer.playNotification();
-              showOverlayNotification((context) {
-                return Card(
-                  margin: const EdgeInsets.symmetric(horizontal: 4),
-                  child: SafeArea(
-                    child: ListTile(
-                      title: Text(
-                        data['titleMultilang']!,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      subtitle: Text(
-                        data['bodyMultilang']!,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      trailing: IconButton(
-                          icon: Icon(Icons.close),
-                          onPressed: () {
-                            OverlaySupportEntry.of(context)!.dismiss();
-                          }),
-                    ),
-                  ),
-                );
-              }, duration: Duration(milliseconds: 2000));
-            }
-          } else {
-            showOverlayNotification((context) {
-              return Card(
-                margin: const EdgeInsets.symmetric(horizontal: 4),
-                child: SafeArea(
-                  child: ListTile(
-                    leading: data.containsKey("image")
-                        ? SizedBox()
-                        : data["image"] == null
-                        ? SizedBox()
-                        : Image.network(
-                      data['image']!,
-                      width: 50,
-                      height: 70,
-                      fit: BoxFit.cover,
-                    ),
-                    title: Text(
-                      data['titleMultilang']!,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    subtitle: Text(
-                      data['bodyMultilang']!,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    trailing: IconButton(
-                        icon: Icon(Icons.close),
-                        onPressed: () {
-                          OverlaySupportEntry.of(context)!.dismiss();
-                        }),
-                  ),
-                ),
-              );
-            }, duration: Duration(milliseconds: 2000));
-          }
-        }
-      }
-    });
-
-    awesomeNotifications.getInitialNotificationAction().then((receivedAction) {
-      if (receivedAction != null) {
-        // flutterLocalNotificationsPlugin..cancelAll();
-        awesomeNotifications..cancelAll();
-        Map<String, dynamic>? notificationData = receivedAction.payload!;
-        if (notificationData['title'] != 'Call Ended' &&
-            notificationData['title'] != 'You have new message(s)' &&
-            notificationData['title'] != 'Missed Call' &&
-            notificationData['title'] != 'Incoming Video Call...' &&
-            notificationData['title'] != 'Incoming Audio Call...' &&
-            notificationData['title'] != 'Incoming Call ended' &&
-            notificationData['title'] != 'New message in Group') {
-          // flutterLocalNotificationsPlugin..cancelAll();
-          awesomeNotifications..cancelAll();
-
-          Navigator.push(
-              context,
-              new MaterialPageRoute(
-                  builder: (context) => AllNotifications(
-                    prefs: widget.prefs,
-                  )));
-        }
-      }
-    });
+    // awesomeNotifications.setListeners(onActionReceivedMethod: (ReceivedAction receivedAction) async {
+    //   // ignore: unnecessary_null_comparison
+    //   awesomeNotifications..cancelAll();
+    //
+    //   final data = receivedAction.payload!;
+    //   if (data['title'] != 'Call Ended' &&
+    //       data['title'] != 'Missed Call' &&
+    //       data['title'] != 'You have new message(s)' &&
+    //       data['title'] != 'Incoming Video Call...' &&
+    //       data['title'] != 'Incoming Audio Call...' &&
+    //       data['title'] != 'Incoming Call ended' &&
+    //       data['title'] != 'New message in Group') {
+    //     Fiberchat.toast(getTranslated(this.context, 'newnotifications'));
+    //   } else {
+    //     if (data['title'] == 'New message in Group') {
+    //     } else if (data['title'] == 'Call Ended') {
+    //       awesomeNotifications..cancelAll();
+    //     } else {
+    //       if (data['title'] == 'Incoming Audio Call...' ||
+    //           data['title'] == 'Incoming Video Call...') {
+    //         final title = data['title'];
+    //         final body = data['body'];
+    //         final titleMultilang = data['titleMultilang'];
+    //         final bodyMultilang = data['bodyMultilang'];
+    //         await _showNotificationWithDefaultSound(
+    //             title, body, titleMultilang, bodyMultilang);
+    //       } else if (data['title'] == 'You have new message(s)') {
+    //         var currentpeer =
+    //         Provider.of<CurrentChatPeer>(this.context, listen: false);
+    //         if (currentpeer.peerid != data['peerid']) {
+    //           // FlutterRingtonePlayer.playNotification();
+    //           showOverlayNotification((context) {
+    //             return Card(
+    //               margin: const EdgeInsets.symmetric(horizontal: 4),
+    //               child: SafeArea(
+    //                 child: ListTile(
+    //                   title: Text(
+    //                     data['titleMultilang']!,
+    //                     maxLines: 1,
+    //                     overflow: TextOverflow.ellipsis,
+    //                   ),
+    //                   subtitle: Text(
+    //                     data['bodyMultilang']!,
+    //                     maxLines: 2,
+    //                     overflow: TextOverflow.ellipsis,
+    //                   ),
+    //                   trailing: IconButton(
+    //                       icon: Icon(Icons.close),
+    //                       onPressed: () {
+    //                         OverlaySupportEntry.of(context)!.dismiss();
+    //                       }),
+    //                 ),
+    //               ),
+    //             );
+    //           }, duration: Duration(milliseconds: 2000));
+    //         }
+    //       } else {
+    //         showOverlayNotification((context) {
+    //           return Card(
+    //             margin: const EdgeInsets.symmetric(horizontal: 4),
+    //             child: SafeArea(
+    //               child: ListTile(
+    //                 leading: data.containsKey("image")
+    //                     ? SizedBox()
+    //                     : data["image"] == null
+    //                     ? SizedBox()
+    //                     : Image.network(
+    //                   data['image']!,
+    //                   width: 50,
+    //                   height: 70,
+    //                   fit: BoxFit.cover,
+    //                 ),
+    //                 title: Text(
+    //                   data['titleMultilang']!,
+    //                   maxLines: 1,
+    //                   overflow: TextOverflow.ellipsis,
+    //                 ),
+    //                 subtitle: Text(
+    //                   data['bodyMultilang']!,
+    //                   maxLines: 2,
+    //                   overflow: TextOverflow.ellipsis,
+    //                 ),
+    //                 trailing: IconButton(
+    //                     icon: Icon(Icons.close),
+    //                     onPressed: () {
+    //                       OverlaySupportEntry.of(context)!.dismiss();
+    //                     }),
+    //               ),
+    //             ),
+    //           );
+    //         }, duration: Duration(milliseconds: 2000));
+    //       }
+    //     }
+    //   }
+    // });
+    //
+    // awesomeNotifications.getInitialNotificationAction().then((receivedAction) {
+    //   if (receivedAction != null) {
+    //     // flutterLocalNotificationsPlugin..cancelAll();
+    //     awesomeNotifications..cancelAll();
+    //     Map<String, dynamic>? notificationData = receivedAction.payload!;
+    //     if (notificationData['title'] != 'Call Ended' &&
+    //         notificationData['title'] != 'You have new message(s)' &&
+    //         notificationData['title'] != 'Missed Call' &&
+    //         notificationData['title'] != 'Incoming Video Call...' &&
+    //         notificationData['title'] != 'Incoming Audio Call...' &&
+    //         notificationData['title'] != 'Incoming Call ended' &&
+    //         notificationData['title'] != 'New message in Group') {
+    //       // flutterLocalNotificationsPlugin..cancelAll();
+    //       awesomeNotifications..cancelAll();
+    //
+    //       Navigator.push(
+    //           context,
+    //           new MaterialPageRoute(
+    //               builder: (context) => AllNotifications(
+    //                 prefs: widget.prefs,
+    //               )));
+    //     }
+    //   }
+    // });
   }
 
   DataModel? _cachedModel;
@@ -2148,7 +2148,7 @@ Future _showNotificationWithDefaultSound(String? title, String? message,
         body: '$bodyMultilang',
         criticalAlert: true,
         wakeUpScreen: true,
-        // customSound: 'whistle2'
+        customSound: 'whistle2'
       ),
     );
   } else {
@@ -2160,7 +2160,8 @@ Future _showNotificationWithDefaultSound(String? title, String? message,
         body: '$bodyMultilang',
         criticalAlert: true,
         wakeUpScreen: true,
-        // customSound: 'ringtone'
+        autoDismissible: false,
+        customSound: 'ringtone'
       ),
       actionButtons: <NotificationActionButton>[
         NotificationActionButton(key: 'yes', label: 'Accept'),
@@ -2168,33 +2169,6 @@ Future _showNotificationWithDefaultSound(String? title, String? message,
       ],
     );
   }
-  await awesome.AwesomeNotifications().createNotification(
-    content: title == 'Missed Call' || title == 'Call Ended'
-    ? NotificationContent(
-      id: 0,
-      channelKey: 'channel_id',
-      title: '$titleMultilang',
-      body: '$bodyMultilang',
-      criticalAlert: true,
-      wakeUpScreen: true,
-      customSound: 'whistle2'
-    )
-    : NotificationContent(
-      id: 0,
-      channelKey: 'channel_id',
-      title: '$titleMultilang',
-      body: '$bodyMultilang',
-      criticalAlert: true,
-      wakeUpScreen: true,
-      customSound: 'ringtone'
-    ),
-    actionButtons: title == 'Missed Call' || title == 'Call Ended'
-    ? null
-    : <NotificationActionButton>[
-      NotificationActionButton(key: 'yes', label: 'Accept'),
-      NotificationActionButton(key: 'no', label: 'Reject'),
-    ],
-  );
 }
 
 Widget errorScreen(String? title, String? subtitle) {

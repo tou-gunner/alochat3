@@ -81,7 +81,7 @@ class AloAuth {
         phone: datas['member_mobile'],
         token: token,
         refreshToken: '',
-        photoURL: data['member_avatar'] == null ? null : "https://alomall.la/demo/system/upfiles/shop/avatar/${datas['member_avatar']}"
+        photoURL: datas['member_avatar'] == null ? null : "https://alomall.la/demo/system/upfiles/shop/avatar/${datas['member_avatar']}"
     );
   }
 
