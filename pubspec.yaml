@@ -127,6 +127,7 @@ dependencies:
   flutter_inappwebview: ^5.4.3+7
   awesome_notifications: ^0.7.3
   awesome_notifications_fcm: ^0.7.3
+  flutter_foreground_task: ^3.10.0
 
   flutter:
     sdk: flutter

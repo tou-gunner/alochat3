@@ -1,5 +1,7 @@
 //*************   © Copyrighted by Thinkcreative_Technologies. An Exclusive item of Envato market. Make sure you have purchased a Regular License OR Extended license for the Source Code from Envato to use this product. See the License Defination attached with source code. *********************
 
+import 'package:alochat/main.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:alochat/Screens/splash_screen/splash_screen.dart';
 import 'package:alochat/Services/Providers/Observer.dart';
@@ -38,7 +40,7 @@ class PickupLayout extends StatelessWidget {
                         snapshot.data!.data() as Map<dynamic, dynamic>);
 
                     if (!call.hasDialled!) {
-                      return PickupScreen(
+                      return _PickUpWrapper(
                         prefs: prefs,
                         call: call,
                         currentuseruid: userProvider.getUser!.phone,
@@ -51,3 +53,51 @@ class PickupLayout extends StatelessWidget {
             : Splashscreen();
   }
 }
+
+class _PickUpWrapper extends StatefulWidget {
+  final SharedPreferences prefs;
+  final Call call;
+  final String? currentuseruid;
+  const _PickUpWrapper({Key? key, required this.prefs, required this.call, required this.currentuseruid}) : super(key: key);
+
+  @override
+  State<_PickUpWrapper> createState() => _PickUpWrapperState();
+}
+
+class _PickUpWrapperState extends State<_PickUpWrapper> {
+  bool _ready = false;
+
+  @override
+  void initState() {
+    super.initState();
+    AwesomeNotifications().getInitialNotificationAction(
+        removeFromActionEvents: false
+    ).then((receivedAction) {
+      // if(receivedAction?.channelKey == 'call_channel') {
+      //   setInitialPageToCallPage();
+      // } else {
+      //   setInitialPageToHomePage();
+      // }
+      print(receivedAction);
+      if (mounted) {
+        setState(() {
+          _ready = true;
+        });
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _ready ?
+    PickupScreen(
+      prefs: widget.prefs,
+      call: widget.call,
+      currentuseruid: widget.currentuseruid,
+    ) :
+    Center(
+      child: CircularProgressIndicator(),
+    );
+  }
+}
+

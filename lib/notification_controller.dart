@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
 import 'dart:ui';
@@ -7,6 +8,7 @@ import 'package:awesome_notifications_fcm/awesome_notifications_fcm.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:http/http.dart' as http;
 
@@ -350,7 +352,7 @@ class NotificationController with ChangeNotifier {
             channelDescription: 'Video Call',
             importance: NotificationImportance.Max,
             playSound: true,
-            soundSource: 'resource://raw/ringtone'
+            soundSource: 'resource://raw/ringtone',
           ),
           NotificationChannel(
               channelGroupKey: 'call_channel',
@@ -460,65 +462,63 @@ class NotificationController with ChangeNotifier {
     if (receivedAction.channelKey == 'video_call') {
       final firebase = await Firebase.initializeApp();
       final CallMethods callMethods = CallMethods();
-      final stream = callMethods.callStream(phone: receivedAction.payload!['phone']);
-      stream.listen((e) async {
-        Call call = Call.fromMap(e.data() as Map<dynamic, dynamic>);
-        if (receivedAction.buttonKeyPressed == 'no') {
-          awesomeNotifications.cancelAll();
-          await callMethods.endCall(call: call);
-          FirebaseFirestore.instance
-              .collection(DbPaths.collectionusers)
-              .doc(call.callerId)
-              .collection(DbPaths.collectioncallhistory)
-              .doc(call.timeepoch.toString())
-              .set({
-            'STATUS': 'rejected',
-            'ENDED': DateTime.now(),
-          }, SetOptions(merge: true));
-          FirebaseFirestore.instance
-              .collection(DbPaths.collectionusers)
-              .doc(call.receiverId)
-              .collection(DbPaths.collectioncallhistory)
-              .doc(call.timeepoch.toString())
-              .set({
-            'STATUS': 'rejected',
-            'ENDED': DateTime.now(),
-          }, SetOptions(merge: true));
-          //----------
-          await FirebaseFirestore.instance
-              .collection(DbPaths.collectionusers)
-              .doc(call.callerId)
-              .collection('recent')
-              .doc('callended')
-              .delete();
-          Future.delayed(
-              const Duration(milliseconds: 200),
-                  () async {
-                await FirebaseFirestore.instance
-                    .collection(DbPaths.collectionusers)
-                    .doc(call.callerId)
-                    .collection('recent')
-                    .doc('callended')
-                    .set({
-                  'id': call.callerId,
-                  'ENDED':
-                  DateTime.now().millisecondsSinceEpoch
-                });
+      final data = jsonDecode(receivedAction.payload!['data']!);
+      Call call = Call.fromMap(data);
+      if (receivedAction.buttonKeyPressed == 'no') {
+        awesomeNotifications.cancelAll();
+        await callMethods.endCall(call: call);
+        FirebaseFirestore.instance
+            .collection(DbPaths.collectionusers)
+            .doc(call.callerId)
+            .collection(DbPaths.collectioncallhistory)
+            .doc(call.timeepoch.toString())
+            .set({
+          'STATUS': 'rejected',
+          'ENDED': DateTime.now(),
+        }, SetOptions(merge: true));
+        FirebaseFirestore.instance
+            .collection(DbPaths.collectionusers)
+            .doc(call.receiverId)
+            .collection(DbPaths.collectioncallhistory)
+            .doc(call.timeepoch.toString())
+            .set({
+          'STATUS': 'rejected',
+          'ENDED': DateTime.now(),
+        }, SetOptions(merge: true));
+        //----------
+        await FirebaseFirestore.instance
+            .collection(DbPaths.collectionusers)
+            .doc(call.callerId)
+            .collection('recent')
+            .doc('callended')
+            .delete();
+        Future.delayed(
+            const Duration(milliseconds: 200),
+                () async {
+              await FirebaseFirestore.instance
+                  .collection(DbPaths.collectionusers)
+                  .doc(call.callerId)
+                  .collection('recent')
+                  .doc('callended')
+                  .set({
+                'id': call.callerId,
+                'ENDED':
+                DateTime.now().millisecondsSinceEpoch
               });
+            });
 
-          // firestoreDataProviderCALLHISTORY.fetchNextData(
-          //     'CALLHISTORY',
-          //     FirebaseFirestore.instance
-          //         .collection(DbPaths.collectionusers)
-          //         .doc(call.receiverId)
-          //         .collection(
-          //         DbPaths.collectioncallhistory)
-          //         .orderBy('TIME', descending: true)
-          //         .limit(14),
-          //     true);
-          awesomeNotifications.cancelAll();
-        }
-      });
+        // firestoreDataProviderCALLHISTORY.fetchNextData(
+        //     'CALLHISTORY',
+        //     FirebaseFirestore.instance
+        //         .collection(DbPaths.collectionusers)
+        //         .doc(call.receiverId)
+        //         .collection(
+        //         DbPaths.collectioncallhistory)
+        //         .orderBy('TIME', descending: true)
+        //         .limit(14),
+        //     true);
+        awesomeNotifications.cancelAll();
+      }
     }
 
     // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -592,7 +592,7 @@ class NotificationController with ChangeNotifier {
           final titleMultilang = data['titleMultilang'];
           final bodyMultilang = data['bodyMultilang'];
           await _showNotificationWithDefaultSound(
-              data['phone']!, title, body, titleMultilang, bodyMultilang);
+              data['phone']!, data['data']!, title, body, titleMultilang, bodyMultilang);
         } else if (data['title'] == 'You have new message(s)') {
           // FlutterRingtonePlayer.playNotification();
           showOverlayNotification((context) {
@@ -659,7 +659,7 @@ class NotificationController with ChangeNotifier {
     }
   }
 
-  static Future<void> _showNotificationWithDefaultSound(String phone, String? title, String? message,
+  static Future<void> _showNotificationWithDefaultSound(String phone, String data, String? title, String? message,
       String? titleMultilang, String? bodyMultilang) async {
     if (Platform.isAndroid) {
       // flutterLocalNotificationsPlugin.cancelAll();
@@ -740,7 +740,8 @@ class NotificationController with ChangeNotifier {
             autoDismissible: false,
             // customSound: 'ringtone',
             payload: {
-              'phone': phone
+              'phone': phone,
+              'data' : data
             },
             category: NotificationCategory.Call,
             actionType: ActionType.DisabledAction
@@ -755,6 +756,36 @@ class NotificationController with ChangeNotifier {
           ),
         ],
       );
+
+      // FlutterForegroundTask.init(
+      //   androidNotificationOptions: AndroidNotificationOptions(
+      //     channelId: 'video_call',
+      //     channelName: 'Video Call',
+      //     channelDescription: 'Video Call',
+      //     channelImportance: NotificationChannelImportance.MAX,
+      //     priority: NotificationPriority.MAX,
+      //     // iconData: const NotificationIconData(
+      //     //   resType: ResourceType.mipmap,
+      //     //   resPrefix: ResourcePrefix.ic,
+      //     //   name: 'launcher',
+      //     // ),
+      //     buttons: [
+      //       const NotificationButton(id: 'yes', text: 'Accept'),
+      //       const NotificationButton(id: 'no', text: 'Reject'),
+      //     ],
+      //   ),
+      //   iosNotificationOptions: const IOSNotificationOptions(
+      //     showNotification: true,
+      //     playSound: false,
+      //   ),
+      //   foregroundTaskOptions: const ForegroundTaskOptions(
+      //     interval: 5000,
+      //     isOnceEvent: true,
+      //     autoRunOnBoot: true,
+      //     allowWakeLock: true,
+      //     allowWifiLock: true,
+      //   ),
+      // );
     }
   }
 

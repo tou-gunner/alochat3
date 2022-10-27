@@ -60,15 +60,6 @@ void main() async {
     logError(e.code, e.description);
   }
 
-  ReceivedAction? receivedAction = await awesomeNotifications.getInitialNotificationAction(
-      removeFromActionEvents: false
-  );
-  // if(receivedAction?.channelKey == 'call_channel') {
-  //   setInitialPageToCallPage();
-  // } else {
-  //   setInitialPageToHomePage();
-  // }
-
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
     runApp(OverlaySupport(child: FiberchatWrapper()));
