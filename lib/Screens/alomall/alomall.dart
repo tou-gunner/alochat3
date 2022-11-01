@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:alochat/Configs/app_constants.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +13,8 @@ class Alomall extends StatefulWidget {
   State<Alomall> createState() => _AlomallState();
 }
 
-class _AlomallState extends State<Alomall> with AutomaticKeepAliveClientMixin<Alomall> {
+class _AlomallState extends State<Alomall>
+    with AutomaticKeepAliveClientMixin<Alomall> {
   InAppWebViewController? _controller;
   final _urlController = TextEditingController();
   Uri? _url;
@@ -47,93 +49,130 @@ class _AlomallState extends State<Alomall> with AutomaticKeepAliveClientMixin<Al
           _controller?.reload();
         } else if (Platform.isIOS) {
           _controller?.loadUrl(
-            urlRequest: URLRequest(url: await _controller?.getUrl()));
+              urlRequest: URLRequest(url: await _controller?.getUrl()));
         }
       },
     );
   }
-  
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return InAppWebView(
-      gestureRecognizers: {
-        Factory<VerticalDragGestureRecognizer>(() => VerticalDragGestureRecognizer())
-      },
-      initialUrlRequest: URLRequest(
-        url: Uri.parse('http://167.172.79.134/mobile/')
-      ),
-      initialOptions: InAppWebViewGroupOptions(
-          crossPlatform: InAppWebViewOptions(
-            useShouldOverrideUrlLoading: true,
-            mediaPlaybackRequiresUserGesture: false,
-            javaScriptEnabled: true
+    return Scaffold(
+      appBar: AppBar(backgroundColor: alochatMain, actions: [
+        IconButton(
+          icon: const Icon(
+            Icons.arrow_back_ios,
           ),
-          android: AndroidInAppWebViewOptions(
-            useHybridComposition: true,
+          onPressed: () async {
+            if (await _controller!.canGoBack()) {
+              _controller?.goBack();
+            }
+          },
+        ),
+        IconButton(
+          icon: const Icon(
+            Icons.arrow_forward_ios,
           ),
-          ios: IOSInAppWebViewOptions(
-            allowsInlineMediaPlayback: true,
-          )
-      ),
-      pullToRefreshController: _pullToRefreshController,
-      onWebViewCreated: (controller) {
-        _controller = controller;
-      },
-      onLoadStart: (controller, url) {
-        setState(() {
-          _url = url;
-          _urlController.text = _url!.toString();
-        });
-      },
-      androidOnPermissionRequest: (controller, origin, resources) async {
-        return PermissionRequestResponse(
-            resources: resources,
-            action: PermissionRequestResponseAction.GRANT);
-      },
-      shouldOverrideUrlLoading: (controller, navigationAction) async {
-        var uri = navigationAction.request.url!;
+          onPressed: () async {
+            if (await _controller!.canGoForward()) {
+              _controller?.goForward();
+            }
+          },
+        ),
+        IconButton(
+          icon: const Icon(
+            Icons.replay,
+          ),
+          onPressed: () {
+            _controller?.reload();
+          },
+        ),
+      ]),
+      body: InAppWebView(
+        gestureRecognizers: {
+          Factory<VerticalDragGestureRecognizer>(
+              () => VerticalDragGestureRecognizer())
+        },
+        initialUrlRequest:
+            URLRequest(url: Uri.parse('https://kobjai.la/mobile/')),
+        initialOptions: InAppWebViewGroupOptions(
+            crossPlatform: InAppWebViewOptions(
+                useShouldOverrideUrlLoading: true,
+                mediaPlaybackRequiresUserGesture: false,
+                javaScriptEnabled: true),
+            android: AndroidInAppWebViewOptions(
+              useHybridComposition: true,
+            ),
+            ios: IOSInAppWebViewOptions(
+              allowsInlineMediaPlayback: true,
+            )),
+        pullToRefreshController: _pullToRefreshController,
+        onWebViewCreated: (controller) {
+          _controller = controller;
+        },
+        onLoadStart: (controller, url) {
+          setState(() {
+            _url = url;
+            _urlController.text = _url!.toString();
+          });
+        },
+        androidOnPermissionRequest: (controller, origin, resources) async {
+          return PermissionRequestResponse(
+              resources: resources,
+              action: PermissionRequestResponseAction.GRANT);
+        },
+        shouldOverrideUrlLoading: (controller, navigationAction) async {
+          var uri = navigationAction.request.url!;
 
-        if (![ "http", "https", "file", "chrome",
-          "data", "javascript", "about"].contains(uri.scheme)) {
-          if (await canLaunchUrl(_url!)) {
-            // Launch the App
-            await launchUrl(_url!);
-            // and cancel the request
-            return NavigationActionPolicy.CANCEL;
+          if (![
+            "http",
+            "https",
+            "file",
+            "chrome",
+            "data",
+            "javascript",
+            "about"
+          ].contains(uri.scheme)) {
+            if (await canLaunchUrl(_url!)) {
+              // Launch the App
+              await launchUrl(_url!);
+              // and cancel the request
+              return NavigationActionPolicy.CANCEL;
+            }
           }
-        }
 
-        return NavigationActionPolicy.ALLOW;
-      },
-      onLoadStop: (controller, url) async {
-        _pullToRefreshController.endRefreshing();
-        setState(() {
-          _url = url;
-          _urlController.text = _url.toString();
-        });
-      },
-      onLoadError: (controller, url, code, message) {
-        _pullToRefreshController.endRefreshing();
-      },
-      onProgressChanged: (controller, progress) {
-        if (progress == 100) {
+          return NavigationActionPolicy.ALLOW;
+        },
+        onLoadStop: (controller, url) async {
           _pullToRefreshController.endRefreshing();
-        }
-        setState(() {
-          this.progress = progress / 100;
-          _urlController.text = _url.toString();
-        });
-      },
-      onUpdateVisitedHistory: (controller, url, androidIsReload) {
-        setState(() {
-          _url = url;
-          _urlController.text = _url.toString();
-        });
-      },
-      onConsoleMessage: (controller, consoleMessage) {
-        print(consoleMessage);
-      },
+          setState(() {
+            _url = url;
+            _urlController.text = _url.toString();
+          });
+        },
+        onLoadError: (controller, url, code, message) {
+          _pullToRefreshController.endRefreshing();
+        },
+        onProgressChanged: (controller, progress) {
+          if (progress == 100) {
+            _pullToRefreshController.endRefreshing();
+          }
+          setState(() {
+            this.progress = progress / 100;
+            _urlController.text = _url.toString();
+          });
+        },
+        onUpdateVisitedHistory: (controller, url, androidIsReload) {
+          setState(() {
+            _url = url;
+            _urlController.text = _url.toString();
+          });
+        },
+        onConsoleMessage: (controller, consoleMessage) {
+          print(consoleMessage);
+        },
+      ),
     );
   }
 }
