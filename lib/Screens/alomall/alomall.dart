@@ -106,7 +106,8 @@ class _AlomallState extends State<Alomall>
             ),
             ios: IOSInAppWebViewOptions(
               allowsInlineMediaPlayback: true,
-            )),
+            ),
+        ),
         pullToRefreshController: _pullToRefreshController,
         onWebViewCreated: (controller) {
           _controller = controller;
@@ -134,6 +135,12 @@ class _AlomallState extends State<Alomall>
             "javascript",
             "about"
           ].contains(uri.scheme)) {
+            if (await canLaunchUrl(uri)) {
+              // Launch the App
+              await launchUrl(uri);
+              // and cancel the request
+              return NavigationActionPolicy.CANCEL;
+            }
             if (await canLaunchUrl(_url!)) {
               // Launch the App
               await launchUrl(_url!);

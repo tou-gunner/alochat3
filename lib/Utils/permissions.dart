@@ -55,6 +55,14 @@ class Permissions {
   //   }
   // }
 
+  static Future<PermissionStatus> getSystemAlertWindowPermission() async {
+    if (await Permission.systemAlertWindow.request().isGranted) {
+      return PermissionStatus.granted;
+    } else {
+      return PermissionStatus.denied;
+    }
+  }
+
   static void _handleInvalidPermissions(
     PermissionStatus cameraPermissionStatus,
     PermissionStatus microphonePermissionStatus,

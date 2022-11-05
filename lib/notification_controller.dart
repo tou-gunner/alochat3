@@ -11,10 +11,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:http/http.dart' as http;
+import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'Configs/Dbpaths.dart';
 import 'Models/call.dart';
 import 'Models/call_methods.dart';
+import 'Utils/permissions.dart';
 
 final _instance2 = NotificationController2();
 
@@ -37,6 +40,7 @@ class NotificationController2 {
     });
 
     _initialized = true;
+
   }
 
   // static Future<void> onSilentActionHandle(ReceivedAction received) async {
@@ -316,6 +320,67 @@ class NotificationController2 {
   }
 }
 
+// The callback function should always be a top-level function.
+@pragma('vm:entry-point')
+void startCallback() {
+  // The setTaskHandler function must be called to handle the task in the background.
+  FlutterForegroundTask.setTaskHandler(MyTaskHandler());
+}
+
+class MyTaskHandler extends TaskHandler {
+  SendPort? _sendPort;
+  int _eventCount = 0;
+
+  @override
+  Future<void> onStart(DateTime timestamp, SendPort? sendPort) async {
+    _sendPort = sendPort;
+
+    // You can use the getData function to get the stored data.
+    final customData =
+    await FlutterForegroundTask.getData<String>(key: 'customData');
+    print('customData: $customData');
+  }
+
+  @override
+  Future<void> onEvent(DateTime timestamp, SendPort? sendPort) async {
+    FlutterForegroundTask.updateService(
+      notificationTitle: 'MyTaskHandler',
+      notificationText: 'eventCount: $_eventCount',
+    );
+
+    // Send data to the main isolate.
+    sendPort?.send(_eventCount);
+
+    _eventCount++;
+  }
+
+  @override
+  Future<void> onDestroy(DateTime timestamp, SendPort? sendPort) async {
+    // You can use the clearAllData function to clear all the stored data.
+    await FlutterForegroundTask.clearAllData();
+  }
+
+  @override
+  void onButtonPressed(String id) {
+    // Called when the notification button on the Android platform is pressed.
+    print('onButtonPressed >> $id');
+  }
+
+  @override
+  void onNotificationPressed() {
+    // Called when the notification itself on the Android platform is pressed.
+    //
+    // "android.permission.SYSTEM_ALERT_WINDOW" permission must be granted for
+    // this function to be called.
+
+    // Note that the app will only route to "/resume-route" when it is exited so
+    // it will usually be necessary to send a message through the send port to
+    // signal it to restore state when the app is already started.
+    FlutterForegroundTask.launchApp("/resume-route");
+    _sendPort?.send('onNotificationPressed');
+  }
+}
+
 class NotificationController with ChangeNotifier {
   /// *********************************************
   ///   SINGLETON PATTERN
@@ -370,6 +435,115 @@ class NotificationController with ChangeNotifier {
               channelGroupName: 'Call Channel'),
         ],
         debug: debug);
+
+    // await _initForegroundTask();
+
+    // FlutterForegroundTask.wakeUpScreen();
+    // await _startForegroundTask();
+  }
+
+  static Future<void> _initForegroundTask() async {
+    FlutterForegroundTask.init(
+      androidNotificationOptions: AndroidNotificationOptions(
+        channelId: 'notification_channel_id',
+        channelName: 'Foreground Notification',
+        channelDescription:
+        'This notification appears when the foreground service is running.',
+        channelImportance: NotificationChannelImportance.LOW,
+        priority: NotificationPriority.LOW,
+        iconData: const NotificationIconData(
+          resType: ResourceType.mipmap,
+          resPrefix: ResourcePrefix.ic,
+          name: 'launcher',
+          backgroundColor: Colors.orange,
+        ),
+        buttons: [
+          const NotificationButton(id: 'sendButton', text: 'Send'),
+          const NotificationButton(id: 'testButton', text: 'Test'),
+        ],
+      ),
+      iosNotificationOptions: const IOSNotificationOptions(
+        showNotification: true,
+        playSound: false,
+      ),
+      foregroundTaskOptions: const ForegroundTaskOptions(
+        interval: 1000,
+        isOnceEvent: false,
+        autoRunOnBoot: true,
+        allowWakeLock: true,
+        allowWifiLock: true,
+      ),
+    );
+  }
+
+  static Future<bool> _startForegroundTask() async {
+    // "android.permission.SYSTEM_ALERT_WINDOW" permission must be granted for
+    // onNotificationPressed function to be called.
+    //
+    // When the notification is pressed while permission is denied,
+    // the onNotificationPressed function is not called and the app opens.
+    //
+    // If you do not use the onNotificationPressed or launchApp function,
+    // you do not need to write this code.
+    if (!await FlutterForegroundTask.canDrawOverlays) {
+      final isGranted =
+      await FlutterForegroundTask.openSystemAlertWindowSettings();
+      if (!isGranted) {
+        print('SYSTEM_ALERT_WINDOW permission denied!');
+        return false;
+      }
+    }
+
+    // You can save data using the saveData function.
+    // await FlutterForegroundTask.saveData(key: 'customData', value: 'hello');
+
+    bool reqResult;
+    if (await FlutterForegroundTask.isRunningService) {
+      reqResult = await FlutterForegroundTask.restartService();
+    } else {
+      reqResult = await FlutterForegroundTask.startService(
+        notificationTitle: 'Foreground Service is running',
+        notificationText: 'Tap to return to the app',
+        callback: startCallback,
+      );
+    }
+
+    ReceivePort? receivePort;
+    if (reqResult) {
+      receivePort = await FlutterForegroundTask.receivePort;
+    }
+
+    return _registerReceivePort(receivePort);
+  }
+
+  static ReceivePort? _receivePort;
+
+  static void _closeReceivePort() {
+    _receivePort?.close();
+    _receivePort = null;
+  }
+
+  static bool _registerReceivePort(ReceivePort? receivePort) {
+    _closeReceivePort();
+
+    if (receivePort != null) {
+      _receivePort = receivePort;
+      _receivePort?.listen((message) {
+        if (message is int) {
+          print('eventCount: $message');
+        } else if (message is String) {
+          if (message == 'onNotificationPressed') {
+            // Navigator.of(context).pushNamed('/resume-route');
+          }
+        } else if (message is DateTime) {
+          print('timestamp: ${message.toString()}');
+        }
+      });
+
+      return true;
+    }
+
+    return false;
   }
 
   static Future<void> initializeRemoteNotifications(
@@ -379,7 +553,7 @@ class NotificationController with ChangeNotifier {
         onFcmSilentDataHandle: NotificationController.mySilentDataHandle,
         onFcmTokenHandle: NotificationController.myFcmTokenHandle,
         onNativeTokenHandle: NotificationController.myNativeTokenHandle,
-        licenseKeys: null,
+        licenseKey: null,
         // On this example app, the app ID / Bundle Id are different
         // for each platform
         // Platform.isIOS
@@ -742,7 +916,8 @@ class NotificationController with ChangeNotifier {
             // customSound: 'ringtone',
             payload: {'phone': phone, 'data': data},
             category: NotificationCategory.Call,
-            actionType: ActionType.DisabledAction),
+            // actionType: ActionType.DisabledAction
+        ),
         actionButtons: <NotificationActionButton>[
           NotificationActionButton(
             key: 'yes',
@@ -772,18 +947,26 @@ class NotificationController with ChangeNotifier {
       //       const NotificationButton(id: 'no', text: 'Reject'),
       //     ],
       //   ),
-      //   iosNotificationOptions: const IOSNotificationOptions(
-      //     showNotification: true,
-      //     playSound: false,
-      //   ),
-      //   foregroundTaskOptions: const ForegroundTaskOptions(
-      //     interval: 5000,
-      //     isOnceEvent: true,
-      //     autoRunOnBoot: true,
-      //     allowWakeLock: true,
-      //     allowWifiLock: true,
-      //   ),
+      //   actionButtons: <NotificationActionButton>[
+      //     NotificationActionButton(
+      //       key: 'yes', label: 'Accept',
+      //     ),
+      //     NotificationActionButton(
+      //         key: 'no', label: 'Reject',
+      //         actionType: ActionType.SilentBackgroundAction
+      //     ),
+      //   ],
       // );
+
+      // final prefs = await SharedPreferences.getInstance();
+      // var oldId = prefs.getInt('incoming_call_id') ?? 0;
+      // await prefs.setString('incoming_call', data);
+      // await prefs.setInt('incoming_call_id', oldId++);
+
+      // await _initForegroundTask();
+      // FlutterForegroundTask.wakeUpScreen();
+      // await _startForegroundTask();
+
     }
   }
 

@@ -3,6 +3,7 @@
 import 'dart:core';
 import 'dart:isolate';
 import 'dart:ui';
+import 'package:alochat/Utils/permissions.dart';
 import 'package:alochat/notification_controller.dart';
 import 'package:alochat/widgets/Camera/camera.dart';
 import 'package:alochat/Configs/Dbkeys.dart';
@@ -45,6 +46,7 @@ void main() async {
   await NotificationController.initializeLocalNotifications(debug: true);
   await NotificationController.initializeRemoteNotifications(debug: true);
   await NotificationController.getInitialNotificationAction();
+  await Permissions.getSystemAlertWindowPermission();
 
   binding.renderView.automaticSystemUiAdjustment = false;
   setStatusBarColor();
