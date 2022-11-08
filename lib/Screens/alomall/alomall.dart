@@ -59,36 +59,36 @@ class _AlomallState extends State<Alomall>
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
-      appBar: AppBar(backgroundColor: alochatMain, actions: [
-        IconButton(
-          icon: const Icon(
-            Icons.arrow_back_ios,
-          ),
-          onPressed: () async {
-            if (await _controller!.canGoBack()) {
-              _controller?.goBack();
-            }
-          },
-        ),
-        IconButton(
-          icon: const Icon(
-            Icons.arrow_forward_ios,
-          ),
-          onPressed: () async {
-            if (await _controller!.canGoForward()) {
-              _controller?.goForward();
-            }
-          },
-        ),
-        IconButton(
-          icon: const Icon(
-            Icons.replay,
-          ),
-          onPressed: () {
-            _controller?.reload();
-          },
-        ),
-      ]),
+      // appBar: AppBar(backgroundColor: alochatMain, actions: [
+      //   IconButton(
+      //     icon: const Icon(
+      //       Icons.arrow_back_ios,
+      //     ),
+      //     onPressed: () async {
+      //       if (await _controller!.canGoBack()) {
+      //         _controller?.goBack();
+      //       }
+      //     },
+      //   ),
+      //   IconButton(
+      //     icon: const Icon(
+      //       Icons.arrow_forward_ios,
+      //     ),
+      //     onPressed: () async {
+      //       if (await _controller!.canGoForward()) {
+      //         _controller?.goForward();
+      //       }
+      //     },
+      //   ),
+      //   IconButton(
+      //     icon: const Icon(
+      //       Icons.replay,
+      //     ),
+      //     onPressed: () {
+      //       _controller?.reload();
+      //     },
+      //   ),
+      // ]),
       body: InAppWebView(
         gestureRecognizers: {
           Factory<VerticalDragGestureRecognizer>(
@@ -138,12 +138,6 @@ class _AlomallState extends State<Alomall>
             if (await canLaunchUrl(uri)) {
               // Launch the App
               await launchUrl(uri);
-              // and cancel the request
-              return NavigationActionPolicy.CANCEL;
-            }
-            if (await canLaunchUrl(_url!)) {
-              // Launch the App
-              await launchUrl(_url!);
               // and cancel the request
               return NavigationActionPolicy.CANCEL;
             }

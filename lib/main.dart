@@ -33,12 +33,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:overlay_support/overlay_support.dart';
+import 'package:package_info/package_info.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final awesomeFcm = AwesomeNotificationsFcm();
 final awesomeNotifications = AwesomeNotifications();
 List<CameraDescription> cameras = <CameraDescription>[];
+late final PackageInfo packageInfo;
 
 void main() async {
   final WidgetsBinding binding = WidgetsFlutterBinding.ensureInitialized();
@@ -47,6 +49,7 @@ void main() async {
   await NotificationController.initializeRemoteNotifications(debug: true);
   await NotificationController.getInitialNotificationAction();
   await Permissions.getSystemAlertWindowPermission();
+  packageInfo = await PackageInfo.fromPlatform();
 
   binding.renderView.automaticSystemUiAdjustment = false;
   setStatusBarColor();
