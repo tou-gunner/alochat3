@@ -48,7 +48,7 @@ void main() async {
   await NotificationController.initializeLocalNotifications(debug: true);
   await NotificationController.initializeRemoteNotifications(debug: true);
   await NotificationController.getInitialNotificationAction();
-  await Permissions.getSystemAlertWindowPermission();
+  // await Permissions.getSystemAlertWindowPermission();
   packageInfo = await PackageInfo.fromPlatform();
 
   binding.renderView.automaticSystemUiAdjustment = false;

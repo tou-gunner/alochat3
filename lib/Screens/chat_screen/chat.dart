@@ -5303,6 +5303,88 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     });
   }
 
+  Future<void> audioCall(BuildContext context) async {
+    if (hasPeerBlockedMe) {
+      Fiberchat.toast(
+        getTranslated(
+            context, 'userhasblocked'),
+      );
+    } else {
+      final observer = Provider.of<Observer>(
+          this.context,
+          listen: false);
+
+      if (IsInterstitialAdShow == true &&
+          observer.isadmobshow == true) {}
+
+      await Permissions
+          .cameraAndMicrophonePermissionsGranted()
+          .then((isgranted) {
+        if (isgranted == true) {
+          call(this.context, true);
+        } else {
+          Fiberchat.showRationale(
+              getTranslated(
+                  this.context, 'pmc'));
+          Navigator.push(
+              context,
+              new MaterialPageRoute(
+                  builder: (context) =>
+                      OpenSettings()));
+        }
+      }).catchError((onError) {
+        Fiberchat.showRationale(getTranslated(
+            this.context, 'pmc'));
+        Navigator.push(
+            context,
+            new MaterialPageRoute(
+                builder: (context) =>
+                    OpenSettings()));
+      });
+    }
+  }
+
+  Future<void> videoCall(BuildContext context) async {
+    if (hasPeerBlockedMe) {
+      Fiberchat.toast(
+        getTranslated(
+            context, 'userhasblocked'),
+      );
+    } else {
+      final observer = Provider.of<Observer>(
+          this.context,
+          listen: false);
+
+      if (IsInterstitialAdShow == true &&
+          observer.isadmobshow == true) {}
+
+      await Permissions
+          .cameraAndMicrophonePermissionsGranted()
+          .then((isgranted) {
+        if (isgranted == true) {
+          call(this.context, true);
+        } else {
+          Fiberchat.showRationale(
+              getTranslated(
+                  this.context, 'pmc'));
+          Navigator.push(
+              context,
+              new MaterialPageRoute(
+                  builder: (context) =>
+                      OpenSettings()));
+        }
+      }).catchError((onError) {
+        Fiberchat.showRationale(getTranslated(
+            this.context, 'pmc'));
+        Navigator.push(
+            context,
+            new MaterialPageRoute(
+                builder: (context) =>
+                    OpenSettings()));
+      });
+    }
+  }
+
   showDialOptions(BuildContext context) {
     showModalBottomSheet(
         context: context,
@@ -5773,38 +5855,74 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                   observer.isCallFeatureTotallyHide == true ||
                                           observer.isOngoingCall
                                       ? SizedBox()
-                                      : SizedBox(
-                                          width: 55,
-                                          child: IconButton(
-                                              icon: Icon(
-                                                Icons.add_call,
-                                                color: DESIGN_TYPE ==
-                                                        Themetype.whatsapp
-                                                    ? fiberchatWhite
-                                                    : fiberchatgreen,
-                                              ),
-                                              onPressed:
-                                                  observer.iscallsallowed ==
-                                                          false
-                                                      ? () {
-                                                          Fiberchat.showRationale(
-                                                              getTranslated(
-                                                                  this.context,
-                                                                  'callnotallowed'));
-                                                        }
-                                                      : hasPeerBlockedMe == true
+                                      : Row(
+                                        children: [
+                                          SizedBox(
+                                              width: 45,
+                                              child: IconButton(
+                                                  icon: Icon(
+                                                    Icons.add_call,
+                                                    color: DESIGN_TYPE ==
+                                                            Themetype.whatsapp
+                                                        ? fiberchatWhite
+                                                        : fiberchatgreen,
+                                                  ),
+                                                  onPressed:
+                                                      observer.iscallsallowed ==
+                                                              false
                                                           ? () {
-                                                              Fiberchat.toast(
-                                                                getTranslated(
-                                                                    context,
-                                                                    'userhasblocked'),
-                                                              );
+                                                              Fiberchat.showRationale(
+                                                                  getTranslated(
+                                                                      this.context,
+                                                                      'callnotallowed'));
                                                             }
-                                                          : () async {
-                                                              showDialOptions(
-                                                                  this.context);
-                                                            }),
-                                        ),
+                                                          : hasPeerBlockedMe == true
+                                                              ? () {
+                                                                  Fiberchat.toast(
+                                                                    getTranslated(
+                                                                        context,
+                                                                        'userhasblocked'),
+                                                                  );
+                                                                }
+                                                              : () async {
+                                                                  audioCall(
+                                                                      this.context);
+                                                                }),
+                                            ),
+                                          SizedBox(
+                                            width: 45,
+                                            child: IconButton(
+                                                icon: Icon(
+                                                  Icons.video_call,
+                                                  color: DESIGN_TYPE ==
+                                                      Themetype.whatsapp
+                                                      ? fiberchatWhite
+                                                      : fiberchatgreen,
+                                                ),
+                                                onPressed:
+                                                observer.iscallsallowed ==
+                                                    false
+                                                    ? () {
+                                                  Fiberchat.showRationale(
+                                                      getTranslated(
+                                                          this.context,
+                                                          'callnotallowed'));
+                                                }
+                                                    : hasPeerBlockedMe == true
+                                                    ? () {
+                                                  Fiberchat.toast(
+                                                    getTranslated(
+                                                        context,
+                                                        'userhasblocked'),
+                                                  );
+                                                }
+                                                    : () async {
+                                                  videoCall(
+                                                      this.context);
+                                                }),
+                                          ),
+                                        ],
+                                      ),
                                   SizedBox(
                                     width: observer.isCallFeatureTotallyHide ==
                                             true

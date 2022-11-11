@@ -5,7 +5,7 @@ import 'dart:core';
 import 'dart:io';
 import 'package:alochat/Screens/alomall/alomall.dart';
 import 'package:alochat/Screens/alomall/alomall_setting.dart';
-import 'package:alochat/Services/Alomall/auth.dart';
+// import 'package:alochat/Services/Alomall/auth.dart';
 import 'package:android_id/android_id.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -446,10 +446,10 @@ class HomepageState extends State<Homepage>
   }
 
   logout(BuildContext context) async {
-    // final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-    // await firebaseAuth.signOut();
-    final AloAuth aloauth = AloAuth.instance();
-    await aloauth.logout();
+    final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+    await firebaseAuth.signOut();
+    // final AloAuth aloauth = AloAuth.instance();
+    // await aloauth.logout();
 
     await widget.prefs.clear();
 

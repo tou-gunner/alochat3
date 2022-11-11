@@ -2,7 +2,11 @@
 
 import 'dart:async';
 import 'dart:io';
+import 'package:alochat/Services/Alomall/auth.dart';
+import 'package:alochat/Services/Alomall/user.dart';
 import 'package:android_id/android_id.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:awesome_notifications_fcm/awesome_notifications_fcm.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:alochat/Configs/Dbkeys.dart';
 import 'package:alochat/Configs/Dbpaths.dart';
@@ -25,6 +29,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:alochat/Models/E2EE/e2ee.dart' as e2ee;
@@ -71,15 +76,15 @@ class LoginScreenState extends State<LoginScreen>
   bool isVerifyingCode = false;
   bool isCodeSent = false;
   dynamic isLoggedIn = false;
-  User? currentUser;
+  AloUser? currentUser;
   String? deviceid;
   var mapDeviceInfo = {};
   @override
   void initState() {
     super.initState();
     setdeviceinfo();
-    seletedlanguage = Language.languageList()
-        .where((element) => element.languageCode == 'en')
+    selectedLanguage = Language.languageList()
+        .where((element) => element.languageCode == 'lo')
         .toList()[0];
   }
 
@@ -124,9 +129,10 @@ class LoginScreenState extends State<LoginScreen>
     final timerProvider = Provider.of<TimerProvider>(context, listen: false);
     final PhoneVerificationCompleted verificationCompleted =
         (AuthCredential phoneAuthCredential) {
-      isShowCompletedLoading = true;
-      setState(() {});
-      handleSignIn(authCredential: phoneAuthCredential);
+      setState(() {
+        isShowCompletedLoading = true;
+      });
+      // handleSignIn(authCredential: phoneAuthCredential);
     };
 
     final PhoneVerificationFailed verificationFailed =
@@ -159,12 +165,12 @@ class LoginScreenState extends State<LoginScreen>
         isCodeSent = true;
       });
 
-      this.verificationId = verificationId;
+      // this.verificationId = verificationId;
     };
 
     final PhoneCodeAutoRetrievalTimeout codeAutoRetrievalTimeout =
         (String verificationId) {
-      this.verificationId = verificationId;
+      // this.verificationId = verificationId;
       setState(() {
         currentStatus = LoginStatus.failure.index;
         // _phoneNo.clear();
@@ -181,17 +187,24 @@ class LoginScreenState extends State<LoginScreen>
       Fiberchat.toast('Authentication failed Timeout. please try again.');
     };
     print('Verify phone triggered');
-    try {
-    await firebaseAuth.verifyPhoneNumber(
-        phoneNumber: (phoneCode! + _phoneNo.text).trim(),
-        timeout: Duration(seconds: timeOutSeconds),
-        verificationCompleted: verificationCompleted,
-        verificationFailed: verificationFailed,
-        codeSent: codeSent,
-        codeAutoRetrievalTimeout: codeAutoRetrievalTimeout);
-    } catch (e) {
-      Fiberchat.toast('NEW CATCH' + e.toString());
-    }
+    // try {
+    // await firebaseAuth.verifyPhoneNumber(
+    //     phoneNumber: (phoneCode! + _phoneNo.text).trim(),
+    //     timeout: Duration(seconds: timeOutSeconds),
+    //     verificationCompleted: verificationCompleted,
+    //     verificationFailed: verificationFailed,
+    //     codeSent: codeSent,
+    //     codeAutoRetrievalTimeout: codeAutoRetrievalTimeout);
+    // } catch (e) {
+    //   Fiberchat.toast('NEW CATCH' + e.toString());
+    // }
+    await AloAuth.verifyPhoneNumber(
+      phoneNumber: (_phoneNo.text).trim(),
+      timeout: Duration(seconds: timeOutSeconds),
+      verificationCompleted: verificationCompleted,
+      verificationFailed: verificationFailed,
+      codeSent: codeSent,
+      codeAutoRetrievalTimeout: codeAutoRetrievalTimeout);
   }
 
   subscribeToNotification(String currentUserNo, bool isFreshNewAccount) async {
@@ -288,18 +301,31 @@ class LoginScreenState extends State<LoginScreen>
     var phoneNo = (phoneCode! + _phoneNo.text).trim();
 
     try {
-      AuthCredential credential = PhoneAuthProvider.credential(
-          verificationId: verificationId!, smsCode: _code);
+      // AuthCredential credential = PhoneAuthProvider.credential(
+      //     verificationId: verificationId!, smsCode: _code);
 
-      UserCredential firebaseUser =
-          await firebaseAuth.signInWithCredential(credential);
+      // UserCredential firebaseUser =
+      //     await firebaseAuth.signInWithCredential(credential);
+
+      var aloUser = await AloAuth.login(verificationId!, _code);
 
       // ignore: unnecessary_null_comparison
-      if (firebaseUser != null) {
+      if (aloUser != null) {
+        //set token for Alomall webview
+        CookieManager _cookieManager = CookieManager.instance();
+        await _cookieManager.setCookie(
+          url: Uri.parse('https://alomall.la/demo/mobile'),
+          name: "key",
+          value: aloUser.token,
+          domain: "alomall.la",
+          expiresDate: DateTime.now().add(Duration(days: 9999)).millisecondsSinceEpoch,
+          isSecure: true,
+        );
+
         // Check is already sign up
         final QuerySnapshot result = await FirebaseFirestore.instance
             .collection(DbPaths.collectionusers)
-            .where(Dbkeys.id, isEqualTo: firebaseUser.user!.uid)
+            .where(Dbkeys.id, isEqualTo: aloUser.uid)
             .get();
         final List documents = result.docs;
         final pair = await e2ee.X25519().generateKeyPair();
@@ -311,16 +337,19 @@ class LoginScreenState extends State<LoginScreen>
             await storage.write(
                 key: Dbkeys.privateKey, value: pair.secretKey.toBase64());
             // Update data to server if new user
+            var name = _name.text.trim() != '' ? _name.text.trim() : aloUser.name;
             await FirebaseFirestore.instance
                 .collection(DbPaths.collectionusers)
                 .doc(phoneNo)
                 .set({
               Dbkeys.publicKey: pair.publicKey.toBase64(),
               Dbkeys.privateKey: pair.secretKey.toBase64(),
+              'alo_token': aloUser.token,
               Dbkeys.countryCode: phoneCode,
-              Dbkeys.nickname: _name.text.trim(),
-              Dbkeys.photoUrl: firebaseUser.user!.photoURL ?? '',
-              Dbkeys.id: firebaseUser.user!.uid,
+              // Dbkeys.nickname: _name.text.trim(),
+              Dbkeys.nickname: name,
+              Dbkeys.photoUrl: aloUser.photoURL ?? '',
+              Dbkeys.id: aloUser.uid,
               Dbkeys.phone: phoneNo,
               Dbkeys.phoneRaw: _phoneNo.text,
               Dbkeys.authenticationType: AuthenticationType.passcode.index,
@@ -333,7 +362,7 @@ class LoginScreenState extends State<LoginScreen>
               Dbkeys.actionmessage: widget.accountApprovalMessage,
               Dbkeys.lastLogin: DateTime.now().millisecondsSinceEpoch,
               Dbkeys.joinedOn: DateTime.now().millisecondsSinceEpoch,
-              Dbkeys.searchKey: _name.text.trim().substring(0, 1).toUpperCase(),
+              Dbkeys.searchKey: name.substring(0, 1).toUpperCase(),
               Dbkeys.videoCallMade: 0,
               Dbkeys.videoCallRecieved: 0,
               Dbkeys.audioCallMade: 0,
@@ -346,7 +375,7 @@ class LoginScreenState extends State<LoginScreen>
               Dbkeys.phonenumbervariants: phoneNumberVariantsList(
                   countrycode: phoneCode, phonenumber: _phoneNo.text)
             }, SetOptions(merge: true));
-            currentUser = firebaseUser.user;
+            currentUser = aloUser;
             await FirebaseFirestore.instance
                 .collection(DbPaths.collectiondashboard)
                 .doc(DbPaths.docuserscount)
@@ -375,8 +404,8 @@ class LoginScreenState extends State<LoginScreen>
               Dbkeys.nOTIFICATIONxxdesc: widget
                           .isaccountapprovalbyadminneeded ==
                       true
-                  ? '${_name.text.trim()} has Joined $Appname. APPROVE the user account. You can view the user profile from All Users List.'
-                  : '${_name.text.trim()} has Joined $Appname. You can view the user profile from All Users List.',
+                  ? '${aloUser.name.trim()} has Joined $Appname. APPROVE the user account. You can view the user profile from All Users List.'
+                  : '${aloUser.name.trim()} has Joined $Appname. You can view the user profile from All Users List.',
               Dbkeys.nOTIFICATIONxxtitle: 'New User Joined',
               Dbkeys.nOTIFICATIONxximageurl: null,
               Dbkeys.nOTIFICATIONxxlastupdate: DateTime.now(),
@@ -387,8 +416,8 @@ class LoginScreenState extends State<LoginScreen>
                   Dbkeys.nOTIFICATIONxxdesc: widget
                               .isaccountapprovalbyadminneeded ==
                           true
-                      ? '${_name.text.trim()} has Joined $Appname. APPROVE the user account. You can view the user profile from All Users List.'
-                      : '${_name.text.trim()} has Joined $Appname. You can view the user profile from All Users List.',
+                      ? '${aloUser.name.trim()} has Joined $Appname. APPROVE the user account. You can view the user profile from All Users List.'
+                      : '${aloUser.name.trim()} has Joined $Appname. You can view the user profile from All Users List.',
                   Dbkeys.nOTIFICATIONxxtitle: 'New User Joined',
                   Dbkeys.nOTIFICATIONxximageurl: null,
                   Dbkeys.nOTIFICATIONxxlastupdate: DateTime.now(),
@@ -401,7 +430,7 @@ class LoginScreenState extends State<LoginScreen>
             // Write data to local
 
             await widget.prefs.setString(Dbkeys.id, currentUser!.uid);
-            await widget.prefs.setString(Dbkeys.nickname, _name.text.trim());
+            await widget.prefs.setString(Dbkeys.nickname, name);
             await widget.prefs
                 .setString(Dbkeys.photoUrl, currentUser!.photoURL ?? '');
             await widget.prefs.setString(Dbkeys.phone, phoneNo);
@@ -437,12 +466,14 @@ class LoginScreenState extends State<LoginScreen>
             await storage.write(
                 key: Dbkeys.privateKey, value: documents[0][Dbkeys.privateKey]);
 
+            var name = _name.text.trim() != '' ? _name.text.trim() : aloUser.name;
             await FirebaseFirestore.instance
                 .collection(DbPaths.collectionusers)
                 .doc(phoneNo)
                 .update(
                   !documents[0].data().containsKey(Dbkeys.deviceDetails)
                       ? {
+                          'alo_token': aloUser.token,
                           Dbkeys.authenticationType:
                               AuthenticationType.passcode.index,
                           Dbkeys.accountstatus:
@@ -456,9 +487,8 @@ class LoginScreenState extends State<LoginScreen>
                               documents[0].data()![Dbkeys.lastSeen] != true
                                   ? documents[0].data()![Dbkeys.lastSeen]
                                   : DateTime.now().millisecondsSinceEpoch,
-                          Dbkeys.nickname: _name.text.trim(),
-                          Dbkeys.searchKey:
-                              _name.text.trim().substring(0, 1).toUpperCase(),
+                          Dbkeys.nickname: name,
+                          Dbkeys.searchKey: name.substring(0, 1).toUpperCase(),
                           Dbkeys.videoCallMade: 0,
                           Dbkeys.videoCallRecieved: 0,
                           Dbkeys.audioCallMade: 0,
@@ -474,9 +504,9 @@ class LoginScreenState extends State<LoginScreen>
                           Dbkeys.notificationTokens: [fcmToken],
                         }
                       : {
-                          Dbkeys.searchKey:
-                              _name.text.trim().substring(0, 1).toUpperCase(),
-                          Dbkeys.nickname: _name.text.trim(),
+                          'alo_token': aloUser.token,
+                          Dbkeys.searchKey: name.substring(0, 1).toUpperCase(),
+                          Dbkeys.nickname: name,
                           Dbkeys.authenticationType:
                               AuthenticationType.passcode.index,
                           Dbkeys.lastLogin:
@@ -493,7 +523,7 @@ class LoginScreenState extends State<LoginScreen>
                 );
             // Write data to local
             await widget.prefs.setString(Dbkeys.id, documents[0][Dbkeys.id]);
-            await widget.prefs.setString(Dbkeys.nickname, _name.text.trim());
+            await widget.prefs.setString(Dbkeys.nickname, name);
             await widget.prefs.setString(
                 Dbkeys.photoUrl, documents[0][Dbkeys.photoUrl] ?? '');
             await widget.prefs
@@ -543,19 +573,19 @@ class LoginScreenState extends State<LoginScreen>
     Locale _locale = await setLocale(language.languageCode);
     FiberchatWrapper.setLocale(this.context, _locale);
     setState(() {
-      seletedlanguage = language;
+      selectedLanguage = language;
     });
 
     await widget.prefs.setBool('islanguageselected', true);
   }
 
-  Language? seletedlanguage;
+  Language? selectedLanguage;
   customclippath(double w, double h) {
     return ClipPath(
       child: Container(
         width: MediaQuery.of(context).size.width,
         padding: EdgeInsets.only(top: MediaQuery.of(this.context).padding.top),
-        height: 400,
+        height: 300,
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
@@ -568,74 +598,77 @@ class LoginScreenState extends State<LoginScreen>
             SizedBox(
               height: Platform.isIOS ? 0 : 10,
             ),
-            Padding(
+            Container(
               padding: const EdgeInsets.only(right: 10, left: 20),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Language.languageList().length < 2
                       ? SizedBox(
-                          height: 40,
-                        )
+                    height: 40,
+                  )
                       : Container(
-                          alignment: Alignment.centerRight,
-                          margin: EdgeInsets.only(top: 4, right: 10),
-                          width: 190,
-                          padding: EdgeInsets.all(8),
-                          child: DropdownButton<Language>(
-                            underline: SizedBox(),
-                            icon: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.language_outlined,
-                                  color: DESIGN_TYPE == Themetype.whatsapp
-                                      ? fiberchatWhite
-                                      : fiberchatBlack.withOpacity(0.8),
-                                ),
-                                SizedBox(
-                                  width: 2,
-                                ),
-                                SizedBox(
-                                  width: 15,
-                                  child: Icon(
-                                    Icons.keyboard_arrow_down,
-                                    color: fiberchatLightGreen,
-                                    size: 27,
-                                  ),
-                                )
-                              ],
+                    alignment: Alignment.centerRight,
+                    margin: EdgeInsets.only(top: 4, right: 10),
+                    width: 190,
+                    padding: EdgeInsets.symmetric(horizontal: 8),
+                    child: DropdownButton<Language>(
+
+                      underline: SizedBox(),
+                      icon: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.language_outlined,
+                            color: DESIGN_TYPE == Themetype.whatsapp
+                                ? fiberchatWhite
+                                : fiberchatBlack.withOpacity(0.8),
+                          ),
+                          SizedBox(
+                            width: 2,
+                          ),
+                          SizedBox(
+                            width: 15,
+                            child: Icon(
+                              Icons.keyboard_arrow_down,
+                              color: DESIGN_TYPE == Themetype.whatsapp
+                                  ? fiberchatWhite
+                                  : fiberchatBlack.withOpacity(0.8),
+                              size: 27,
                             ),
-                            onChanged: (Language? language) {
-                              _changeLanguage(language!);
-                            },
-                            items: Language.languageList()
-                                .map<DropdownMenuItem<Language>>(
-                                  (e) => DropdownMenuItem<Language>(
-                                    value: e,
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: <Widget>[
-                                        Text(
-                                            IsShowLanguageNameInNativeLanguage ==
-                                                    true
-                                                ? '' +
-                                                    e.name +
-                                                    '  ' +
-                                                    e.flag +
-                                                    ' '
-                                                : ' ' +
-                                                    e.languageNameInEnglish +
-                                                    '  ' +
-                                                    e.flag +
-                                                    ' '),
-                                      ],
-                                    ),
-                                  ),
-                                )
-                                .toList(),
+                          )
+                        ],
+                      ),
+                      onChanged: (Language? language) {
+                        _changeLanguage(language!);
+                      },
+                      items: Language.languageList()
+                          .map<DropdownMenuItem<Language>>(
+                            (e) => DropdownMenuItem<Language>(
+                          value: e,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: <Widget>[
+                              Text(
+                                  IsShowLanguageNameInNativeLanguage ==
+                                      true
+                                      ? '' +
+                                      e.name +
+                                      '  ' +
+                                      e.flag +
+                                      ' '
+                                      : ' ' +
+                                      e.languageNameInEnglish +
+                                      '  ' +
+                                      e.flag +
+                                      ' '),
+                            ],
                           ),
                         ),
+                      )
+                          .toList(),
+                    ),
+                  ),
 
                   //---- All localizations settings----
                 ],
@@ -647,11 +680,11 @@ class LoginScreenState extends State<LoginScreen>
             w < h
                 ? Image.asset(
                     AppLogoPath,
-                    width: w / 2.65,
+                    width: w / 2.6,
                   )
                 : Image.asset(
                     AppLogoPath,
-                    height: h / 9,
+                    height: h / 12,
                   ),
             SizedBox(
               height: 0,
@@ -726,7 +759,7 @@ class LoginScreenState extends State<LoginScreen>
                         ),
                       ),
                       Container(
-                        margin: EdgeInsets.only(top: 0),
+                        margin: EdgeInsets.only(top: 10),
                         // padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
                         // height: 63,
                         height: 63,
@@ -747,7 +780,7 @@ class LoginScreenState extends State<LoginScreen>
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.all(17),
+                        padding: EdgeInsets.all(0),
                         child: Text(
                           getTranslated(this.context, 'sendsmscode'),
                           // 'Send a SMS Code to verify your number',
@@ -779,9 +812,11 @@ class LoginScreenState extends State<LoginScreen>
                                   setState(() {});
                                   RegExp e164 =
                                       new RegExp(r'^\+[1-9]\d{1,14}$');
-                                  if (_name.text.trim().isNotEmpty) {
+                                  // if (_name.text.trim().isNotEmpty) {
+                                  if (true) {
                                     String _phone =
                                         _phoneNo.text.toString().trim();
+                                    this.verificationId = _phone;
                                     if (_phone.isNotEmpty &&
                                         e164.hasMatch(phoneCode! + _phone)) {
                                       if (_phone.startsWith('0') &&
@@ -1062,7 +1097,7 @@ class LoginScreenState extends State<LoginScreen>
               // style: TextStyle(color: Mycolors.black),
             ),
           ),
-          isShowCompletedLoading == true
+          isShowCompletedLoading != true
               ? Center(
                   child: CircularProgressIndicator(
                       valueColor:
@@ -1091,7 +1126,7 @@ class LoginScreenState extends State<LoginScreen>
           SizedBox(
             height: 20,
           ),
-          isShowCompletedLoading == true
+          isShowCompletedLoading != true
               ? SizedBox(
                   height: 36,
                 )
