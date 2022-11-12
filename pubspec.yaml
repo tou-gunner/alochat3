@@ -168,4 +168,5 @@ flutter:
     - assets/sounds/
     - assets/flags/
     - assets/fonts/
+    - assets/attachment_icons/
     - lib/Services/localization/json_languages/

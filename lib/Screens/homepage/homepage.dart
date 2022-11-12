@@ -1301,7 +1301,10 @@ class HomepageState extends State<Homepage>
   }
 
   DateTime? currentBackPressTime = DateTime.now();
-  Future<bool> onWillPop() {
+  Future<bool> onWillPop(bool isInWebviewAndCanGoBack) {
+    if (isInWebviewAndCanGoBack) {
+      return Future.value(true);
+    }
     DateTime now = DateTime.now();
     if (now.difference(currentBackPressTime!) > Duration(seconds: 3)) {
       currentBackPressTime = now;
@@ -1532,6 +1535,7 @@ class HomepageState extends State<Homepage>
       ),
     ];
 
+    final discoverTabIndex = observer.isCallFeatureTotallyHide ? 2 : 3;
     return isNotAllowEmulator == true
         ? errorScreen(
             'Emulator Not Allowed.', ' Please use any real device & Try again.')
@@ -1546,7 +1550,11 @@ class HomepageState extends State<Homepage>
                     : PickupLayout(
                         prefs: widget.prefs,
                         scaffold: Fiberchat.getNTPWrappedWidget(WillPopScope(
-                          onWillPop: onWillPop,
+                          onWillPop: () {
+                            final isInWebViewAndCanGoBack = tabController!.index == discoverTabIndex
+                                && canDiscoverPageGoback;
+                            return onWillPop(isInWebViewAndCanGoBack);
+                          },
                           child: Scaffold(
                               backgroundColor: Colors.white,
 //                               appBar: AppBar(

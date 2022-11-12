@@ -412,7 +412,7 @@ class NotificationController with ChangeNotifier {
         null,
         [
           NotificationChannel(
-            channelGroupKey: 'call_channel',
+            channelGroupKey: 'call_channels',
             channelKey: 'video_call',
             channelName: 'Video Call',
             channelDescription: 'Video Call',
@@ -421,7 +421,16 @@ class NotificationController with ChangeNotifier {
             soundSource: 'resource://raw/ringtone',
           ),
           NotificationChannel(
-              channelGroupKey: 'call_channel',
+            channelGroupKey: 'call_channels',
+            channelKey: 'audio_call',
+            channelName: 'Audio Call',
+            channelDescription: 'Audio Call',
+            importance: NotificationImportance.Max,
+            playSound: true,
+            soundSource: 'resource://raw/ringtone',
+          ),
+          NotificationChannel(
+              channelGroupKey: 'call_channels',
               channelKey: 'missed_call',
               channelName: 'Missed Call',
               channelDescription: 'Missed Call',
@@ -431,8 +440,8 @@ class NotificationController with ChangeNotifier {
         ],
         channelGroups: [
           NotificationChannelGroup(
-              channelGroupKey: 'call_channel',
-              channelGroupName: 'Call Channel'),
+              channelGroupKey: 'call_channels',
+              channelGroupName: 'Call Channels'),
         ],
         debug: debug);
 
@@ -718,13 +727,13 @@ class NotificationController with ChangeNotifier {
     //     ),
     //     backgroundColor: Colors.blueAccent,));
 
-    print('"SilentData": ${silentData.toString()}');
+    // print('"SilentData": ${silentData.toString()}');
 
-    if (silentData.createdLifeCycle != NotificationLifeCycle.Foreground) {
-      print("bg");
-    } else {
-      print("FOREGROUND");
-    }
+    // if (silentData.createdLifeCycle != NotificationLifeCycle.Foreground) {
+    //   print("bg");
+    // } else {
+    //   print("FOREGROUND");
+    // }
 
     // print("starting long task");
     // await Future.delayed(Duration(seconds: 4));
@@ -903,7 +912,7 @@ class NotificationController with ChangeNotifier {
           category: NotificationCategory.MissedCall,
         ),
       );
-    } else {
+    } else if(title == 'Incoming Video Call...') {
       await awesomeNotifications.createNotification(
         content: NotificationContent(
             id: 1,
@@ -967,6 +976,32 @@ class NotificationController with ChangeNotifier {
       // FlutterForegroundTask.wakeUpScreen();
       // await _startForegroundTask();
 
+    } else if(title == 'Incoming Audio Call...') {
+      await awesomeNotifications.createNotification(
+        content: NotificationContent(
+          id: 1,
+          channelKey: 'audio_call',
+          title: '$titleMultilang',
+          body: '$bodyMultilang',
+          criticalAlert: true,
+          wakeUpScreen: true,
+          autoDismissible: false,
+          // customSound: 'ringtone',
+          payload: {'phone': phone, 'data': data},
+          category: NotificationCategory.Call,
+          // actionType: ActionType.DisabledAction
+        ),
+        actionButtons: <NotificationActionButton>[
+          NotificationActionButton(
+            key: 'yes',
+            label: 'Accept',
+          ),
+          NotificationActionButton(
+              key: 'no',
+              label: 'Reject',
+              actionType: ActionType.SilentBackgroundAction),
+        ],
+      );
     }
   }
 
