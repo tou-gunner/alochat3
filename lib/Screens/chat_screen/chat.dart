@@ -5359,7 +5359,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
           .cameraAndMicrophonePermissionsGranted()
           .then((isgranted) {
         if (isgranted == true) {
-          call(this.context, true);
+          call(this.context, false);
         } else {
           Fiberchat.showRationale(
               getTranslated(

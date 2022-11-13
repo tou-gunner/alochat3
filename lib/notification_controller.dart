@@ -562,7 +562,7 @@ class NotificationController with ChangeNotifier {
         onFcmSilentDataHandle: NotificationController.mySilentDataHandle,
         onFcmTokenHandle: NotificationController.myFcmTokenHandle,
         onNativeTokenHandle: NotificationController.myNativeTokenHandle,
-        licenseKey: null,
+        licenseKey: 'G0E3HQtVUxGt886U9Bn0Z6WKlUoNHLjCMtHQV9sUaIcK0Ay5TZcnlTL1abIutDs4aCe6bBJ4x7nziBA78qcEQxVUrTX9cJjC8RH/Tth1GczYMgdhTNaxAkRjrlGB7BaYpfD137a88FcMyws1BoPo1N+RmXE/EyzeT+2zAm4U7G0=',
         // On this example app, the app ID / Bundle Id are different
         // for each platform
         // Platform.isIOS
