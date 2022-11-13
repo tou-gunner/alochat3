@@ -641,7 +641,7 @@ class NotificationController with ChangeNotifier {
     String? actionSourceText =
         AwesomeAssertUtils.toSimpleEnumString(receivedAction.actionLifeCycle);
 
-    if (receivedAction.channelKey == 'video_call') {
+    if (receivedAction.channelKey == 'video_call' || receivedAction.channelKey == 'audio_call') {
       final firebase = await Firebase.initializeApp();
       final CallMethods callMethods = CallMethods();
       final data = jsonDecode(receivedAction.payload!['data']!);
