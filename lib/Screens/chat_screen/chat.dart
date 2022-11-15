@@ -1072,6 +1072,28 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
   contextMenuNew(contextForDialog, Map<String, dynamic> mssgDoc, bool isTemp,
       {bool saved = false}) {
     List<Widget> tiles = List.from(<Widget>[]);
+
+    //Seng add - Reply button
+    if (mssgDoc[Dbkeys.hasSenderDeleted] == false) {
+      tiles.add(ListTile(
+          dense: true,
+          leading: Icon(Icons.reply),
+          title: Text(
+            getTranslated(contextForDialog, 'reply'),
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+          onTap: () {
+            Navigator.pop(contextForDialog);
+            setStateIfMounted(() {
+              isReplyKeyboard = true;
+              replyDoc = mssgDoc;
+            });
+            HapticFeedback.heavyImpact();
+            keyboardFocusNode.requestFocus();
+          },
+      ));
+    }  
+    
     //####################----------------------- Delete Msgs for SENDER ---------------------------------------------------
     if ((mssgDoc[Dbkeys.from] == currentUserNo &&
             mssgDoc[Dbkeys.hasSenderDeleted] == false) &&

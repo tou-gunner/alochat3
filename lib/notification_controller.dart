@@ -799,7 +799,7 @@ class NotificationController with ChangeNotifier {
             );
           }, duration: Duration(milliseconds: 2000));
         } else {
-          showOverlayNotification((context) {
+          var overlay = showOverlayNotification((context) {
             return Card(
               margin: const EdgeInsets.symmetric(horizontal: 4),
               child: SafeArea(

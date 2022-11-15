@@ -1497,6 +1497,28 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
   contextMenuNew(contextForDialog, Map<String, dynamic> mssgDoc, bool isTemp,
       {bool saved = false}) {
     List<Widget> tiles = List.from(<Widget>[]);
+
+    //Seng add - Reply button
+    if (mssgDoc[Dbkeys.hasSenderDeleted] == false) {
+      tiles.add(ListTile(
+        dense: true,
+        leading: Icon(Icons.reply),
+        title: Text(
+          getTranslated(contextForDialog, 'reply'),
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        onTap: () {
+          Navigator.pop(contextForDialog);
+          setStateIfMounted(() {
+            isReplyKeyboard = true;
+            replyDoc = mssgDoc;
+          });
+          HapticFeedback.heavyImpact();
+          keyboardFocusNode.requestFocus();
+        },
+      ));
+    }
+
     //####################----------------------- Delete Msgs for SENDER ---------------------------------------------------
     if ((mssgDoc[Dbkeys.from] == widget.currentUserNo &&
             mssgDoc[Dbkeys.hasSenderDeleted] == false) &&
@@ -3707,6 +3729,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
           borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
         ),
         builder: (BuildContext context) {
+          const iconSize = 50.0;
           // return your layout
           return Container(
             padding: EdgeInsets.all(12),
@@ -3755,12 +3778,18 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                           },
                           elevation: .5,
                           fillColor: Colors.indigo,
-                          child: Icon(
-                            Icons.file_copy,
-                            size: 25.0,
-                            color: Colors.white,
+                          // child: Icon(
+                          //   Icons.file_copy,
+                          //   size: 25.0,
+                          //   color: Colors.white,
+                          // ),
+                          // padding: EdgeInsets.all(15.0),
+                          child: Image.asset(
+                            'assets/attachment_icons/newsletter.png',
+                            fit: BoxFit.cover,
+                            height: iconSize,
+                            width: iconSize,
                           ),
-                          padding: EdgeInsets.all(15.0),
                           shape: CircleBorder(),
                         ),
                         SizedBox(
@@ -3817,12 +3846,18 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                           },
                           elevation: .5,
                           fillColor: Colors.pink[600],
-                          child: Icon(
-                            Icons.video_collection_sharp,
-                            size: 25.0,
-                            color: Colors.white,
+                          // child: Icon(
+                          //   Icons.video_collection_sharp,
+                          //   size: 25.0,
+                          //   color: Colors.white,
+                          // ),
+                          // padding: EdgeInsets.all(15.0),
+                          child: Image.asset(
+                            'assets/attachment_icons/video_player.png',
+                            fit: BoxFit.cover,
+                            height: iconSize,
+                            width: iconSize,
                           ),
-                          padding: EdgeInsets.all(15.0),
                           shape: CircleBorder(),
                         ),
                         SizedBox(
@@ -3868,12 +3903,18 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                           },
                           elevation: .5,
                           fillColor: Colors.purple,
-                          child: Icon(
-                            Icons.image_rounded,
-                            size: 25.0,
-                            color: Colors.white,
+                          // child: Icon(
+                          //   Icons.image_rounded,
+                          //   size: 25.0,
+                          //   color: Colors.white,
+                          // ),
+                          // padding: EdgeInsets.all(15.0),
+                          child: Image.asset(
+                            'assets/attachment_icons/photo_camera.png',
+                            fit: BoxFit.cover,
+                            height: iconSize,
+                            width: iconSize,
                           ),
-                          padding: EdgeInsets.all(15.0),
                           shape: CircleBorder(),
                         ),
                         SizedBox(
@@ -3932,12 +3973,18 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                           },
                           elevation: .5,
                           fillColor: Colors.yellow[900],
-                          child: Icon(
-                            Icons.mic_rounded,
-                            size: 25.0,
-                            color: Colors.white,
+                          // child: Icon(
+                          //   Icons.mic_rounded,
+                          //   size: 25.0,
+                          //   color: Colors.white,
+                          // ),
+                          // padding: EdgeInsets.all(15.0),
+                          child: Image.asset(
+                            'assets/attachment_icons/microphone.png',
+                            fit: BoxFit.cover,
+                            height: iconSize,
+                            width: iconSize,
                           ),
-                          padding: EdgeInsets.all(15.0),
                           shape: CircleBorder(),
                         ),
                         SizedBox(
@@ -3982,12 +4029,18 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                           },
                           elevation: .5,
                           fillColor: Colors.cyan[700],
-                          child: Icon(
-                            Icons.location_on,
-                            size: 25.0,
-                            color: Colors.white,
+                          // child: Icon(
+                          //   Icons.location_on,
+                          //   size: 25.0,
+                          //   color: Colors.white,
+                          // ),
+                          // padding: EdgeInsets.all(15.0),
+                          child: Image.asset(
+                            'assets/attachment_icons/address.png',
+                            fit: BoxFit.cover,
+                            height: iconSize,
+                            width: iconSize,
                           ),
-                          padding: EdgeInsets.all(15.0),
                           shape: CircleBorder(),
                         ),
                         SizedBox(
@@ -4033,12 +4086,18 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                           },
                           elevation: .5,
                           fillColor: Colors.blue[800],
-                          child: Icon(
-                            Icons.person,
-                            size: 25.0,
-                            color: Colors.white,
+                          // child: Icon(
+                          //   Icons.person,
+                          //   size: 25.0,
+                          //   color: Colors.white,
+                          // ),
+                          // padding: EdgeInsets.all(15.0),
+                          child: Image.asset(
+                            'assets/attachment_icons/address_book.png',
+                            fit: BoxFit.cover,
+                            height: iconSize,
+                            width: iconSize,
                           ),
-                          padding: EdgeInsets.all(15.0),
                           shape: CircleBorder(),
                         ),
                         SizedBox(
