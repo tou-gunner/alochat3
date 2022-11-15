@@ -1,6 +1,7 @@
 //*************   © Copyrighted by Thinkcreative_Technologies. An Exclusive item of Envato market. Make sure you have purchased a Regular License OR Extended license for the Source Code from Envato to use this product. See the License Defination attached with source code. *********************
 
 import 'package:alochat/main.dart';
+import 'package:alochat/widgets/CameraGalleryImagePicker/image_pick.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:alochat/Configs/app_constants.dart';
@@ -4013,33 +4014,57 @@ class _GroupChatPageState extends State<GroupChatPage>
                           onPressed: () async {
                             hidekeyboard(context);
                             Navigator.of(context).pop();
-                            await Navigator.push(
-                                context,
-                                new MaterialPageRoute(
-                                    builder: (context) =>
-                                        new CameraImageGalleryPicker(
-                                          onTakeFile: (file) async {
-                                            setStatusBarColor();
 
-                                            int timeStamp = DateTime.now()
-                                                .millisecondsSinceEpoch;
+                            var selectedFiles = await pickMultiImages(context)
+                                .catchError((err) {
+                              Fiberchat.toast(
+                                  "Invalid file. Cannot Select this file !");
+                            });
 
-                                            String? url =
-                                                await uploadSelectedLocalFileWithProgressIndicator(
-                                                    file,
-                                                    false,
-                                                    false,
-                                                    timeStamp);
-                                            if (url != null) {
-                                              onSendMessage(
-                                                  context: this.context,
-                                                  content: url,
-                                                  type: MessageType.image,
-                                                  timestamp: timeStamp);
-                                              file.delete();
-                                            }
-                                          },
-                                        )));
+                            if (selectedFiles == null || selectedFiles.isEmpty) {
+                            } else {
+                              List<String> extensions = selectedFiles.map((e) => p.extension(e.path).toLowerCase()).toList();
+                              final isThereNotSupportedFile = extensions.any((e) => ![".png", ".jpg", ".jpeg"].contains(e));
+
+                              if (isThereNotSupportedFile) {
+                                Fiberchat.toast(
+                                    "There are some files those are not supported type. Please choose only .jpg, .jpeg, .png files.");
+                              } else {
+                                var tempFiles = <File>[];
+                                final tempDir = await getTemporaryDirectory();
+                                for(var selectedFile in selectedFiles) {
+                                  File file = await File(p.extension(selectedFile.path).toLowerCase() == ".png"
+                                      ? '${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}.png'
+                                      : '${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}.jpg')
+                                      .create();
+                                  file.writeAsBytesSync(
+                                      selectedFile.readAsBytesSync());
+                                  tempFiles.add(file);
+                                }
+                                setStatusBarColor();
+
+                                for (var tempFile in tempFiles) {
+                                  await Future.delayed(Duration(milliseconds: 1)).then((_) async {
+                                    int timeStamp = DateTime.now()
+                                        .millisecondsSinceEpoch;
+                                    String? url =
+                                    await uploadSelectedLocalFileWithProgressIndicator(
+                                        tempFile,
+                                        false,
+                                        false,
+                                        timeStamp);
+                                    if (url != null) {
+                                      onSendMessage(
+                                          context: this.context,
+                                          content: url,
+                                          type: MessageType.image,
+                                          timestamp: timeStamp);
+                                      tempFile.delete();
+                                    }
+                                  });
+                                }
+                              }
+                            }
                           },
                           elevation: .5,
                           fillColor: Colors.purple,

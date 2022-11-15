@@ -9,6 +9,7 @@ import 'package:alochat/Utils/custom_url_launcher.dart';
 import 'package:alochat/Utils/setStatusBarColor.dart';
 import 'package:alochat/widgets/AllinOneCameraGalleryImageVideoPicker/AllinOneCameraGalleryImageVideoPicker.dart';
 import 'package:alochat/widgets/CameraGalleryImagePicker/camera_image_gallery_picker.dart';
+import 'package:alochat/widgets/CameraGalleryImagePicker/image_pick.dart';
 import 'package:alochat/widgets/CameraGalleryImagePicker/multiMediaPicker.dart';
 import 'package:alochat/widgets/DownloadManager/download_all_file_type.dart';
 import 'package:alochat/widgets/VideoEditor/video_editor.dart';
@@ -3729,30 +3730,53 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                             hidekeyboard(context);
                             Navigator.of(context).pop();
 
-                            await Navigator.push(
-                                context,
-                                new MaterialPageRoute(
-                                    builder: (context) =>
-                                        new CameraImageGalleryPicker(
-                                          onTakeFile: (file) async {
-                                            setStatusBarColor();
+                            var selectedFiles = await pickMultiImages(context)
+                                .catchError((err) {
+                              Fiberchat.toast(
+                                  "Invalid file. Cannot Select this file !");
+                            });
 
-                                            int timeStamp = DateTime.now()
-                                                .millisecondsSinceEpoch;
+                            if (selectedFiles == null || selectedFiles.isEmpty) {
+                            } else {
+                              List<String> extensions = selectedFiles.map((e) => p.extension(e.path).toLowerCase()).toList();
+                              final isThereNotSupportedFile = extensions.any((e) => ![".png", ".jpg", ".jpeg"].contains(e));
 
-                                            String? url =
-                                                await uploadSelectedLocalFileWithProgressIndicator(
-                                                    file,
-                                                    false,
-                                                    false,
-                                                    timeStamp);
-                                            if (url != null) {
-                                              onSendMessage(this.context, url,
-                                                  MessageType.image, timeStamp);
-                                              await file.delete();
-                                            }
-                                          },
-                                        )));
+                              if (isThereNotSupportedFile) {
+                                Fiberchat.toast(
+                                    "There are some files those are not supported type. Please choose only .jpg, .jpeg, .png files.");
+                              } else {
+                                var tempFiles = <File>[];
+                                final tempDir = await getTemporaryDirectory();
+                                for(var selectedFile in selectedFiles) {
+                                  File file = await File(p.extension(selectedFile.path).toLowerCase() == ".png"
+                                      ? '${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}.png'
+                                      : '${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}.jpg')
+                                      .create();
+                                  file.writeAsBytesSync(
+                                      selectedFile.readAsBytesSync());
+                                  tempFiles.add(file);
+                                }
+                                setStatusBarColor();
+
+                                for (var tempFile in tempFiles) {
+                                  await Future.delayed(Duration(milliseconds: 1)).then((_) async {
+                                    int timeStamp = DateTime.now()
+                                        .millisecondsSinceEpoch;
+                                    String? url =
+                                    await uploadSelectedLocalFileWithProgressIndicator(
+                                        tempFile,
+                                        false,
+                                        false,
+                                        timeStamp);
+                                    if (url != null) {
+                                      onSendMessage(this.context, url,
+                                          MessageType.image, timeStamp);
+                                      await tempFile.delete();
+                                    }
+                                  });
+                                }
+                              }
+                            }
                           },
                           elevation: .5,
                           fillColor: Colors.purple,

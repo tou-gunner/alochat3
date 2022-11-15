@@ -14,8 +14,9 @@ import 'package:video_player/video_player.dart';
 import 'package:path/path.dart' as p;
 
 class CameraImageGalleryPicker extends StatefulWidget {
-  final Function(File file) onTakeFile;
-  const CameraImageGalleryPicker({Key? key, required this.onTakeFile})
+  final bool multiple;
+  final Function(List<File> file) onTakeFile;
+  const CameraImageGalleryPicker({Key? key, required this.onTakeFile, this.multiple = false})
       : super(key: key);
   @override
   _CameraImageGalleryPickerState createState() {
@@ -290,46 +291,79 @@ class _CameraImageGalleryPickerState extends State<CameraImageGalleryPicker>
                       IconButton(
                           onPressed: () async {
                             // Navigator.of(context).pop();
-                            File? selectedMedia = await pickSingleImage(context)
-                                .catchError((err) {
-                              Fiberchat.toast(
-                                  "Invalid file. Cannot Select this file !");
-                            });
+                            if (widget.multiple) {
+                              var selectedFiles = await pickMultiImages(context)
+                                  .catchError((err) {
+                                Fiberchat.toast(
+                                    "Invalid file. Cannot Select this file !");
+                              });
 
-                            if (selectedMedia == null) {
-                            } else {
-                              String fileExtension =
-                                  p.extension(selectedMedia.path).toLowerCase();
+                              if (selectedFiles == null || selectedFiles.isEmpty) {
+                              } else {
+                                List<String> extensions = selectedFiles.map((e) => p.extension(e.path).toLowerCase()).toList();
+                                final isThereNotSupportedFile = extensions.any((e) => ![".png", ".jpg", ".jpeg"].contains(e));
 
-                              if (fileExtension == ".png" ||
-                                  fileExtension == ".jpg" ||
-                                  fileExtension == ".jpeg") {
-                                final tempDir = await getTemporaryDirectory();
-                                File file = await File(fileExtension == ".png"
+                                if (isThereNotSupportedFile) {
+                                  Fiberchat.toast(
+                                      "There are some files those are not supported type. Please choose only .jpg, .jpeg, .png files.");
+                                } else {
+                                  var tempFiles = <File>[];
+                                  final tempDir = await getTemporaryDirectory();
+                                  for(var selectedFile in selectedFiles) {
+                                    File file = await File(p.extension(selectedFile.path).toLowerCase() == ".png"
                                         ? '${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}.png'
                                         : '${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}.jpg')
-                                    .create();
-                                file.writeAsBytesSync(
-                                    selectedMedia.readAsBytesSync());
-                                controller!.dispose();
-                                _flashModeControlRowAnimationController
-                                    .dispose();
-                                _exposureModeControlRowAnimationController
-                                    .dispose();
-                                await Navigator.pushReplacement(
-                                    context,
-                                    new MaterialPageRoute(
-                                        builder: (context) => PhotoEditor(
-                                              isPNG: false,
-                                              onImageEdit: (editedImage) {
-                                                widget.onTakeFile(editedImage);
-                                              },
-                                              imageFilePreSelected:
-                                                  File(file.path),
-                                            )));
-                              } else {
+                                        .create();
+                                    file.writeAsBytesSync(
+                                        selectedFile.readAsBytesSync());
+                                    tempFiles.add(file);
+                                  }
+                                  Navigator.of(context).pop();
+                                  widget.onTakeFile(tempFiles);
+                                }
+                              }
+                            } else {
+                              File? selectedMedia = await pickSingleImage(context)
+                                  .catchError((err) {
                                 Fiberchat.toast(
-                                    "File type not supported. Please choose a .jpg, .jpeg, .png file. \n\nSelected file was $fileExtension ");
+                                    "Invalid file. Cannot Select this file !");
+                              });
+
+                              if (selectedMedia == null) {
+                              } else {
+                                String fileExtension =
+                                p.extension(selectedMedia.path).toLowerCase();
+
+                                if (fileExtension == ".png" ||
+                                    fileExtension == ".jpg" ||
+                                    fileExtension == ".jpeg") {
+                                  final tempDir = await getTemporaryDirectory();
+                                  File file = await File(fileExtension == ".png"
+                                      ? '${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}.png'
+                                      : '${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}.jpg')
+                                      .create();
+                                  file.writeAsBytesSync(
+                                      selectedMedia.readAsBytesSync());
+                                  controller!.dispose();
+                                  _flashModeControlRowAnimationController
+                                      .dispose();
+                                  _exposureModeControlRowAnimationController
+                                      .dispose();
+                                  await Navigator.pushReplacement(
+                                      context,
+                                      new MaterialPageRoute(
+                                          builder: (context) => PhotoEditor(
+                                            isPNG: false,
+                                            onImageEdit: (editedImage) {
+                                              widget.onTakeFile([editedImage]);
+                                            },
+                                            imageFilePreSelected:
+                                            File(file.path),
+                                          )));
+                                } else {
+                                  Fiberchat.toast(
+                                      "File type not supported. Please choose a .jpg, .jpeg, .png file. \n\nSelected file was $fileExtension ");
+                                }
                               }
                             }
                           },
@@ -942,7 +976,7 @@ class _CameraImageGalleryPickerState extends State<CameraImageGalleryPicker>
                   builder: (context) => PhotoEditor(
                         isPNG: false,
                         onImageEdit: (editedImage) {
-                          widget.onTakeFile(editedImage);
+                          widget.onTakeFile([editedImage]);
                         },
                         imageFilePreSelected: File(file.path),
                       )));

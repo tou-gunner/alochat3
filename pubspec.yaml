@@ -1,7 +1,7 @@
 name: alochat #changing it will force you to change appname in import statement inside every .dart file.
 description: Chats & Calling app
 
-version: 1.1.0+52
+version: 1.1.0+53
 publish_to: none
 
 environment:

@@ -3,6 +3,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:alochat/widgets/CameraGalleryImagePicker/image_pick.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:alochat/Configs/app_constants.dart';
@@ -1877,6 +1878,7 @@ class _BroadcastChatPageState extends State<BroadcastChatPage>
           borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
         ),
         builder: (BuildContext context) {
+          const iconSize = 50.0;
           // return your layout
           return Container(
             padding: EdgeInsets.all(12),
@@ -1933,12 +1935,18 @@ class _BroadcastChatPageState extends State<BroadcastChatPage>
                           },
                           elevation: .5,
                           fillColor: Colors.indigo,
-                          child: Icon(
-                            Icons.file_copy,
-                            size: 25.0,
-                            color: Colors.white,
+                          // child: Icon(
+                          //   Icons.file_copy,
+                          //   size: 25.0,
+                          //   color: Colors.white,
+                          // ),
+                          // padding: EdgeInsets.all(15.0),
+                          child: Image.asset(
+                            'assets/attachment_icons/newsletter.png',
+                            fit: BoxFit.cover,
+                            height: iconSize,
+                            width: iconSize,
                           ),
-                          padding: EdgeInsets.all(15.0),
                           shape: CircleBorder(),
                         ),
                         SizedBox(
@@ -2079,12 +2087,18 @@ class _BroadcastChatPageState extends State<BroadcastChatPage>
                           },
                           elevation: .5,
                           fillColor: Colors.pink[600],
-                          child: Icon(
-                            Icons.video_collection_sharp,
-                            size: 25.0,
-                            color: Colors.white,
+                          // child: Icon(
+                          //   Icons.video_collection_sharp,
+                          //   size: 25.0,
+                          //   color: Colors.white,
+                          // ),
+                          // padding: EdgeInsets.all(15.0),
+                          child: Image.asset(
+                            'assets/attachment_icons/video_player.png',
+                            fit: BoxFit.cover,
+                            height: iconSize,
+                            width: iconSize,
                           ),
-                          padding: EdgeInsets.all(15.0),
                           shape: CircleBorder(),
                         ),
                         SizedBox(
@@ -2113,50 +2127,78 @@ class _BroadcastChatPageState extends State<BroadcastChatPage>
                             hidekeyboard(context);
                             Navigator.of(context).pop();
 
-                            await Navigator.push(
-                                context,
-                                new MaterialPageRoute(
-                                    builder:
-                                        (context) =>
-                                            new CameraImageGalleryPicker(
-                                              onTakeFile: (file) async {
-                                                setStatusBarColor();
+                            var selectedFiles = await pickMultiImages(context)
+                                .catchError((err) {
+                              Fiberchat.toast(
+                                  "Invalid file. Cannot Select this file !");
+                            });
 
-                                                int timeStamp = DateTime.now()
-                                                    .millisecondsSinceEpoch;
+                            if (selectedFiles == null || selectedFiles.isEmpty) {
+                            } else {
+                              List<String> extensions = selectedFiles.map((e) => p.extension(e.path).toLowerCase()).toList();
+                              final isThereNotSupportedFile = extensions.any((e) => ![".png", ".jpg", ".jpeg"].contains(e));
 
-                                                String? url =
-                                                    await uploadSelectedLocalFileWithProgressIndicator(
-                                                        file,
-                                                        false,
-                                                        false,
-                                                        timeStamp);
-                                                if (url != null) {
-                                                  onSendMessage(
-                                                      context: this.context,
-                                                      content: url,
-                                                      type: MessageType.image,
-                                                      recipientList: broadcastList
-                                                          .toList()
-                                                          .firstWhere((element) =>
-                                                              element.docmap[Dbkeys
-                                                                  .broadcastID] ==
-                                                              widget
-                                                                  .broadcastID)
-                                                          .docmap[Dbkeys.broadcastMEMBERSLIST]);
-                                                  file.delete();
-                                                }
-                                              },
-                                            )));
+                              if (isThereNotSupportedFile) {
+                                Fiberchat.toast(
+                                    "There are some files those are not supported type. Please choose only .jpg, .jpeg, .png files.");
+                              } else {
+                                var tempFiles = <File>[];
+                                final tempDir = await getTemporaryDirectory();
+                                for(var selectedFile in selectedFiles) {
+                                  File file = await File(p.extension(selectedFile.path).toLowerCase() == ".png"
+                                      ? '${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}.png'
+                                      : '${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}.jpg')
+                                      .create();
+                                  file.writeAsBytesSync(
+                                      selectedFile.readAsBytesSync());
+                                  tempFiles.add(file);
+                                }
+                                setStatusBarColor();
+
+                                for (var tempFile in tempFiles) {
+                                  await Future.delayed(Duration(milliseconds: 1)).then((_) async {
+                                    int timeStamp = DateTime.now()
+                                        .millisecondsSinceEpoch;
+                                    String? url =
+                                    await uploadSelectedLocalFileWithProgressIndicator(
+                                        tempFile,
+                                        false,
+                                        false,
+                                        timeStamp);
+                                    if (url != null) {
+                                      onSendMessage(
+                                          context: this.context,
+                                          content: url,
+                                          type: MessageType.image,
+                                          recipientList: broadcastList
+                                              .toList()
+                                              .firstWhere((element) =>
+                                          element.docmap[Dbkeys
+                                              .broadcastID] ==
+                                              widget
+                                                  .broadcastID)
+                                              .docmap[Dbkeys.broadcastMEMBERSLIST]);
+                                      tempFile.delete();
+                                    }
+                                  });
+                                }
+                              }
+                            }
                           },
                           elevation: .5,
                           fillColor: Colors.purple,
-                          child: Icon(
-                            Icons.image_rounded,
-                            size: 25.0,
-                            color: Colors.white,
+                          // child: Icon(
+                          //   Icons.image_rounded,
+                          //   size: 25.0,
+                          //   color: Colors.white,
+                          // ),
+                          // padding: EdgeInsets.all(15.0),
+                          child: Image.asset(
+                            'assets/attachment_icons/photo_camera.png',
+                            fit: BoxFit.cover,
+                            height: iconSize,
+                            width: iconSize,
                           ),
-                          padding: EdgeInsets.all(15.0),
                           shape: CircleBorder(),
                         ),
                         SizedBox(
@@ -2221,12 +2263,18 @@ class _BroadcastChatPageState extends State<BroadcastChatPage>
                           },
                           elevation: .5,
                           fillColor: Colors.yellow[900],
-                          child: Icon(
-                            Icons.mic_rounded,
-                            size: 25.0,
-                            color: Colors.white,
+                          // child: Icon(
+                          //   Icons.mic_rounded,
+                          //   size: 25.0,
+                          //   color: Colors.white,
+                          // ),
+                          // padding: EdgeInsets.all(15.0),
+                          child: Image.asset(
+                            'assets/attachment_icons/microphone.png',
+                            fit: BoxFit.cover,
+                            height: iconSize,
+                            width: iconSize,
                           ),
-                          padding: EdgeInsets.all(15.0),
                           shape: CircleBorder(),
                         ),
                         SizedBox(
@@ -2277,12 +2325,18 @@ class _BroadcastChatPageState extends State<BroadcastChatPage>
                           },
                           elevation: .5,
                           fillColor: Colors.cyan[700],
-                          child: Icon(
-                            Icons.location_on,
-                            size: 25.0,
-                            color: Colors.white,
+                          // child: Icon(
+                          //   Icons.location_on,
+                          //   size: 25.0,
+                          //   color: Colors.white,
+                          // ),
+                          // padding: EdgeInsets.all(15.0),
+                          child: Image.asset(
+                            'assets/attachment_icons/address.png',
+                            fit: BoxFit.cover,
+                            height: iconSize,
+                            width: iconSize,
                           ),
-                          padding: EdgeInsets.all(15.0),
                           shape: CircleBorder(),
                         ),
                         SizedBox(
@@ -2334,12 +2388,18 @@ class _BroadcastChatPageState extends State<BroadcastChatPage>
                           },
                           elevation: .5,
                           fillColor: Colors.blue[800],
-                          child: Icon(
-                            Icons.person,
-                            size: 25.0,
-                            color: Colors.white,
+                          // child: Icon(
+                          //   Icons.person,
+                          //   size: 25.0,
+                          //   color: Colors.white,
+                          // ),
+                          // padding: EdgeInsets.all(15.0),
+                          child: Image.asset(
+                            'assets/attachment_icons/address_book.png',
+                            fit: BoxFit.cover,
+                            height: iconSize,
+                            width: iconSize,
                           ),
-                          padding: EdgeInsets.all(15.0),
                           shape: CircleBorder(),
                         ),
                         SizedBox(
