@@ -105,14 +105,15 @@ class _FiberchatWrapperState extends State<FiberchatWrapper> with WidgetsBinding
   }
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      AwesomeNotifications().getInitialNotificationAction(
-          removeFromActionEvents: false
-      ).then((action) {
-        if(action?.channelKey == 'call_channel') {
-          print('1234');
-        }
-      });
+    if (state == AppLifecycleState.resumed || state == AppLifecycleState.detached) {
+      // AwesomeNotifications().getInitialNotificationAction(
+      //     removeFromActionEvents: false
+      // ).then((action) {
+      //   if(action?.channelKey == 'call_channel') {
+      //     print('1234');
+      //   }
+      // });
+      AwesomeNotifications().cancelAll();
     }
   }
 
