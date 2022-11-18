@@ -6,7 +6,7 @@ import 'dart:io';
 import 'package:alochat/Screens/alomall/alomall.dart';
 import 'package:alochat/Screens/alomall/alomall_setting.dart';
 // import 'package:alochat/Services/Alomall/auth.dart';
-import 'package:android_id/android_id.dart';
+// import 'package:android_id/android_id.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_info_plus/device_info_plus.dart';
@@ -406,17 +406,18 @@ class HomepageState extends State<Homepage>
   Future<void> setdeviceinfo() async {
     if (Platform.isAndroid == true) {
       AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-      const _androidIdPlugin = AndroidId();
-      final String? androidId = await _androidIdPlugin.getId();
+      // const _androidIdPlugin = AndroidId();
+      // final String? androidId = await _androidIdPlugin.getId();
       setState(() {
-        deviceid = androidInfo.id! + androidId!;
+        // deviceid = androidInfo.id! + androidId!;
         mapDeviceInfo = {
           Dbkeys.deviceInfoMODEL: androidInfo.model,
           Dbkeys.deviceInfoOS: 'android',
           Dbkeys.deviceInfoISPHYSICAL: androidInfo.isPhysicalDevice,
           Dbkeys.deviceInfoDEVICEID: androidInfo.id,
-          Dbkeys.deviceInfoOSID: androidId,
-          Dbkeys.deviceInfoOSVERSION: androidInfo.version.baseOS,
+          // Dbkeys.deviceInfoOSID: androidId,
+          Dbkeys.deviceInfoOSID: androidInfo.version.baseOS,
+          Dbkeys.deviceInfoOSVERSION: androidInfo.version.release,
           Dbkeys.deviceInfoMANUFACTURER: androidInfo.manufacturer,
           Dbkeys.deviceInfoLOGINTIMESTAMP: DateTime.now(),
         };

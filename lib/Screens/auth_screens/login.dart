@@ -2,7 +2,7 @@
 
 import 'dart:async';
 import 'dart:io';
-import 'package:android_id/android_id.dart';
+// import 'package:android_id/android_id.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:alochat/Configs/Dbkeys.dart';
 import 'package:alochat/Configs/Dbpaths.dart';
@@ -86,17 +86,18 @@ class LoginScreenState extends State<LoginScreen>
   setdeviceinfo() async {
     if (Platform.isAndroid == true) {
       AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-      const _androidIdPlugin = AndroidId();
-      final String? androidId = await _androidIdPlugin.getId();
+      // const _androidIdPlugin = AndroidId();
+      // final String? androidId = await _androidIdPlugin.getId();
       setState(() {
-        deviceid = androidInfo.id! + androidId!;
+        // deviceid = androidInfo.id! + androidId!;
         mapDeviceInfo = {
           Dbkeys.deviceInfoMODEL: androidInfo.model,
           Dbkeys.deviceInfoOS: 'android',
           Dbkeys.deviceInfoISPHYSICAL: androidInfo.isPhysicalDevice,
           Dbkeys.deviceInfoDEVICEID: androidInfo.id,
-          Dbkeys.deviceInfoOSID: androidId,
-          Dbkeys.deviceInfoOSVERSION: androidInfo.version.baseOS,
+          // Dbkeys.deviceInfoOSID: androidId,
+          Dbkeys.deviceInfoOSID: androidInfo.version.baseOS,
+          Dbkeys.deviceInfoOSVERSION: androidInfo.version.release,
           Dbkeys.deviceInfoMANUFACTURER: androidInfo.manufacturer,
           Dbkeys.deviceInfoLOGINTIMESTAMP: DateTime.now(),
         };

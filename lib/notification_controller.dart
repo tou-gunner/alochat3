@@ -12,12 +12,16 @@ import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:http/http.dart' as http;
 import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'Configs/Dbpaths.dart';
 import 'Models/call.dart';
 import 'Models/call_methods.dart';
+import 'Services/Providers/currentchat_peer.dart';
 import 'Utils/permissions.dart';
+
+List<OverlaySupportEntry> overlayNotifications = [];
 
 final _instance2 = NotificationController2();
 
@@ -412,6 +416,15 @@ class NotificationController with ChangeNotifier {
         null,
         [
           NotificationChannel(
+            channelGroupKey: 'message_channels',
+            channelKey: 'new_group_message',
+            channelName: 'New Group Message',
+            channelDescription: 'New Group Message',
+            importance: NotificationImportance.Max,
+            playSound: true,
+            soundSource: 'resource://raw/whistle',
+          ),
+          NotificationChannel(
             channelGroupKey: 'call_channels',
             channelKey: 'video_call',
             channelName: 'Video Call',
@@ -439,6 +452,9 @@ class NotificationController with ChangeNotifier {
               soundSource: 'resource://raw/whistle')
         ],
         channelGroups: [
+          NotificationChannelGroup(
+              channelGroupKey: 'message_channels',
+              channelGroupName: 'Message Channels'),
           NotificationChannelGroup(
               channelGroupKey: 'call_channels',
               channelGroupName: 'Call Channels'),
@@ -562,7 +578,12 @@ class NotificationController with ChangeNotifier {
         onFcmSilentDataHandle: NotificationController.mySilentDataHandle,
         onFcmTokenHandle: NotificationController.myFcmTokenHandle,
         onNativeTokenHandle: NotificationController.myNativeTokenHandle,
-        licenseKey: 'G0E3HQtVUxGt886U9Bn0Z6WKlUoNHLjCMtHQV9sUaIcK0Ay5TZcnlTL1abIutDs4aCe6bBJ4x7nziBA78qcEQxVUrTX9cJjC8RH/Tth1GczYMgdhTNaxAkRjrlGB7BaYpfD137a88FcMyws1BoPo1N+RmXE/EyzeT+2zAm4U7G0=',
+        licenseKeys: [
+          //come.alo.alochat
+          'G0E3HQtVUxGt886U9Bn0Z6WKlUoNHLjCMtHQV9sUaIcK0Ay5TZcnlTL1abIutDs4aCe6'
+          'bBJ4x7nziBA78qcEQxVUrTX9cJjC8RH/Tth1GczYMgdhTNaxAkRjrlGB7BaYpfD137a8'
+          '8FcMyws1BoPo1N+RmXE/EyzeT+2zAm4U7G0=',
+        ],
         // On this example app, the app ID / Bundle Id are different
         // for each platform
         // Platform.isIOS
@@ -642,7 +663,7 @@ class NotificationController with ChangeNotifier {
         AwesomeAssertUtils.toSimpleEnumString(receivedAction.actionLifeCycle);
 
     if (receivedAction.channelKey == 'video_call' || receivedAction.channelKey == 'audio_call') {
-      final firebase = await Firebase.initializeApp();
+      // final firebase = await Firebase.initializeApp();
       final CallMethods callMethods = CallMethods();
       final data = jsonDecode(receivedAction.payload!['data']!);
       Call call = Call.fromMap(data);
@@ -759,6 +780,20 @@ class NotificationController with ChangeNotifier {
         data['title'] != 'New message in Group') {
     } else {
       if (data['title'] == 'New message in Group') {
+        awesomeNotifications..cancelAll();
+
+        await awesomeNotifications.createNotification(
+          content: NotificationContent(
+            id: 0,
+            channelKey: 'new_group_message',
+            title: data['titleMultilang']!,
+            body: data['bodyMultilang']!,
+            criticalAlert: true,
+            wakeUpScreen: true,
+            // customSound: 'whistle2'
+            category: NotificationCategory.Message,
+          ),
+        );
       } else if (data['title'] == 'Call Ended') {
         awesomeNotifications.cancelAll();
       } else {
@@ -774,7 +809,7 @@ class NotificationController with ChangeNotifier {
               title, body, titleMultilang, bodyMultilang);
         } else if (data['title'] == 'You have new message(s)') {
           // FlutterRingtonePlayer.playNotification();
-          showOverlayNotification((context) {
+          overlayNotifications.add(showOverlayNotification((context) {
             return Card(
               margin: const EdgeInsets.symmetric(horizontal: 4),
               child: SafeArea(
@@ -797,9 +832,9 @@ class NotificationController with ChangeNotifier {
                 ),
               ),
             );
-          }, duration: Duration(milliseconds: 2000));
+          }, duration: Duration(milliseconds: 2000)));
         } else {
-          var overlay = showOverlayNotification((context) {
+          overlayNotifications.add(showOverlayNotification((context) {
             return Card(
               margin: const EdgeInsets.symmetric(horizontal: 4),
               child: SafeArea(
@@ -832,7 +867,7 @@ class NotificationController with ChangeNotifier {
                 ),
               ),
             );
-          }, duration: Duration(milliseconds: 2000));
+          }, duration: Duration(milliseconds: 2000)));
         }
       }
     }
@@ -930,7 +965,7 @@ class NotificationController with ChangeNotifier {
         actionButtons: <NotificationActionButton>[
           NotificationActionButton(
             key: 'yes',
-            label: 'Accept',
+            label: 'Accept'
           ),
           NotificationActionButton(
               key: 'no',
@@ -1035,4 +1070,22 @@ class NotificationController with ChangeNotifier {
     //     backgroundColor: Colors.blueAccent,));
     debugPrint('Native Token:"$token"');
   }
+
+  ///  *********************************************
+  ///     REMOTE TOKEN REQUESTS
+  ///  *********************************************
+
+  static Future<String> requestFirebaseToken() async {
+    if (await AwesomeNotificationsFcm().isFirebaseAvailable) {
+      try {
+        return await AwesomeNotificationsFcm().requestFirebaseAppToken();
+      } catch (exception) {
+        debugPrint('$exception');
+      }
+    } else {
+      debugPrint('Firebase is not available on this project');
+    }
+    return '';
+  }
+
 }

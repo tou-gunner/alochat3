@@ -1,6 +1,6 @@
 //*************   © Copyrighted by Thinkcreative_Technologies. An Exclusive item of Envato market. Make sure you have purchased a Regular License OR Extended license for the Source Code from Envato to use this product. See the License Defination attached with source code. *********************
 
-import 'package:agora_rtc_engine/rtc_engine.dart';
+import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:alochat/main.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -34,7 +34,7 @@ class PickupScreen extends StatelessWidget {
     required this.currentuseruid,
     required this.prefs,
   });
-  ClientRole _role = ClientRole.Broadcaster;
+  ClientRoleType _role = ClientRoleType.clientRoleBroadcaster;
   @override
   Widget build(BuildContext context) {
     var w = MediaQuery.of(context).size.width;

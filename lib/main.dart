@@ -85,7 +85,7 @@ class FiberchatWrapper extends StatefulWidget {
   _FiberchatWrapperState createState() => _FiberchatWrapperState();
 }
 
-class _FiberchatWrapperState extends State<FiberchatWrapper> {
+class _FiberchatWrapperState extends State<FiberchatWrapper> with WidgetsBindingObserver {
   Locale? _locale;
   setLocale(Locale locale) {
     setState(() {
@@ -93,9 +93,33 @@ class _FiberchatWrapperState extends State<FiberchatWrapper> {
     });
   }
 
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    super.initState();
+  }
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      AwesomeNotifications().getInitialNotificationAction(
+          removeFromActionEvents: false
+      ).then((action) {
+        if(action?.channelKey == 'call_channel') {
+          print('1234');
+        }
+      });
+    }
+  }
+
   Future<void> _initialization() async {
 
     await NotificationController.initializeNotificationListeners();
+    await NotificationController.requestFirebaseToken();
     // await Firebase.initializeApp();
     // await NotificationController.initialize();
     // await awesomeNotifications.initialize(

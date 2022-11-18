@@ -45,7 +45,7 @@ class _SelectContactToShareState extends State<SelectContactToShare>
   GlobalKey<ScaffoldState> _scaffold = new GlobalKey<ScaffoldState>();
   Map<String?, String?>? contacts;
   bool isGroupsloading = true;
-  var joinedGroupsList = [];
+  var joinedGroupsList = <QueryDocumentSnapshot<Map<String, dynamic>>>[];
   @override
   bool get wantKeepAlive => true;
 
@@ -192,22 +192,17 @@ class _SelectContactToShareState extends State<SelectContactToShare>
                                                 NeverScrollableScrollPhysics(),
                                             itemCount: joinedGroupsList.length,
                                             itemBuilder: (context, i) {
+                                              final group = joinedGroupsList[i].data();
                                               return Column(
                                                 children: [
                                                   ListTile(
                                                     leading: customCircleAvatarGroup(
-                                                        url: joinedGroupsList
-                                                                .contains(Dbkeys
-                                                                    .groupPHOTOURL)
-                                                            ? joinedGroupsList[
-                                                                    i][
-                                                                Dbkeys
-                                                                    .groupPHOTOURL]
+                                                        url: joinedGroupsList.contains(Dbkeys.groupPHOTOURL)
+                                                            ? group[Dbkeys.groupPHOTOURL]
                                                             : '',
                                                         radius: 22),
                                                     title: Text(
-                                                      joinedGroupsList[i]
-                                                          [Dbkeys.groupNAME],
+                                                      group[Dbkeys.groupNAME],
                                                       maxLines: 1,
                                                       overflow:
                                                           TextOverflow.ellipsis,
@@ -217,7 +212,7 @@ class _SelectContactToShareState extends State<SelectContactToShare>
                                                       ),
                                                     ),
                                                     subtitle: Text(
-                                                      '${joinedGroupsList[i][Dbkeys.groupMEMBERSLIST].length} ${getTranslated(context, 'participants')}',
+                                                      '${group[Dbkeys.groupMEMBERSLIST].length} ${getTranslated(context, 'participants')}',
                                                       style: TextStyle(
                                                         color: fiberchatGrey,
                                                         fontSize: 14,
@@ -229,8 +224,8 @@ class _SelectContactToShareState extends State<SelectContactToShare>
                                                           context,
                                                           new MaterialPageRoute(
                                                               builder: (context) => new GroupChatPage(
-                                                                  isCurrentUserMuted: joinedGroupsList[i].containsKey(Dbkeys.groupMUTEDMEMBERS)
-                                                                      ? joinedGroupsList[i][Dbkeys.groupMUTEDMEMBERS].contains(widget
+                                                                  isCurrentUserMuted: group.containsKey(Dbkeys.groupMUTEDMEMBERS)
+                                                                      ? group[Dbkeys.groupMUTEDMEMBERS].contains(widget
                                                                           .currentUserNo)
                                                                       : false,
                                                                   sharedText: widget
@@ -243,11 +238,11 @@ class _SelectContactToShareState extends State<SelectContactToShare>
                                                                       .model,
                                                                   prefs: widget
                                                                       .prefs,
-                                                                  joinedTime: joinedGroupsList[i][
+                                                                  joinedTime: group[
                                                                       '${widget.currentUserNo}-joinedOn'],
                                                                   currentUserno:
                                                                       widget.currentUserNo!,
-                                                                  groupID: joinedGroupsList[i][Dbkeys.groupID])));
+                                                                  groupID: group[Dbkeys.groupID])));
                                                     },
                                                   ),
                                                   Divider(

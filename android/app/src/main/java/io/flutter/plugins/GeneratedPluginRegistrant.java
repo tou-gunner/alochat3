@@ -16,14 +16,9 @@ public final class GeneratedPluginRegistrant {
   private static final String TAG = "GeneratedPluginRegistrant";
   public static void registerWith(@NonNull FlutterEngine flutterEngine) {
     try {
-      flutterEngine.getPlugins().add(new io.agora.agora_rtc_engine.AgoraRtcEnginePlugin());
+      flutterEngine.getPlugins().add(new io.agora.agora_rtc_ng.AgoraRtcNgPlugin());
     } catch(Exception e) {
-      Log.e(TAG, "Error registering plugin agora_rtc_engine, io.agora.agora_rtc_engine.AgoraRtcEnginePlugin", e);
-    }
-    try {
-      flutterEngine.getPlugins().add(new plus.fluttercommunity.dev.android_id.AndroidIdPlugin());
-    } catch(Exception e) {
-      Log.e(TAG, "Error registering plugin android_id, plus.fluttercommunity.dev.android_id.AndroidIdPlugin", e);
+      Log.e(TAG, "Error registering plugin agora_rtc_engine, io.agora.agora_rtc_ng.AgoraRtcNgPlugin", e);
     }
     try {
       flutterEngine.getPlugins().add(new xyz.luan.audioplayers.AudioplayersPlugin());
@@ -56,11 +51,6 @@ public final class GeneratedPluginRegistrant {
       Log.e(TAG, "Error registering plugin connectivity, io.flutter.plugins.connectivity.ConnectivityPlugin", e);
     }
     try {
-      flutterEngine.getPlugins().add(new flutter.plugins.contactsservice.contactsservice.ContactsServicePlugin());
-    } catch(Exception e) {
-      Log.e(TAG, "Error registering plugin contacts_service, flutter.plugins.contactsservice.contactsservice.ContactsServicePlugin", e);
-    }
-    try {
       flutterEngine.getPlugins().add(new dev.fluttercommunity.plus.device_info.DeviceInfoPlusPlugin());
     } catch(Exception e) {
       Log.e(TAG, "Error registering plugin device_info_plus, dev.fluttercommunity.plus.device_info.DeviceInfoPlusPlugin", e);
@@ -86,11 +76,6 @@ public final class GeneratedPluginRegistrant {
       Log.e(TAG, "Error registering plugin file_picker, com.mr.flutter.plugin.filepicker.FilePickerPlugin", e);
     }
     try {
-      flutterEngine.getPlugins().add(new com.one.file_saver.FileSaverPlugin());
-    } catch(Exception e) {
-      Log.e(TAG, "Error registering plugin file_saver, com.one.file_saver.FileSaverPlugin", e);
-    }
-    try {
       flutterEngine.getPlugins().add(new io.flutter.plugins.firebase.auth.FlutterFirebaseAuthPlugin());
     } catch(Exception e) {
       Log.e(TAG, "Error registering plugin firebase_auth, io.flutter.plugins.firebase.auth.FlutterFirebaseAuthPlugin", e);
@@ -111,6 +96,11 @@ public final class GeneratedPluginRegistrant {
       Log.e(TAG, "Error registering plugin firebase_storage, io.flutter.plugins.firebase.storage.FlutterFirebaseStoragePlugin", e);
     }
     try {
+      flutterEngine.getPlugins().add(new co.quis.flutter_contacts.FlutterContactsPlugin());
+    } catch(Exception e) {
+      Log.e(TAG, "Error registering plugin flutter_contacts, co.quis.flutter_contacts.FlutterContactsPlugin", e);
+    }
+    try {
       flutterEngine.getPlugins().add(new com.pravera.flutter_foreground_task.FlutterForegroundTaskPlugin());
     } catch(Exception e) {
       Log.e(TAG, "Error registering plugin flutter_foreground_task, com.pravera.flutter_foreground_task.FlutterForegroundTaskPlugin", e);
@@ -128,7 +118,7 @@ public final class GeneratedPluginRegistrant {
     try {
       flutterEngine.getPlugins().add(new com.whelksoft.flutter_native_timezone.FlutterNativeTimezonePlugin());
     } catch(Exception e) {
-      Log.e(TAG, "Error registering plugin flutter_native_timezone, com.whelksoft.flutter_native_timezone.FlutterNativeTimezonePlugin", e);
+      Log.e(TAG, "Error registering plugin flutter_native_timezone_updated_gradle, com.whelksoft.flutter_native_timezone.FlutterNativeTimezonePlugin", e);
     }
     try {
       flutterEngine.getPlugins().add(new io.endigo.plugins.pdfviewflutter.PDFViewFlutterPlugin());
@@ -189,6 +179,11 @@ public final class GeneratedPluginRegistrant {
       flutterEngine.getPlugins().add(new com.fluttercandies.image_editor.ImageEditorPlugin());
     } catch(Exception e) {
       Log.e(TAG, "Error registering plugin image_editor, com.fluttercandies.image_editor.ImageEditorPlugin", e);
+    }
+    try {
+      flutterEngine.getPlugins().add(new io.agora.iris_event.iris_event.IrisEventPlugin());
+    } catch(Exception e) {
+      Log.e(TAG, "Error registering plugin iris_event, io.agora.iris_event.iris_event.IrisEventPlugin", e);
     }
     try {
       flutterEngine.getPlugins().add(new com.iyaffle.launchreview.LaunchReviewPlugin());

@@ -1,9 +1,9 @@
 //*************   © Copyrighted by Thinkcreative_Technologies. An Exclusive item of Envato market. Make sure you have purchased a Regular License OR Extended license for the Source Code from Envato to use this product. See the License Defination attached with source code. *********************
 
 import 'dart:async';
-import 'package:agora_rtc_engine/rtc_engine.dart';
-import 'package:agora_rtc_engine/rtc_local_view.dart' as RtcLocalView;
-import 'package:agora_rtc_engine/rtc_remote_view.dart' as RtcRemoteView;
+import 'package:agora_rtc_engine/agora_rtc_engine.dart';
+// import 'package:agora_rtc_engine/rtc_local_view.dart' as RtcLocalView;
+// import 'package:agora_rtc_engine/rtc_remote_view.dart' as RtcRemoteView;
 import 'package:alochat/main.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -30,7 +30,7 @@ class VideoCall extends StatefulWidget {
   final String currentuseruid;
   final SharedPreferences prefs;
   final Call call;
-  final ClientRole role;
+  final ClientRoleType role;
   const VideoCall(
       {Key? key,
       required this.call,
@@ -57,7 +57,7 @@ class _VideoCallState extends State<VideoCall> {
     _users.clear();
     // destroy sdk
     _engine.leaveChannel();
-    _engine.destroy();
+    // _engine.destroy();
     streamController!.done;
     streamController!.close();
     timerSubscription?.cancel();
@@ -123,30 +123,39 @@ class _VideoCallState extends State<VideoCall> {
     await _initAgoraRtcEngine();
     _addAgoraEventHandlers();
 
-    VideoEncoderConfiguration configuration = VideoEncoderConfiguration();
-    configuration.dimensions = VideoDimensions(height: 1920, width: 1080);
+    VideoEncoderConfiguration configuration = VideoEncoderConfiguration(
+      dimensions: VideoDimensions(height: 1920, width: 1080)
+    );
     await _engine.setVideoEncoderConfiguration(configuration);
-    await _engine.joinChannel(Agora_TOKEN, widget.channelName, null, 0);
+    await _engine.joinChannel(
+      token: Agora_TOKEN,
+      channelId: widget.channelName,
+      uid: 0,
+      options: ChannelMediaOptions()
+    );
   }
 
   Future<void> _initAgoraRtcEngine() async {
-    _engine = await RtcEngine.create(Agora_APP_IDD);
-    await _engine.enableVideo();
+    _engine = createAgoraRtcEngine();
+    await _engine.initialize(RtcEngineContext(
+        appId: Agora_APP_IDD,
+        channelProfile: ChannelProfileType.channelProfileLiveBroadcasting,
+        audioScenario: AudioScenarioType.audioScenarioChatroom
+    ));
     await _engine.setEnableSpeakerphone(isspeaker);
-    await _engine.setChannelProfile(ChannelProfile.LiveBroadcasting);
-    await _engine.setClientRole(widget.role);
+    await _engine.setClientRole(role: widget.role);
   }
 
   void _addAgoraEventHandlers() {
-    _engine.setEventHandler(RtcEngineEventHandler(error: (code) {
+    _engine.registerEventHandler(RtcEngineEventHandler(onError: (code, msg) {
       setState(() {
         final info = 'onError: $code';
         _infoStrings.add(info);
       });
-    }, joinChannelSuccess: (channel, uid, elapsed) {
+    }, onJoinChannelSuccess: (connection, uid) {
       if (widget.call.callerId == widget.currentuseruid) {
         setState(() {
-          final info = 'onJoinChannel: $channel, uid: $uid';
+          final info = 'onJoinChannel: ${connection.channelId}, uid: $uid';
           _infoStrings.add(info);
         });
         FirebaseFirestore.instance
@@ -167,7 +176,7 @@ class _VideoCallState extends State<VideoCall> {
           'STARTED': null,
           'ENDED': null,
           'CALLERNAME': widget.call.callerName,
-          'CHANNEL': channel,
+          'CHANNEL': connection.channelId,
           'UID': uid,
         }, SetOptions(merge: true));
         FirebaseFirestore.instance
@@ -188,7 +197,7 @@ class _VideoCallState extends State<VideoCall> {
           'STARTED': null,
           'ENDED': null,
           'CALLERNAME': widget.call.callerName,
-          'CHANNEL': channel,
+          'CHANNEL': connection.channelId,
           'UID': uid,
         }, SetOptions(merge: true));
         _playCallingTone();
@@ -196,7 +205,7 @@ class _VideoCallState extends State<VideoCall> {
       Wakelock.enable();
       // flutterLocalNotificationsPlugin.cancelAll();
       awesomeNotifications.cancelAll();
-    }, leaveChannel: (stats) {
+    }, onLeaveChannel: (connection, stats) {
       _stopCallingSound();
       setState(() {
         _infoStrings.add('onLeaveChannel');
@@ -234,7 +243,7 @@ class _VideoCallState extends State<VideoCall> {
         // }, SetOptions(merge: true));
       }
       Wakelock.disable();
-    }, userJoined: (uid, elapsed) {
+    }, onUserJoined: (connection, uid, elapsed) {
       setState(() {
         final info = 'userJoined: $uid';
         _infoStrings.add(info);
@@ -283,7 +292,7 @@ class _VideoCallState extends State<VideoCall> {
         }, SetOptions(merge: true));
       }
       Wakelock.enable();
-    }, userOffline: (uid, elapsed) {
+    }, onUserOffline: (connection, uid, reasonType) {
       setState(() {
         final info = 'userOffline: $uid';
         _infoStrings.add(info);
@@ -312,7 +321,7 @@ class _VideoCallState extends State<VideoCall> {
         //----------
 
       }
-    }, firstRemoteVideoFrame: (uid, width, height, elapsed) {
+    }, onFirstRemoteVideoFrame: (connection, uid, width, height, elapsed) {
       setState(() {
         final info = 'firstRemoteVideo: $uid ${width}x $height';
         _infoStrings.add(info);
@@ -322,13 +331,21 @@ class _VideoCallState extends State<VideoCall> {
 
   List<Widget> _getRenderViews() {
     final List<StatefulWidget> list = [];
-    if (widget.role == ClientRole.Broadcaster) {
-      list.add(RtcLocalView.SurfaceView());
+    if (widget.role == ClientRoleType.clientRoleBroadcaster) {
+      list.add(AgoraVideoView(
+        controller: VideoViewController(
+          rtcEngine: _engine,
+          canvas: const VideoCanvas(uid: 0),
+        ),
+      ));
     }
-    _users.forEach((int uid) => list.add(RtcRemoteView.SurfaceView(
-          uid: uid,
-          channelId: widget.channelName,
-        )));
+    _users.forEach((int uid) => list.add(AgoraVideoView(
+      controller: VideoViewController.remote(
+        rtcEngine: _engine,
+        canvas: VideoCanvas(uid: uid),
+        connection: RtcConnection(channelId: widget.channelName),
+      ),
+    )));
     return list;
   }
 
@@ -349,7 +366,7 @@ class _VideoCallState extends State<VideoCall> {
     String? status,
   ) {
     final observer = Provider.of<Observer>(this.context, listen: true);
-    if (widget.role == ClientRole.Audience) return Container();
+    if (widget.role == ClientRoleType.clientRoleAudience) return Container();
 
     return Container(
       alignment: Alignment.bottomCenter,

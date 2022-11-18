@@ -7,7 +7,8 @@ import 'package:alochat/Configs/Dbpaths.dart';
 import 'package:alochat/Configs/optional_constants.dart';
 import 'package:alochat/Services/Providers/StatusProvider.dart';
 import 'package:alochat/Services/localization/language_constants.dart';
-import 'package:contacts_service/contacts_service.dart';
+// import 'package:contacts_service/contacts_service.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:alochat/Models/DataModel.dart';
 import 'package:alochat/Utils/open_settings.dart';
 import 'package:alochat/Utils/utils.dart';
@@ -93,13 +94,13 @@ class AvailableContactsProvider with ChangeNotifier {
               return number.replaceAll(new RegExp('[^0-9+]'), '');
             }
 
-            ContactsService.getContacts(withThumbnails: false)
+            FlutterContacts.getContacts(withProperties: true)
                 .then((Iterable<Contact> contacts) async {
-              contacts.where((c) => c.phones!.isNotEmpty).forEach((Contact p) {
-                if (p.displayName != null && p.phones!.isNotEmpty) {
-                  List<String?> numbers = p.phones!
+              contacts.where((c) => c.phones.isNotEmpty).forEach((Contact p) {
+                if (p.displayName != '' && p.phones.isNotEmpty) {
+                  List<String?> numbers = p.phones
                       .map((number) {
-                        String? _phone = getNormalizedNumber(number.value);
+                        String? _phone = getNormalizedNumber(number.number);
 
                         return _phone;
                       })

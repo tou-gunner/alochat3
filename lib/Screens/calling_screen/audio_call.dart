@@ -1,7 +1,7 @@
 //*************   © Copyrighted by Thinkcreative_Technologies. An Exclusive item of Envato market. Make sure you have purchased a Regular License OR Extended license for the Source Code from Envato to use this product. See the License Defination attached with source code. *********************
 
 import 'dart:async';
-import 'package:agora_rtc_engine/rtc_engine.dart';
+import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:alochat/main.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -31,7 +31,7 @@ class AudioCall extends StatefulWidget {
   final Call call;
   final SharedPreferences prefs;
   final String? currentuseruid;
-  final ClientRole? role;
+  final ClientRoleType? role;
   const AudioCall(
       {Key? key,
       required this.call,
@@ -56,8 +56,10 @@ class _AudioCallState extends State<AudioCall> {
     // clear users
     _users.clear();
     // destroy sdk
-    _engine.leaveChannel();
-    _engine.destroy();
+    _engine.leaveChannel(
+      options: LeaveChannelOptions()
+    );
+    // _engine.destroy();
 
     streamController!.done;
     streamController!.close();
@@ -119,31 +121,41 @@ class _AudioCallState extends State<AudioCall> {
     await _initAgoraRtcEngine();
     _addAgoraEventHandlers();
 
-    VideoEncoderConfiguration configuration = VideoEncoderConfiguration();
-    configuration.dimensions = VideoDimensions(height: 1920, width: 1080);
+    VideoEncoderConfiguration configuration = VideoEncoderConfiguration(
+      dimensions: VideoDimensions(height: 1920, width: 1080)
+    );
     await _engine.setVideoEncoderConfiguration(configuration);
-    await _engine.joinChannel(Agora_TOKEN, widget.channelName!, null, 0);
+    await _engine.joinChannel(
+      token: Agora_TOKEN,
+      channelId: widget.channelName!,
+      uid: 0,
+      options: ChannelMediaOptions()
+    );
   }
 
   Future<void> _initAgoraRtcEngine() async {
-    _engine = await RtcEngine.create(Agora_APP_IDD);
+    _engine = createAgoraRtcEngine();
+    await _engine.initialize(RtcEngineContext(
+      appId: Agora_APP_IDD,
+      channelProfile: ChannelProfileType.channelProfileLiveBroadcasting,
+      audioScenario: AudioScenarioType.audioScenarioChatroom
+    ));
     await _engine.setEnableSpeakerphone(isspeaker);
-    await _engine.setChannelProfile(ChannelProfile.LiveBroadcasting);
-    await _engine.setClientRole(widget.role!);
+    await _engine.setClientRole(role: widget.role!);
   }
 
   bool isPickedup = false;
   bool isalreadyendedcall = false;
   void _addAgoraEventHandlers() {
-    _engine.setEventHandler(RtcEngineEventHandler(error: (code) {
+    _engine.registerEventHandler(RtcEngineEventHandler(onError: (code, msg) {
       setState(() {
         final info = 'onError: $code';
         _infoStrings.add(info);
       });
-    }, joinChannelSuccess: (channel, uid, elapsed) async {
+    }, onJoinChannelSuccess: (connection, uid) async {
       if (widget.call.callerId == widget.currentuseruid) {
         setState(() {
-          final info = 'onJoinChannel: $channel, uid: $uid';
+          final info = 'onJoinChannel: ${connection.channelId}, uid: $uid';
           _infoStrings.add(info);
         });
         await FirebaseFirestore.instance
@@ -164,7 +176,7 @@ class _AudioCallState extends State<AudioCall> {
           'STARTED': null,
           'ENDED': null,
           'CALLERNAME': widget.call.callerName,
-          'CHANNEL': channel,
+          'CHANNEL': connection.channelId,
           'UID': uid,
         }, SetOptions(merge: true));
         await FirebaseFirestore.instance
@@ -185,14 +197,14 @@ class _AudioCallState extends State<AudioCall> {
           'STARTED': null,
           'ENDED': null,
           'CALLERNAME': widget.call.callerName,
-          'CHANNEL': channel,
+          'CHANNEL': connection.channelId,
           'UID': uid,
         }, SetOptions(merge: true));
         _playCallingTone();
       }
 
       Wakelock.enable();
-    }, leaveChannel: (stats) {
+    }, onLeaveChannel: (connection, stats) {
       _stopCallingSound();
 
       setState(() {
@@ -231,7 +243,7 @@ class _AudioCallState extends State<AudioCall> {
         // });
       }
       Wakelock.disable();
-    }, userJoined: (uid, elapsed) {
+    }, onUserJoined: (connection, uid, elapsed) {
       startTimerNow();
 
       setState(() {
@@ -283,7 +295,7 @@ class _AudioCallState extends State<AudioCall> {
         }, SetOptions(merge: true));
       }
       Wakelock.enable();
-    }, userOffline: (uid, elapsed) async {
+    }, onUserOffline: (connection, uid, reasonType) async {
       setState(() {
         final info = 'userOffline: $uid';
         _infoStrings.add(info);
@@ -310,7 +322,7 @@ class _AudioCallState extends State<AudioCall> {
           'ENDED': DateTime.now(),
         }, SetOptions(merge: true));
       }
-    }, firstRemoteVideoFrame: (uid, width, height, elapsed) {
+    }, onFirstRemoteVideoFrame: (connection, uid, width, height, elapsed) {
       setState(() {
         final info = 'firstRemoteVideo: $uid ${width}x $height';
         _infoStrings.add(info);
@@ -323,7 +335,7 @@ class _AudioCallState extends State<AudioCall> {
     String? status,
     BuildContext context,
   ) {
-    if (widget.role == ClientRole.Audience) return Container();
+    if (widget.role == ClientRoleType.clientRoleAudience) return Container();
     final observer = Provider.of<Observer>(this.context, listen: true);
     return Container(
       alignment: Alignment.bottomCenter,

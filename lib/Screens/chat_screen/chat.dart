@@ -690,7 +690,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     } else if (isthumbnail == false && isImage(pickedFile!.path) == true) {
       final targetPath = pickedFile!.absolute.path
               .replaceAll(basename(pickedFile!.absolute.path), "") +
-          "temp.jpg";
+          "compress_temp.jpg";
 
       compressedImage = await FlutterImageCompress.compressAndGetFile(
         pickedFile!.absolute.path,

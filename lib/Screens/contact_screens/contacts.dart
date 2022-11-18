@@ -1,6 +1,7 @@
 //*************   © Copyrighted by Thinkcreative_Technologies. An Exclusive item of Envato market. Make sure you have purchased a Regular License OR Extended license for the Source Code from Envato to use this product. See the License Defination attached with source code. *********************
 
-import 'package:contacts_service/contacts_service.dart';
+// import 'package:contacts_service/contacts_service.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:alochat/Configs/Dbkeys.dart';
 import 'package:alochat/Configs/Enum.dart';
 import 'package:alochat/Configs/app_constants.dart';
@@ -147,13 +148,13 @@ class _ContactsState extends State<Contacts>
               return number.replaceAll(new RegExp('[^0-9+]'), '');
             }
 
-            ContactsService.getContacts(withThumbnails: false)
+            FlutterContacts.getContacts(withProperties: true)
                 .then((Iterable<Contact> contacts) async {
-              contacts.where((c) => c.phones!.isNotEmpty).forEach((Contact p) {
-                if (p.displayName != null && p.phones!.isNotEmpty) {
-                  List<String?> numbers = p.phones!
+              contacts.where((c) => c.phones.isNotEmpty).forEach((Contact p) {
+                if (p.displayName != '' && p.phones.isNotEmpty) {
+                  List<String?> numbers = p.phones
                       .map((number) {
-                        String? _phone = getNormalizedNumber(number.value);
+                        String? _phone = getNormalizedNumber(number.number);
 
                         return _phone;
                       })
