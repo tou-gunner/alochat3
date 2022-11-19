@@ -3007,7 +3007,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
     return Flexible(
       child: Container(
           // width: 280,
-          height: 70,
+          height: 76,
           margin: EdgeInsets.only(left: 0, right: 0),
           decoration: BoxDecoration(
               color: fiberchatWhite.withOpacity(0.55),
