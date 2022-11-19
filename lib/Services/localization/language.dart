@@ -17,7 +17,7 @@ class Language {
     return <Language>[
       Language(1, "🇱🇦", "ລາວ", "lo", "Lao"),
       Language(2, "🇺🇸", "English", "en", "English"),
-      Language(3, "🇨🇳", "中文", "zh", "Chinese"),
+      // Language(3, "🇨🇳", "中文", "zh", "Chinese"),
     ];
   }
 }

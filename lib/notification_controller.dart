@@ -805,7 +805,7 @@ class NotificationController with ChangeNotifier {
           final body = data['body'];
           final titleMultilang = data['titleMultilang'];
           final bodyMultilang = data['bodyMultilang'];
-          await _showNotificationWithDefaultSound(data['phone']!, data['data']!,
+          await _showNotificationWithDefaultSound(data['phone'], data['data']!,
               title, body, titleMultilang, bodyMultilang);
         } else if (data['title'] == 'You have new message(s)') {
           // FlutterRingtonePlayer.playNotification();
@@ -874,7 +874,7 @@ class NotificationController with ChangeNotifier {
   }
 
   static Future<void> _showNotificationWithDefaultSound(
-      String phone,
+      String? phone,
       String data,
       String? title,
       String? message,
@@ -958,7 +958,7 @@ class NotificationController with ChangeNotifier {
             wakeUpScreen: true,
             autoDismissible: false,
             // customSound: 'ringtone',
-            payload: {'phone': phone, 'data': data},
+            payload: {'phone': phone!, 'data': data},
             category: NotificationCategory.Call,
             // actionType: ActionType.DisabledAction
         ),
@@ -1022,7 +1022,7 @@ class NotificationController with ChangeNotifier {
           wakeUpScreen: true,
           autoDismissible: false,
           // customSound: 'ringtone',
-          payload: {'phone': phone, 'data': data},
+          payload: {'phone': phone!, 'data': data},
           category: NotificationCategory.Call,
           // actionType: ActionType.DisabledAction
         ),
