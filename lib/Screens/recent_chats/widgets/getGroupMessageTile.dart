@@ -470,7 +470,7 @@ Widget groupMessageTile(
                       lastMessage == {} || lastMessage == null
                           ? SizedBox()
                           : Padding(
-                              padding: const EdgeInsets.only(top: 2),
+                              padding: const EdgeInsets.only(top: 1),
                               child: Text(
                                 getLastMessageTime(context, currentUserNo,
                                     lastMessage[Dbkeys.timestamp]),
@@ -481,9 +481,9 @@ Widget groupMessageTile(
                                     fontSize: 12),
                               ),
                             ),
-                      SizedBox(
-                        height: 6,
-                      ),
+                      // SizedBox(
+                      //   height: 6,
+                      // ),
                       Row(
                         mainAxisSize: MainAxisSize.min,
                         mainAxisAlignment: MainAxisAlignment.end,
@@ -510,7 +510,7 @@ Widget groupMessageTile(
                                           fontSize: 14,
                                           color: Colors.white,
                                           fontWeight: FontWeight.bold)),
-                                  padding: const EdgeInsets.all(7.0),
+                                  padding: const EdgeInsets.all(6.0),
                                   decoration: new BoxDecoration(
                                     shape: BoxShape.circle,
                                     color: Colors.green[400],

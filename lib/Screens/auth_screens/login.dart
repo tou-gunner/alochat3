@@ -166,18 +166,20 @@ class LoginScreenState extends State<LoginScreen>
     final PhoneCodeAutoRetrievalTimeout codeAutoRetrievalTimeout =
         (String verificationId) {
       this.verificationId = verificationId;
-      setState(() {
-        currentStatus = LoginStatus.failure.index;
-        // _phoneNo.clear();
-        // _code = '';
-        isCodeSent = false;
+      if (mounted) {
+        setState(() {
+          currentStatus = LoginStatus.failure.index;
+          // _phoneNo.clear();
+          // _code = '';
+          isCodeSent = false;
 
-        timerProvider.resetTimer();
+          timerProvider.resetTimer();
 
-        isShowCompletedLoading = false;
-        isVerifyingCode = false;
-        currentPinAttemps = 0;
-      });
+          isShowCompletedLoading = false;
+          isVerifyingCode = false;
+          currentPinAttemps = 0;
+        });
+      }
 
       Fiberchat.toast('Authentication failed Timeout. please try again.');
     };
