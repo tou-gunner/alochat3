@@ -6,353 +6,356 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Dbkeys {
   //------- device info
-  static final String deviceInfoDEVICEID = 'Device ID';
-  static final String deviceInfoOSID = 'Os ID';
-  static final String deviceInfoMODEL = 'Model';
-  static final String deviceInfoOSVERSION = 'OS version';
-  static final String deviceInfoOS = 'OS type';
-  static final String deviceInfoDEVICENAME = 'Device name';
-  static final String deviceInfoMANUFACTURER = 'Manufacturer';
-  static final String deviceInfoLOGINTIMESTAMP = 'Device login Time';
-  static final String deviceInfoISPHYSICAL = 'Is Physical';
+  static const String deviceInfoDEVICEID = 'Device ID';
+  static const String deviceInfoOSID = 'Os ID';
+  static const String deviceInfoMODEL = 'Model';
+  static const String deviceInfoOSVERSION = 'OS version';
+  static const String deviceInfoOS = 'OS type';
+  static const String deviceInfoDEVICENAME = 'Device name';
+  static const String deviceInfoMANUFACTURER = 'Manufacturer';
+  static const String deviceInfoLOGINTIMESTAMP = 'Device login Time';
+  static const String deviceInfoISPHYSICAL = 'Is Physical';
   //-----
 
-  static final String userapp = 'userapp';
-  static final String latestappversionandroid = 'latestappversionandroid';
-  static final String latestappversionios = 'latestappversionios';
-  static final String latestappversionweb = 'latestappversionweb';
-  static final String appsettings = 'appsettings';
-  static final String totalvisitsANDROID = 'totalvisitsANDROID';
-  static final String totalvisitsIOS = 'totalvisitsIOS';
+  static const String userapp = 'userapp';
+  static const String latestappversionandroid = 'latestappversionandroid';
+  static const String latestappversionios = 'latestappversionios';
+  static const String latestappversionweb = 'latestappversionweb';
+  static const String appsettings = 'appsettings';
+  static const String totalvisitsANDROID = 'totalvisitsANDROID';
+  static const String totalvisitsIOS = 'totalvisitsIOS';
   //---
 
-  static final String issetupdone = 'xhxaxftaft';
-  static final String isupdatemandatory = 'isupdatemandatory';
-  static final String isappunderconstructionandroid =
+  static const String issetupdone = 'xhxaxftaft';
+  static const String isupdatemandatory = 'isupdatemandatory';
+  static const String isappunderconstructionandroid =
       'isappunderconstructionandroid';
-  static final String isappunderconstructionios = 'isappunderconstructionios';
-  static final String isappunderconstructionweb = 'isappunderconstructionweb';
-  static final String isaccountapprovalbyadminneeded =
+  static const String isappunderconstructionios = 'isappunderconstructionios';
+  static const String isappunderconstructionweb = 'isappunderconstructionweb';
+  static const String isaccountapprovalbyadminneeded =
       'isaccountapprovalbyadminneeded';
-  static final String accountapprovalmessage = 'accountapprovalmessage';
+  static const String accountapprovalmessage = 'accountapprovalmessage';
 
-  static final String alloweddebuggersUID = 'alloweddebuggersUID';
-  static final String isblockedCOD = 'isblockedCOD';
-  static final String isblocknewlogins = 'isblocknewlogins';
-  static final String maintainancemessage = 'maintainancemessage';
-  static final String isshowerrorlog = 'isshowerrorlog';
-  static final String newapplinkandroid = 'newapplinkandroid';
-  static final String newapplinkios = 'newapplinkios';
-  static final String newapplinkweb = 'newapplinkweb';
+  static const String alloweddebuggersUID = 'alloweddebuggersUID';
+  static const String isblockedCOD = 'isblockedCOD';
+  static const String isblocknewlogins = 'isblocknewlogins';
+  static const String maintainancemessage = 'maintainancemessage';
+  static const String isshowerrorlog = 'isshowerrorlog';
+  static const String newapplinkandroid = 'newapplinkandroid';
+  static const String newapplinkios = 'newapplinkios';
+  static const String newapplinkweb = 'newapplinkweb';
 
-  static final String iscallsallowed = 'iscallsallowed';
-  static final String ismediamessageallowed = 'ismediamessageallowed';
-  static final String istextmessageallowed = 'istextmessageallowed';
-  static final String isadmobshow = 'isadmobshow';
-  static final String isemulatorallowed = 'isemlalwd';
-  static final String privacypolicy = 'ppl';
-  static final String tnc = 'tnc';
-  static final String tncTYPE = 'tncType';
-  static final String privacypolicyTYPE = 'pplType';
-  static final String url = 'url';
-  static final String file = 'file';
-  static final String usersidesetupdone = 'usersidesetupdone';
-  static final String updateV7done = 'updateV7done';
-  static final String adminsidesetupdone = 'adminsidesetupdone';
+  static const String iscallsallowed = 'iscallsallowed';
+  static const String ismediamessageallowed = 'ismediamessageallowed';
+  static const String istextmessageallowed = 'istextmessageallowed';
+  static const String isadmobshow = 'isadmobshow';
+  static const String isemulatorallowed = 'isemlalwd';
+  static const String privacypolicy = 'ppl';
+  static const String tnc = 'tnc';
+  static const String tncTYPE = 'tncType';
+  static const String privacypolicyTYPE = 'pplType';
+  static const String url = 'url';
+  static const String file = 'file';
+  static const String usersidesetupdone = 'usersidesetupdone';
+  static const String updateV7done = 'updateV7done';
+  static const String adminsidesetupdone = 'adminsidesetupdone';
 //-added in update-
-  static final String isCallFeatureTotallyHide = 'isCallFeatureTotallyHide';
-  static final String maxFileSizeAllowedInMB = 'maxFileSizeAllowedInMB';
-  static final String is24hrsTimeformat = 'is24hrsTimeformat';
-  static final String isPercentProgressShowWhileUploading =
+  static const String isCallFeatureTotallyHide = 'isCallFeatureTotallyHide';
+  static const String maxFileSizeAllowedInMB = 'maxFileSizeAllowedInMB';
+  static const String is24hrsTimeformat = 'is24hrsTimeformat';
+  static const String isPercentProgressShowWhileUploading =
       'isPercentProgressShowWhileUploading';
 
-  static final String isAllowCreatingGroups = 'isAllowCreatingGroups';
-  static final String isAllowCreatingBroadcasts = 'isAllowCreatingBroadcasts';
-  static final String isAllowCreatingStatus = 'isAllowCreatingStatus';
-  static final String groupMemberslimit = 'groupmemberslimit';
-  static final String statusDeleteAfterInHours = 'statusDeleteAfterInHours';
-  static final String broadcastMemberslimit = 'broadcastMemberslimit';
-  static final String feedbackEmail = 'feedbackEmail';
-  static final String isLogoutButtonShowInSettingsPage =
+  static const String isAllowCreatingGroups = 'isAllowCreatingGroups';
+  static const String isAllowCreatingBroadcasts = 'isAllowCreatingBroadcasts';
+  static const String isAllowCreatingStatus = 'isAllowCreatingStatus';
+  static const String groupMemberslimit = 'groupmemberslimit';
+  static const String statusDeleteAfterInHours = 'statusDeleteAfterInHours';
+  static const String broadcastMemberslimit = 'broadcastMemberslimit';
+  static const String feedbackEmail = 'feedbackEmail';
+  static const String isLogoutButtonShowInSettingsPage =
       'isLogoutButtonShowInSettingsPage';
 
   // Status--------
-  static final String sTATUSblocked = 'blocked';
-  static final String sTATUSallowed = 'allowed';
-  static final String sTATUSpending = 'pending';
-  static final String sTATUSdeleted = 'deleted';
+  static const String sTATUSblocked = 'blocked';
+  static const String sTATUSallowed = 'allowed';
+  static const String sTATUSpending = 'pending';
+  static const String sTATUSdeleted = 'deleted';
 
-  static final String totalapprovedusers = 'totalapprovedusers';
-  static final String totalblockedusers = 'totalblockedusers';
-  static final String totalpendingusers = 'totalpendingusers';
-  static final String totalusers = 'totalusers';
+  static const String totalapprovedusers = 'totalapprovedusers';
+  static const String totalblockedusers = 'totalblockedusers';
+  static const String totalpendingusers = 'totalpendingusers';
+  static const String totalusers = 'totalusers';
   //---
-  static final String nOTIFICATIONisunseen = 'isunseen';
-  static final String nOTIFICATIONxxauthor = 'author';
-  static final String nOTIFICATIONxxtitle = 'title';
-  static final String nOTIFICATIONxxdesc = 'desc';
-  static final String nOTIFICATIONxxaction = 'action';
-  static final String nOTIFICATIONxximageurl = 'imageurl';
-  static final String nOTIFICATIONxxlastupdate = 'lastupdated';
-  static final String nOTIFICATIONxxpagecomparekey = 'comparekey';
-  static final String nOTIFICATIONxxpagecompareval = 'compareval';
-  static final String nOTIFICATIONxxparentid = 'parentid';
-  static final String nOTIFICATIONxxextrafield = 'extrafield';
-  static final String nOTIFICATIONxxpagetype = 'pagetype';
-  static final String nOTIFICATIONxxpageID = 'pageid';
+  static const String nOTIFICATIONisunseen = 'isunseen';
+  static const String nOTIFICATIONxxauthor = 'author';
+  static const String nOTIFICATIONxxtitle = 'title';
+  static const String nOTIFICATIONxxdesc = 'desc';
+  static const String nOTIFICATIONxxaction = 'action';
+  static const String nOTIFICATIONxximageurl = 'imageurl';
+  static const String nOTIFICATIONxxlastupdate = 'lastupdated';
+  static const String nOTIFICATIONxxpagecomparekey = 'comparekey';
+  static const String nOTIFICATIONxxpagecompareval = 'compareval';
+  static const String nOTIFICATIONxxparentid = 'parentid';
+  static const String nOTIFICATIONxxextrafield = 'extrafield';
+  static const String nOTIFICATIONxxpagetype = 'pagetype';
+  static const String nOTIFICATIONxxpageID = 'pageid';
 
-  static final String nOTIFICATIONpagetypeAllDOCSNAPLIST = 'AllDOCSNAPLIST';
-  static final String nOTIFICATIONpagetypeSingleDOCinDOCSNAPLIST =
+  static const String nOTIFICATIONpagetypeAllDOCSNAPLIST = 'AllDOCSNAPLIST';
+  static const String nOTIFICATIONpagetypeSingleDOCinDOCSNAPLIST =
       'SingleDOCinDOCSNAPLIST';
-  static final String nOTIFICATIONpagetypeSingleLISTinDOCSNAP =
+  static const String nOTIFICATIONpagetypeSingleLISTinDOCSNAP =
       'SingleLISTinDOCSNAP';
-  static final String nOTIFICATIONpagecollection1 = 'collection1';
-  static final String nOTIFICATIONpagedoc1 = 'doc1';
-  static final String nOTIFICATIONpagecollection2 = 'collection2';
-  static final String nOTIFICATIONpagedoc2 = 'doc2';
-  static final String nOTIFICATIONtopic = 'topic';
-  static final String nOTIFICATIONactionPUSH = 'PUSH';
+  static const String nOTIFICATIONpagecollection1 = 'collection1';
+  static const String nOTIFICATIONpagedoc1 = 'doc1';
+  static const String nOTIFICATIONpagecollection2 = 'collection2';
+  static const String nOTIFICATIONpagedoc2 = 'doc2';
+  static const String nOTIFICATIONtopic = 'topic';
+  static const String nOTIFICATIONactionPUSH = 'PUSH';
 
 //--
-  static final String topicUSERS = 'USERS';
-  static final String topicPARTICULARUSER = 'PUSER';
-  static final String topicADMIN = 'ADMIN';
-  static final String topicUSERSandroid = 'USERS-ANDROID';
-  static final String topicUSERSios = 'USERS-IOS';
-  static final String topicUSERSweb = 'USERS-WEB';
+  static const String topicUSERS = 'USERS';
+  static const String topicPARTICULARUSER = 'PUSER';
+  static const String topicADMIN = 'ADMIN';
+  static const String topicUSERSandroid = 'USERS-ANDROID';
+  static const String topicUSERSios = 'USERS-IOS';
+  static const String topicUSERSweb = 'USERS-WEB';
 
   //---
-  static final String docid = 'docid';
-  static final String list = 'list';
+  static const String docid = 'docid';
+  static const String list = 'list';
   //--
-  static final String audiocallsmade = 'audiocallsmade';
-  static final String videocallsmade = 'videocallsmade';
-  static final String mediamessagessent = 'mediamessagessent';
+  static const String audiocallsmade = 'audiocallsmade';
+  static const String videocallsmade = 'videocallsmade';
+  static const String mediamessagessent = 'mediamessagessent';
   //---   All Status Fileds-
-  static final String statusPUBLISHERPHONE = 'phone';
-  static final String statusPUBLISHERPHONEVARIANTS = 'phoneVariants';
-  static final String statusPUBLISHEDON = 'publishedOn';
-  static final String statusEXPIRININGON = 'expiringOn';
-  static final String statusITEMSLIST = 'itemsList';
-  static final String statusVIEWERLIST = 'viewerList';
-  static final String statusVIEWERLISTWITHTIME = 'viewerListwithtime';
+  static const String statusPUBLISHERPHONE = 'phone';
+  static const String statusPUBLISHERPHONEVARIANTS = 'phoneVariants';
+  static const String statusPUBLISHEDON = 'publishedOn';
+  static const String statusEXPIRININGON = 'expiringOn';
+  static const String statusITEMSLIST = 'itemsList';
+  static const String statusVIEWERLIST = 'viewerList';
+  static const String statusVIEWERLISTWITHTIME = 'viewerListwithtime';
   //----
-  static final String statusItemID = 'id';
-  static final String statusItemCAPTION = 'caption';
-  static final String statusItemBGCOLOR = 'bgcolor';
-  static final String statusItemURL = 'url';
-  static final String statusItemDURATION = 'duration';
-  static final String statusItemTYPE = 'type';
+  static const String statusItemID = 'id';
+  static const String statusItemCAPTION = 'caption';
+  static const String statusItemBGCOLOR = 'bgcolor';
+  static const String statusItemURL = 'url';
+  static const String statusItemDURATION = 'duration';
+  static const String statusItemTYPE = 'type';
   //----
-  static final String statustypeIMAGE = 'img';
-  static final String statustypeIMAGEwithcaption = 'imgcap';
-  static final String statustypeVIDEO = 'vdo';
-  static final String statustypeTEXT = 'text';
+  static const String statustypeIMAGE = 'img';
+  static const String statustypeIMAGEwithcaption = 'imgcap';
+  static const String statustypeVIDEO = 'vdo';
+  static const String statustypeTEXT = 'text';
   //---   All Group Chat Fileds-
-  static final String groupMUTEDMEMBERS = 'muted';
-  static final String groupPHOTOURL = 'photourl';
-  static final String groupNAME = 'name';
-  static final String groupTYPE = 'type';
-  static final String groupID = 'id';
-  static final String groupIDfiltered = 'iDfltrd';
-  static final String groupDESCRIPTION = 'description';
-  static final String groupMEMBERSLIST = 'memberslist';
-  static final String groupCREATEDBY = 'createdby';
-  static final String groupCREATEDON = 'createdon';
-  static final String groupLATESTMESSAGETIME = 'latesttimestamp';
-  static final String groupADMINLIST = 'adminlist';
-  static final String groupISTYPINGUSERID = 'istypingID';
+  static const String groupMUTEDMEMBERS = 'muted';
+  static const String groupPHOTOURL = 'photourl';
+  static const String groupNAME = 'name';
+  static const String groupTYPE = 'type';
+  static const String groupID = 'id';
+  static const String groupIDfiltered = 'iDfltrd';
+  static const String groupDESCRIPTION = 'description';
+  static const String groupMEMBERSLIST = 'memberslist';
+  static const String groupCREATEDBY = 'createdby';
+  static const String groupCREATEDON = 'createdon';
+  static const String groupLATESTMESSAGETIME = 'latesttimestamp';
+  static const String groupADMINLIST = 'adminlist';
+  static const String groupISTYPINGUSERID = 'istypingID';
   //-
-  static final String groupTYPEonlyadminmessageallowed =
+  static const String groupTYPEonlyadminmessageallowed =
       'Only Admin Messages Allowed';
-  static final String groupTYPEallusersmessageallowed =
+  static const String groupTYPEallusersmessageallowed =
       'Both User & Admin Messages Allowed';
   //--
-  static final String groupmsgCONTENT = 'content';
-  static final String groupmsgLISToptional = 'list';
-  static final String groupmsgTIME = 'timestamp';
-  static final String groupmsgSENDBY = 'sendby';
-  static final String groupmsgISDELETED = 'isDeleted';
-  static final String groupmsgTYPE = 'type';
-  static final String groupmsgISMEDIA = 'ismedia';
-  static final String groupmsgNOTIFICATIONtitle = 'nTitle';
-  static final String groupmsgNOTIFICATIONdescription = 'nDesc';
+  static const String groupmsgCONTENT = 'content';
+  static const String groupmsgLISToptional = 'list';
+  static const String groupmsgTIME = 'timestamp';
+  static const String groupmsgSENDBY = 'sendby';
+  static const String groupmsgISDELETED = 'isDeleted';
+  static const String groupmsgTYPE = 'type';
+  static const String groupmsgISMEDIA = 'ismedia';
+  static const String groupmsgNOTIFICATIONtitle = 'nTitle';
+  static const String groupmsgNOTIFICATIONdescription = 'nDesc';
   //------
-  static final String groupmsgTYPEnotificationCreatedGroup = 'createdgroup';
-  static final String groupmsgTYPEnotificationUpdatedGroupDetails =
+  static const String groupmsgTYPEnotificationCreatedGroup = 'createdgroup';
+  static const String groupmsgTYPEnotificationUpdatedGroupDetails =
       'updatedgroupdetails';
-  static final String groupmsgTYPEnotificationUpdatedGroupicon =
+  static const String groupmsgTYPEnotificationUpdatedGroupicon =
       'updatedgroupdetailsicon';
-  static final String groupmsgTYPEnotificationDeletedGroupicon =
+  static const String groupmsgTYPEnotificationDeletedGroupicon =
       'updatedgroupdetailsicon';
-  static final String groupmsgTYPEnotificationUserSetAsAdmin = 'UserSetAsAdmin';
-  static final String groupmsgTYPEnotificationUserRemovedAsAdmin =
+  static const String groupmsgTYPEnotificationUserSetAsAdmin = 'UserSetAsAdmin';
+  static const String groupmsgTYPEnotificationUserRemovedAsAdmin =
       'UserRemovedAsAdmin';
-  static final String groupmsgTYPEnotificationAddedUser = 'addeduser';
-  static final String groupmsgTYPEnotificationRemovedUser = 'removeduser';
-  static final String groupmsgTYPEnotificationUserLeft = 'removedleft';
-  static final String groupmsgTYPEnotificationSetToAdminOnly = 'settoadminonly';
-  static final String groupmsgTYPEnotificationSetToUsersAndAdmin =
+  static const String groupmsgTYPEnotificationAddedUser = 'addeduser';
+  static const String groupmsgTYPEnotificationRemovedUser = 'removeduser';
+  static const String groupmsgTYPEnotificationUserLeft = 'removedleft';
+  static const String groupmsgTYPEnotificationSetToAdminOnly = 'settoadminonly';
+  static const String groupmsgTYPEnotificationSetToUsersAndAdmin =
       'settousersandadmin';
-  static final String groupmsgTYPEaudio = 'audio';
-  static final String groupmsgTYPEimage = 'image';
-  static final String groupmsgTYPEvideo = 'video';
-  static final String groupmsgTYPEdocument = 'document';
-  static final String groupmsgTYPElocation = 'location';
-  static final String groupmsgTYPElcontact = 'contact';
+  static const String groupmsgTYPEaudio = 'audio';
+  static const String groupmsgTYPEimage = 'image';
+  static const String groupmsgTYPEvideo = 'video';
+  static const String groupmsgTYPEdocument = 'document';
+  static const String groupmsgTYPElocation = 'location';
+  static const String groupmsgTYPElcontact = 'contact';
 
   //---   All Group Chat Fileds-
-  static final String broadcastBLACKLISTED = 'blacklisted';
-  static final String broadcastPHOTOURL = 'photourl';
-  static final String broadcastNAME = 'name';
-  static final String broadcastID = 'id';
-  static final String broadcastDESCRIPTION = 'description';
-  static final String broadcastMEMBERSLIST = 'memberslist';
-  static final String broadcastCREATEDBY = 'createdby';
-  static final String broadcastCREATEDON = 'createdon';
-  static final String broadcastLATESTMESSAGETIME = 'timestamplatest';
-  static final String broadcastADMINLIST = 'adminlist';
+  static const String broadcastBLACKLISTED = 'blacklisted';
+  static const String broadcastPHOTOURL = 'photourl';
+  static const String broadcastNAME = 'name';
+  static const String broadcastID = 'id';
+  static const String broadcastDESCRIPTION = 'description';
+  static const String broadcastMEMBERSLIST = 'memberslist';
+  static const String broadcastCREATEDBY = 'createdby';
+  static const String broadcastCREATEDON = 'createdon';
+  static const String broadcastLATESTMESSAGETIME = 'timestamplatest';
+  static const String broadcastADMINLIST = 'adminlist';
 
   //--
-  static final String broadcastmsgCONTENT = 'content';
-  static final String broadcastmsgLISToptional = 'list';
-  static final String broadcastmsgTIME = 'timestamp';
-  static final String broadcastmsgSENDBY = 'sendby';
-  static final String broadcastmsgISDELETED = 'isDeleted';
-  static final String broadcastmsgTYPE = 'type';
-  static final String broadcastmsgISMEDIA = 'ismedia';
+  static const String broadcastmsgCONTENT = 'content';
+  static const String broadcastmsgLISToptional = 'list';
+  static const String broadcastmsgTIME = 'timestamp';
+  static const String broadcastmsgSENDBY = 'sendby';
+  static const String broadcastmsgISDELETED = 'isDeleted';
+  static const String broadcastmsgTYPE = 'type';
+  static const String broadcastmsgISMEDIA = 'ismedia';
   //------
-  static final String broadcastmsgTYPEnotificationCreatedbroadcast =
+  static const String broadcastmsgTYPEnotificationCreatedbroadcast =
       'createdbroadcast';
-  static final String broadcastmsgTYPEnotificationUpdatedbroadcastDetails =
+  static const String broadcastmsgTYPEnotificationUpdatedbroadcastDetails =
       'updatedbroadcastdetails';
-  static final String broadcastmsgTYPEnotificationUpdatedbroadcasticon =
+  static const String broadcastmsgTYPEnotificationUpdatedbroadcasticon =
       'updatedbroadcastdetailsicon';
-  static final String broadcastmsgTYPEnotificationDeletedbroadcasticon =
+  static const String broadcastmsgTYPEnotificationDeletedbroadcasticon =
       'updatedbroadcastdetailsicon';
 
-  static final String broadcastmsgTYPEnotificationAddedUser = 'addeduser';
-  static final String broadcastmsgTYPEnotificationRemovedUser = 'removeduser';
+  static const String broadcastmsgTYPEnotificationAddedUser = 'addeduser';
+  static const String broadcastmsgTYPEnotificationRemovedUser = 'removeduser';
 
-  static final String broadcastmsgTYPEaudio = 'audio';
-  static final String broadcastmsgTYPEimage = 'image';
-  static final String broadcastmsgTYPEvideo = 'video';
-  static final String broadcastmsgTYPEdocument = 'document';
-  static final String broadcastmsgTYPElocation = 'location';
-  static final String broadcastmsgTYPElcontact = 'contact';
+  static const String broadcastmsgTYPEaudio = 'audio';
+  static const String broadcastmsgTYPEimage = 'image';
+  static const String broadcastmsgTYPEvideo = 'video';
+  static const String broadcastmsgTYPEdocument = 'document';
+  static const String broadcastmsgTYPElocation = 'location';
+  static const String broadcastmsgTYPElcontact = 'contact';
 
   //---Firebase Indentifiers below
-  static final String firebaseStorageNoObjectFound1 = 'object-not-found';
-  static final String firebaseStorageNoObjectFound2 = 'does not exist';
-  static final String firebaseStorageNoObjectFound3 = 'exists';
-  static final String firebaseStorageNoObjectFound4 = 'exist';
-  static final String firebaseStorageNoObjectFound5 = 'Not Found';
-  static final String firebaseStorageNoObjectFound6 = 'found';
-  static final String firebaseStorageNoObjectFound7 = '404';
-  static final String firebaseStorageNoObjectFound8 = 'not delete';
+  static const String firebaseStorageNoObjectFound1 = 'object-not-found';
+  static const String firebaseStorageNoObjectFound2 = 'does not exist';
+  static const String firebaseStorageNoObjectFound3 = 'exists';
+  static const String firebaseStorageNoObjectFound4 = 'exist';
+  static const String firebaseStorageNoObjectFound5 = 'Not Found';
+  static const String firebaseStorageNoObjectFound6 = 'found';
+  static const String firebaseStorageNoObjectFound7 = '404';
+  static const String firebaseStorageNoObjectFound8 = 'not delete';
 
   //----All App Constants ----
-  static final String timestampField = 'timestamp';
-  static final String isTokenGenerated = 'isTokenGenerated';
-  static final String notificationTokens = 'notificationTokens';
-  static final String photoUrl = 'photoUrl';
-  static final String answerTries = 'answerTries';
-  static final String passcodeTries = 'passcodeTries';
-  static final String aboutMe = 'aboutMe';
-  static final String nickname = 'nickname';
-  static final String messageType = 'type';
-  static final String isMuted = 'isMuted';
-  static final String from = 'from';
-  static final String to = 'to';
-  static final String sendername = 'sname';
-  static final String hasRecipientDeleted = 'rd';
-  static final String hasSenderDeleted = 'sd';
-  static final String content = 'content';
-  static final String tempcontent = 'tempcontent';
-  static final String chatsWith = 'chatsWith';
-  static final String chatStatus = 'chatStatus';
-  static final String lastSeen = 'lastSeen';
-  static final String lastOnline = 'lastTimeOnline';
-  static final String phone = 'phone';
-  static final String phoneRaw = 'phone_raw';
-  static final String isSecuritySetupDone = 'isd';
-  static final String isPINsetDone = 'ipsd';
-  static final String id = 'id';
-  static final String answer = 'answer';
-  static final String question = 'question';
-  static final String passcode = 'passcode';
-  static final String hidden = 'hidden';
-  static final String locked = 'locked';
-  static final String deleteUpto = 'deleteUpto';
-  static final String timestamp = 'timestamp';
-  static final String lastAnswered = 'lastAnswered';
-  static final String lastAttempt = 'lastAttempt';
-  static final String authenticationType = 'authenticationType';
-  static final String cachedContacts = 'cachedContacts';
-  static final String saved = 'saved';
-  static final String aliasName = 'aliasName';
-  static final String aliasAvatar = 'aliasAvatar';
-  static final String publicKey = 'publicKey';
-  static final String privateKey = 'privateKey';
-  static final String countryCode = 'countryCode';
-  static final String wallpaper = 'wallpaper';
-  static final String crcSeperator = '&';
-  static final String currentDeviceID = 'currentDeviceID';
-  static final String lastLogin = 'lastLogin';
-  static final String joinedOn = 'joinedOn';
-  static final String searchKey = 'searchKey';
-  static final String groupsCreated = 'groupsCreated';
-  static final String blockeduserslist = 'blockeduserslist';
-  static final String videoCallMade = 'videoCallMade';
-  static final String videoCallRecieved = 'videoCallRecieved';
-  static final String audioCallMade = 'audioCallMade';
-  static final String audioCallRecieved = 'audioCallRecieved';
-  static final String mssgSent = 'mssgSent';
-  static final String deviceDetails = 'deviceDetails';
-  static final String accountstatus = 'accountstatus';
-  static final String actionmessage = 'actionmessage';
-  static final String phonenumbervariants = 'phonenumbervariants';
-  static final String isbroadcast = 'isbroadcast';
-  static final String broadcastLocations = 'broadcastLocations';
+  static const String timestampField = 'timestamp';
+  static const String isTokenGenerated = 'isTokenGenerated';
+  static const String notificationTokens = 'notificationTokens';
+  static const String photoUrl = 'photoUrl';
+  static const String answerTries = 'answerTries';
+  static const String passcodeTries = 'passcodeTries';
+  static const String aboutMe = 'aboutMe';
+  static const String nickname = 'nickname';
+  static const String messageType = 'type';
+  static const String isMuted = 'isMuted';
+  static const String from = 'from';
+  static const String to = 'to';
+  static const String sendername = 'sname';
+  static const String hasRecipientDeleted = 'rd';
+  static const String hasSenderDeleted = 'sd';
+  static const String content = 'content';
+  static const String tempcontent = 'tempcontent';
+  static const String chatsWith = 'chatsWith';
+  static const String chatStatus = 'chatStatus';
+  static const String lastSeen = 'lastSeen';
+  static const String lastOnline = 'lastTimeOnline';
+  static const String phone = 'phone';
+  static const String phoneRaw = 'phone_raw';
+  static const String isSecuritySetupDone = 'isd';
+  static const String isPINsetDone = 'ipsd';
+  static const String id = 'id';
+  static const String answer = 'answer';
+  static const String question = 'question';
+  static const String passcode = 'passcode';
+  static const String hidden = 'hidden';
+  static const String locked = 'locked';
+  static const String deleteUpto = 'deleteUpto';
+  static const String timestamp = 'timestamp';
+  static const String lastAnswered = 'lastAnswered';
+  static const String lastAttempt = 'lastAttempt';
+  static const String authenticationType = 'authenticationType';
+  static const String cachedContacts = 'cachedContacts';
+  static const String saved = 'saved';
+  static const String aliasName = 'aliasName';
+  static const String aliasAvatar = 'aliasAvatar';
+  static const String publicKey = 'publicKey';
+  static const String privateKey = 'privateKey';
+  static const String countryCode = 'countryCode';
+  static const String wallpaper = 'wallpaper';
+  static const String crcSeperator = '&';
+  static const String currentDeviceID = 'currentDeviceID';
+  static const String lastLogin = 'lastLogin';
+  static const String joinedOn = 'joinedOn';
+  static const String searchKey = 'searchKey';
+  static const String groupsCreated = 'groupsCreated';
+  static const String blockeduserslist = 'blockeduserslist';
+  static const String videoCallMade = 'videoCallMade';
+  static const String videoCallRecieved = 'videoCallRecieved';
+  static const String audioCallMade = 'audioCallMade';
+  static const String audioCallRecieved = 'audioCallRecieved';
+  static const String mssgSent = 'mssgSent';
+  static const String deviceDetails = 'deviceDetails';
+  static const String accountstatus = 'accountstatus';
+  static const String actionmessage = 'actionmessage';
+  static const String phonenumbervariants = 'phonenumbervariants';
+  static const String isbroadcast = 'isbroadcast';
+  static const String broadcastLocations = 'broadcastLocations';
   //---
-  static final String notificationStringsMap = 'notificationsMap';
-  static final String isNotificationStringsMulitilanguageEnabled =
+  static const String notificationStringsMap = 'notificationsMap';
+  static const String isNotificationStringsMulitilanguageEnabled =
       'isMultiLangNotifEnabled';
-  static final String notificationStringNewTextMessage = 'ntm';
-  static final String notificationStringNewImageMessage = 'nim';
-  static final String notificationStringNewVideoMessage = 'nvm';
-  static final String notificationStringNewAudioMessage = 'nam';
-  static final String notificationStringNewContactMessage = 'ncm';
-  static final String notificationStringNewDocumentMessage = 'ndm';
-  static final String notificationStringNewLocationMessage = 'nlm';
-  static final String notificationStringNewIncomingAudioCall = 'niac';
-  static final String notificationStringNewIncomingVideoCall = 'nivc';
-  static final String notificationStringCallEnded = 'ce';
-  static final String notificationStringMissedCall = 'mc';
-  static final String notificationStringAcceptOrRejectCall = 'aorc';
-  static final String notificationStringCallRejected = 'cr';
+  static const String notificationStringNewTextMessage = 'ntm';
+  static const String notificationStringNewImageMessage = 'nim';
+  static const String notificationStringNewVideoMessage = 'nvm';
+  static const String notificationStringNewAudioMessage = 'nam';
+  static const String notificationStringNewContactMessage = 'ncm';
+  static const String notificationStringNewDocumentMessage = 'ndm';
+  static const String notificationStringNewLocationMessage = 'nlm';
+  static const String notificationStringNewIncomingAudioCall = 'niac';
+  static const String notificationStringNewIncomingVideoCall = 'nivc';
+  static const String notificationStringCallEnded = 'ce';
+  static const String notificationStringMissedCall = 'mc';
+  static const String notificationStringAcceptOrRejectCall = 'aorc';
+  static const String notificationStringCallRejected = 'cr';
   //---
-  static final int triesThreshold = 3;
-  static final int timeBase = 2;
+  static const int triesThreshold = 3;
+  static const int timeBase = 2;
   //--
-  static final String datatypeGROUPCHATMSGS = 'groupchatMSGS';
-  static final String datatypeBROADCASTCMSGS = 'broadcastMSGS';
-  static final String datatypeONETOONEMSGS = 'onetooneMSGS';
-  static final String isReply = 'isReply';
-  static final String replyToMsgDoc = 'replyToMsgDoc';
-  static final String isForward = 'isForward';
-  static final String latestEncrypted = 'lE';
+  static const String datatypeGROUPCHATMSGS = 'groupchatMSGS';
+  static const String datatypeBROADCASTCMSGS = 'broadcastMSGS';
+  static const String datatypeONETOONEMSGS = 'onetooneMSGS';
+  static const String isReply = 'isReply';
+  static const String replyToMsgDoc = 'replyToMsgDoc';
+  static const String isForward = 'isForward';
+  static const String latestEncrypted = 'lE';
   //--
-  static final String maxNoOfFilesInMultiSharing = 'maxNoOfFilesInMultiSharing';
-  static final String maxNoOfContactsSelectForForward =
+  static const String maxNoOfFilesInMultiSharing = 'maxNoOfFilesInMultiSharing';
+  static const String maxNoOfContactsSelectForForward =
       'maxNoOfContactsSelectForForward';
-  static final String appShareMessageStringAndroid =
+  static const String appShareMessageStringAndroid =
       'appShareMessageStringAndroid';
-  static final String appShareMessageStringiOS = 'appShareMessageStringiOS';
-  static final String isCustomAppShareLink = 'isCustomAppShareLink';
+  static const String appShareMessageStringiOS = 'appShareMessageStringiOS';
+  static const String isCustomAppShareLink = 'isCustomAppShareLink';
   //---
-  static final String deviceSavedLeads = 'deviceSavedLeads';
-  static final String lastupdatedepoch = 'lue';
+  static const String deviceSavedLeads = 'deviceSavedLeads';
+  static const String lastupdatedepoch = 'lue';
+
+  // Seng add - task
+  static const String taskduedate = 'dueDate';
 }
 
 //WARNING: DO NOT EDIT BELOW LINES ON YOUR OWN:

@@ -36,7 +36,7 @@ Widget groupMessageTile(
         title: Text(
           getTranslated(contextForDialog,
               isGroupChatMuted ? 'unmutenotifications' : 'mutenotifications'),
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         onTap: () async {
           Navigator.of(contextForDialog).pop();
@@ -83,17 +83,17 @@ Widget groupMessageTile(
     if (groupDoc[Dbkeys.groupCREATEDBY] == currentUserNo) {
       tiles.add(ListTile(
           dense: true,
-          leading: Icon(Icons.delete, size: 22),
+          leading: const Icon(Icons.delete, size: 22),
           title: Text(
             getTranslated(context, 'deletegroup'),
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           onTap: () async {
             Navigator.of(contextForDialog).pop();
             unawaited(showDialog(
               builder: (BuildContext context) {
                 return AlertDialog(
-                  title: new Text(getTranslated(context, 'deletegroup')),
+                  title: Text(getTranslated(context, 'deletegroup')),
                   actions: [
                     // ignore: deprecated_member_use
                     TextButton(
@@ -109,7 +109,7 @@ Widget groupMessageTile(
                     TextButton(
                       child: Text(
                         getTranslated(context, 'delete'),
-                        style: TextStyle(color: Colors.red, fontSize: 18),
+                        style: const TextStyle(color: Colors.red, fontSize: 18),
                       ),
                       onPressed: () async {
                         Navigator.of(context).pop();
@@ -143,17 +143,17 @@ Widget groupMessageTile(
     } else {
       tiles.add(ListTile(
           dense: true,
-          leading: Icon(Icons.remove_circle_outlined, size: 22),
+          leading: const Icon(Icons.remove_circle_outlined, size: 22),
           title: Text(
             getTranslated(context, 'leavegroup'),
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           onTap: () async {
             Navigator.of(contextForDialog).pop();
             unawaited(showDialog(
               builder: (BuildContext context) {
                 return AlertDialog(
-                  title: new Text(getTranslated(context, 'leavegroup')),
+                  title: Text(getTranslated(context, 'leavegroup')),
                   actions: [
                     // ignore: deprecated_member_use
                     TextButton(
@@ -169,7 +169,7 @@ Widget groupMessageTile(
                     TextButton(
                       child: Text(
                         getTranslated(context, 'leave'),
-                        style: TextStyle(color: Colors.red, fontSize: 18),
+                        style: const TextStyle(color: Colors.red, fontSize: 18),
                       ),
                       onPressed: () async {
                         Navigator.of(context).pop();
@@ -225,9 +225,7 @@ Widget groupMessageTile(
                                 .collection(DbPaths.collectiongroups)
                                 .doc(groupId)
                                 .collection(DbPaths.collectiongroupChats)
-                                .doc(time.millisecondsSinceEpoch.toString() +
-                                    '--' +
-                                    groupId)
+                                .doc('${time.millisecondsSinceEpoch}--$groupId')
                                 .set({
                               Dbkeys.groupmsgCONTENT:
                                   '$currentUserNo ${getTranslated(context, 'leftthegroup')}',
@@ -290,14 +288,14 @@ Widget groupMessageTile(
             .orderBy(Dbkeys.timestamp, descending: true)
             .limit(1)
             .snapshots(),
-        placeholder: SizedBox(),
+        placeholder: const SizedBox(),
         noDataWidget: Column(
           children: [
             ListTile(
                 onLongPress: () {
                   showMenuForGroupChat(context, streamDocSnap[index]);
                 },
-                contentPadding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                contentPadding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                 leading: customCircleAvatarGroup(
                     url: streamDocSnap[index][Dbkeys.groupPHOTOURL],
                     radius: 22),
@@ -321,8 +319,8 @@ Widget groupMessageTile(
                 onTap: () {
                   Navigator.push(
                       context,
-                      new MaterialPageRoute(
-                          builder: (context) => new GroupChatPage(
+                      MaterialPageRoute(
+                          builder: (context) => GroupChatPage(
                               isCurrentUserMuted: isGroupChatMuted,
                               isSharingIntentForwarded: false,
                               model: cachedModel,
@@ -337,25 +335,25 @@ Widget groupMessageTile(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     unRead == 0
-                        ? SizedBox()
+                        ? const SizedBox()
                         : Container(
-                            child: Text(unRead.toString(),
-                                style: TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold)),
                             padding: const EdgeInsets.all(7.0),
-                            decoration: new BoxDecoration(
+                            decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               color: Colors.green[400],
                             ),
+                            child: Text(unRead.toString(),
+                                style: const TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold)),
                           ),
-                    SizedBox(
+                    const SizedBox(
                       height: 3,
                     ),
                   ],
                 )),
-            Divider(
+            const Divider(
               height: 0,
             ),
           ],
@@ -369,7 +367,7 @@ Widget groupMessageTile(
                   onLongPress: () {
                     showMenuForGroupChat(context, streamDocSnap[index]);
                   },
-                  contentPadding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                  contentPadding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                   leading: customCircleAvatarGroup(
                       url: streamDocSnap[index][Dbkeys.groupPHOTOURL],
                       radius: 22),
@@ -387,7 +385,7 @@ Widget groupMessageTile(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       lastMessage[Dbkeys.groupmsgSENDBY] == currentUserNo
-                          ? SizedBox()
+                          ? const SizedBox()
                           : Consumer<AvailableContactsProvider>(
                               builder: (context, availableContacts, _child) {
                               // _filtered = availableContacts.filtered;
@@ -450,8 +448,8 @@ Widget groupMessageTile(
                   onTap: () {
                     Navigator.push(
                         context,
-                        new MaterialPageRoute(
-                            builder: (context) => new GroupChatPage(
+                        MaterialPageRoute(
+                            builder: (context) => GroupChatPage(
                                 isCurrentUserMuted: isGroupChatMuted,
                                 isSharingIntentForwarded: false,
                                 model: cachedModel,
@@ -468,7 +466,7 @@ Widget groupMessageTile(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       lastMessage == {} || lastMessage == null
-                          ? SizedBox()
+                          ? const SizedBox()
                           : Padding(
                               padding: const EdgeInsets.only(top: 1),
                               child: Text(
@@ -495,32 +493,32 @@ Widget groupMessageTile(
                                   size: 20,
                                   color: lightGrey.withOpacity(0.5),
                                 )
-                              : Icon(
+                              : const Icon(
                                   Icons.volume_up,
                                   size: 20,
                                   color: Colors.transparent,
                                 ),
                           unRead == 0
-                              ? SizedBox()
+                              ? const SizedBox()
                               : Container(
                                   margin: EdgeInsets.only(
                                       left: isGroupChatMuted ? 7 : 0),
-                                  child: Text(unRead.toString(),
-                                      style: TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold)),
                                   padding: const EdgeInsets.all(6.0),
-                                  decoration: new BoxDecoration(
+                                  decoration: BoxDecoration(
                                     shape: BoxShape.circle,
                                     color: Colors.green[400],
                                   ),
+                                  child: Text(unRead.toString(),
+                                      style: const TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold)),
                                 ),
                         ],
                       ),
                     ],
                   )),
-              Divider(
+              const Divider(
                 height: 0,
               ),
             ],

@@ -97,7 +97,7 @@ class LazyLoadingChat extends StatefulWidget {
     this.sharedFiles,
     this.sharedFilestype,
     this.sharedText,
-  });
+  }) : super(key: key);
 
   @override
   _LazyLoadingChatState createState() => _LazyLoadingChatState();
@@ -125,11 +125,11 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
       chatStatusSubscriptionForPeer;
 
   final TextEditingController textEditingController =
-      new TextEditingController();
+      TextEditingController();
   final TextEditingController reportEditingController =
-      new TextEditingController();
-  final ScrollController realtime = new ScrollController();
-  final ScrollController saved = new ScrollController();
+      TextEditingController();
+  final ScrollController realtime = ScrollController();
+  final ScrollController saved = ScrollController();
   late DataModel _cachedModel;
 
   Duration? duration;
@@ -160,9 +160,9 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
   late String messageReplyOwnerName;
   late Stream<QuerySnapshot> groupChatMessages;
   late Query firestoreChatquery;
-  GlobalKey<ScaffoldState> _scaffold = new GlobalKey<ScaffoldState>();
-  GlobalKey<State> _keyLoader =
-      new GlobalKey<State>(debugLabel: 'qqqeqeqsssaadqeqe');
+  final GlobalKey<ScaffoldState> _scaffold = GlobalKey<ScaffoldState>();
+  final GlobalKey<State> _keyLoader =
+      GlobalKey<State>(debugLabel: 'qqqeqeqsssaadqeqe');
   Map<String, dynamic>? replyDoc;
   bool isReplyKeyboard = false;
 
@@ -208,7 +208,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
       var currentpeer =
           Provider.of<CurrentChatPeer>(this.context, listen: false);
       currentpeer.setpeer(newpeerid: widget.peerNo);
-      seenState = new SeenState(false);
+      seenState = SeenState(false);
       WidgetsBinding.instance.addObserver(this);
       var firestoreProvider =
           Provider.of<FirestoreDataProviderMESSAGESforLAZYLOADINGCHAT>(
@@ -319,7 +319,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
   uploadEach(
     int index,
   ) async {
-    File file = new File(widget.sharedFiles![index].path);
+    File file = File(widget.sharedFiles![index].path);
     String fileName = file.path.split('/').last.toLowerCase();
 
     print(fileName);
@@ -392,8 +392,9 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
     if (content.trim() != '') {
       try {
         content = content.trim();
-        if (chatStatus == null || chatStatus == 4)
+        if (chatStatus == null || chatStatus == 4) {
           ChatController.request(widget.currentUserNo, widget.peerNo, chatId);
+        }
         textEditingController.clear();
         // final encrypted = encryptWithCRC(content);
         final encrypted = AESEncryptData.encryptAES(content, sharedSecret);
@@ -490,7 +491,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
           });
 
           unawaited(realtime.animateTo(0.0,
-              duration: Duration(milliseconds: 300), curve: Curves.easeOut));
+              duration: const Duration(milliseconds: 300), curve: Curves.easeOut));
 
           if (type == MessageType.doc ||
               type == MessageType.audio ||
@@ -683,7 +684,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
         context: this.context,
         barrierDismissible: false,
         builder: (BuildContext context) {
-          return new WillPopScope(
+          return WillPopScope(
               onWillPop: () async => false,
               child: SimpleDialog(
                   shape: RoundedRectangleBorder(
@@ -809,7 +810,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
   void _createInterstitialAd() {
     InterstitialAd.load(
         adUnitId: getInterstitialAdUnitId()!,
-        request: AdRequest(
+        request: const AdRequest(
           nonPersonalizedAds: true,
         ),
         adLoadCallback: InterstitialAdLoadCallback(
@@ -856,7 +857,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
   void _createRewardedAd() {
     RewardedAd.load(
         adUnitId: getRewardBasedVideoAdUnitId()!,
-        request: AdRequest(
+        request: const AdRequest(
           nonPersonalizedAds: true,
         ),
         rewardedAdLoadCallback: RewardedAdLoadCallback(
@@ -930,7 +931,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
     }
   }
 
-  FocusNode keyboardFocusNode = new FocusNode();
+  FocusNode keyboardFocusNode = FocusNode();
   Widget buildInputAndroid(BuildContext context, bool isemojiShowing,
       Function refreshThisInput, bool keyboardVisible) {
     final observer = Provider.of<Observer>(context, listen: true);
@@ -943,19 +944,25 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
               ? buildReplyMessageForInput(
                   context,
                 )
-              : SizedBox(),
+              : const SizedBox(),
           Container(
             margin: EdgeInsets.only(bottom: Platform.isIOS == true ? 20 : 0),
+            width: double.infinity,
+            height: 60.0,
+            decoration: const BoxDecoration(
+              // border: new Border(top: new BorderSide(color: Colors.grey, width: 0.5)),
+              color: Colors.transparent,
+            ),
             child: Row(
               children: <Widget>[
                 Flexible(
                   child: Container(
-                    margin: EdgeInsets.only(
+                    margin: const EdgeInsets.only(
                       left: 10,
                     ),
                     decoration: BoxDecoration(
                         color: fiberchatWhite,
-                        borderRadius: BorderRadius.all(Radius.circular(30))),
+                        borderRadius: const BorderRadius.all(Radius.circular(30))),
                     child: Row(
                       children: [
                         SizedBox(
@@ -994,29 +1001,29 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                               enabledBorder: OutlineInputBorder(
                                 // width: 0.0 produces a thin "hairline" border
                                 borderRadius: BorderRadius.circular(1),
-                                borderSide: BorderSide(
+                                borderSide: const BorderSide(
                                     color: Colors.transparent, width: 1.5),
                               ),
                               hoverColor: Colors.transparent,
                               focusedBorder: OutlineInputBorder(
                                 // width: 0.0 produces a thin "hairline" border
                                 borderRadius: BorderRadius.circular(1),
-                                borderSide: BorderSide(
+                                borderSide: const BorderSide(
                                     color: Colors.transparent, width: 1.5),
                               ),
                               border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(1),
                                   borderSide:
-                                      BorderSide(color: Colors.transparent)),
-                              contentPadding: EdgeInsets.fromLTRB(10, 4, 7, 4),
+                                      const BorderSide(color: Colors.transparent)),
+                              contentPadding: const EdgeInsets.fromLTRB(10, 4, 7, 4),
                               hintText: getTranslated(this.context, 'msg'),
                               hintStyle:
-                                  TextStyle(color: Colors.grey, fontSize: 15),
+                                  const TextStyle(color: Colors.grey, fontSize: 15),
                             ),
                           ),
                         ),
                         Container(
-                            margin: EdgeInsets.fromLTRB(0, 0, 5, 0),
+                            margin: const EdgeInsets.fromLTRB(0, 0, 5, 0),
                             width: textEditingController.text.isNotEmpty
                                 ? 10
                                 : IsShowGIFsenderButtonByGIPHY == false
@@ -1026,15 +1033,15 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
                                 textEditingController.text.isNotEmpty
-                                    ? SizedBox()
+                                    ? const SizedBox()
                                     : SizedBox(
                                         width: 30,
                                         child: IconButton(
-                                          icon: new Icon(
+                                          icon: Icon(
                                             Icons.attachment_outlined,
                                             color: fiberchatGrey,
                                           ),
-                                          padding: EdgeInsets.all(0.0),
+                                          padding: const EdgeInsets.all(0.0),
                                           onPressed:
                                               observer.ismediamessagingallowed ==
                                                       false
@@ -1052,16 +1059,16 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                                         ),
                                       ),
                                 textEditingController.text.isNotEmpty
-                                    ? SizedBox()
+                                    ? const SizedBox()
                                     : SizedBox(
                                         width: 30,
                                         child: IconButton(
-                                          icon: new Icon(
+                                          icon: Icon(
                                             Icons.camera_alt_rounded,
                                             size: 20,
                                             color: fiberchatGrey,
                                           ),
-                                          padding: EdgeInsets.all(0.0),
+                                          padding: const EdgeInsets.all(0.0),
                                           onPressed:
                                               observer.ismediamessagingallowed ==
                                                       false
@@ -1102,19 +1109,19 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                                           color: fiberchatWhite,
                                         ),
                                       ),
-                                textEditingController.text.length != 0 ||
+                                textEditingController.text.isNotEmpty ||
                                         IsShowGIFsenderButtonByGIPHY == false
-                                    ? SizedBox(
+                                    ? const SizedBox(
                                         width: 0,
                                       )
                                     : Container(
-                                        margin: EdgeInsets.only(bottom: 5),
+                                        margin: const EdgeInsets.only(bottom: 5),
                                         height: 35,
                                         alignment: Alignment.topLeft,
                                         width: 40,
                                         child: IconButton(
                                             color: fiberchatWhite,
-                                            padding: EdgeInsets.all(0.0),
+                                            padding: const EdgeInsets.all(0.0),
                                             icon: Icon(
                                               Icons.gif_rounded,
                                               size: 40,
@@ -1163,7 +1170,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                   height: 47,
                   width: 47,
                   // alignment: Alignment.center,
-                  margin: EdgeInsets.only(left: 6, right: 10),
+                  margin: const EdgeInsets.only(left: 6, right: 10),
                   decoration: BoxDecoration(
                       color: DESIGN_TYPE == Themetype.whatsapp
                           ? fiberchatgreen
@@ -1171,11 +1178,11 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                       // border: Border.all(
                       //   color: Colors.red[500],
                       // ),
-                      borderRadius: BorderRadius.all(Radius.circular(30))),
+                      borderRadius: const BorderRadius.all(Radius.circular(30))),
                   child: Padding(
                     padding: const EdgeInsets.all(2.0),
                     child: IconButton(
-                      icon: new Icon(
+                      icon: Icon(
                         // textEditingController.text.isNotEmpty == true
                         //     ?
                         Icons.send,
@@ -1200,12 +1207,6 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                 ),
               ],
             ),
-            width: double.infinity,
-            height: 60.0,
-            decoration: new BoxDecoration(
-              // border: new Border(top: new BorderSide(color: Colors.grey, width: 0.5)),
-              color: Colors.transparent,
-            ),
           ),
           isemojiShowing == true && keyboardVisible == false
               ? Offstage(
@@ -1224,7 +1225,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                             verticalSpacing: 0,
                             horizontalSpacing: 0,
                             initCategory: emojipic.Category.RECENT,
-                            bgColor: Color(0xFFF2F2F2),
+                            bgColor: const Color(0xFFF2F2F2),
                             indicatorColor: fiberchatgreen,
                             iconColor: Colors.grey,
                             iconColorSelected: fiberchatgreen,
@@ -1233,11 +1234,11 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                             showRecentsTab: true,
                             recentsLimit: 28,
                           
-                            categoryIcons: CategoryIcons(),
+                            categoryIcons: const CategoryIcons(),
                             buttonMode: ButtonMode.MATERIAL)),
                   ),
                 )
-              : SizedBox(),
+              : const SizedBox(),
         ]);
   }
 
@@ -1269,10 +1270,11 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed)
+    if (state == AppLifecycleState.resumed) {
       setIsActive();
-    else
+    } else {
       setLastSeen();
+    }
   }
 
   void setIsActive() async {
@@ -1284,7 +1286,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
 
   dynamic lastSeen;
 
-  FlutterSecureStorage storage = new FlutterSecureStorage();
+  FlutterSecureStorage storage = const FlutterSecureStorage();
   late encrypt.Encrypter cryptor;
   final iv = encrypt.IV.fromLength(8);
 
@@ -1293,12 +1295,12 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
   ) async {
     try {
       privateKey = await storage.read(key: Dbkeys.privateKey);
-      sharedSecret = (await e2ee.X25519().calculateSharedSecret(
+      sharedSecret = (await const e2ee.X25519().calculateSharedSecret(
               e2ee.Key.fromBase64(privateKey!, false),
               e2ee.Key.fromBase64(peer![Dbkeys.publicKey], true)))
           .toBase64();
       final key = encrypt.Key.fromBase64(sharedSecret!);
-      cryptor = new encrypt.Encrypter(encrypt.Salsa20(key));
+      cryptor = encrypt.Encrypter(encrypt.Salsa20(key));
     } catch (e) {
       sharedSecret = null;
     }
@@ -1417,8 +1419,8 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
               refdata: firestoreChatquery,
               list: ListView.builder(
                   reverse: true,
-                  padding: EdgeInsets.all(7),
-                  physics: ScrollPhysics(),
+                  padding: const EdgeInsets.all(7),
+                  physics: const ScrollPhysics(),
                   shrinkWrap: true,
                   itemCount: firestoreDataProvider.recievedDocs.length,
                   itemBuilder: (BuildContext context, int i) {
@@ -1502,10 +1504,10 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
     if (mssgDoc[Dbkeys.hasSenderDeleted] == false) {
       tiles.add(ListTile(
         dense: true,
-        leading: Icon(Icons.reply),
+        leading: const Icon(Icons.reply),
         title: Text(
           getTranslated(contextForDialog, 'reply'),
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         onTap: () {
           Navigator.pop(contextForDialog);
@@ -1519,16 +1521,31 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
       ));
     }
 
+    //Seng add - Add task
+    if (mssgDoc[Dbkeys.hasSenderDeleted] == false) {
+      tiles.add(ListTile(
+        dense: true,
+        leading: const Icon(Icons.task),
+        title: Text(
+          getTranslated(contextForDialog, 'addtask'),
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        onTap: () {
+          // TODO: Go to task page
+        },
+      ));
+    }
+
     //####################----------------------- Delete Msgs for SENDER ---------------------------------------------------
     if ((mssgDoc[Dbkeys.from] == widget.currentUserNo &&
             mssgDoc[Dbkeys.hasSenderDeleted] == false) &&
         saved == false) {
       tiles.add(ListTile(
           dense: true,
-          leading: Icon(Icons.delete_outline),
+          leading: const Icon(Icons.delete_outline),
           title: Text(
             getTranslated(contextForDialog, 'dltforme'),
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           onTap: () async {
             Fiberchat.toast(getTranslated(contextForDialog, 'deleting'));
@@ -1626,10 +1643,10 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
 
       tiles.add(ListTile(
           dense: true,
-          leading: Icon(Icons.delete),
+          leading: const Icon(Icons.delete),
           title: Text(
             getTranslated(contextForDialog, 'dltforeveryone'),
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           onTap: () async {
             if ((mssgDoc.containsKey(Dbkeys.isbroadcast) == true
@@ -1687,10 +1704,10 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
         saved == false) {
       tiles.add(ListTile(
           dense: true,
-          leading: Icon(Icons.delete_outline),
+          leading: const Icon(Icons.delete_outline),
           title: Text(
             getTranslated(contextForDialog, 'dltforme'),
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           onTap: () async {
             Fiberchat.toast(
@@ -1787,10 +1804,10 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
         mssgDoc[Dbkeys.to] == widget.currentUserNo) {
       tiles.add(ListTile(
           dense: true,
-          leading: Icon(Icons.block),
+          leading: const Icon(Icons.block),
           title: Text(
             getTranslated(contextForDialog, 'blockbroadcast'),
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           onTap: () {
             Fiberchat.toast(
@@ -1824,10 +1841,10 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
         !mssgDoc.containsKey(Dbkeys.broadcastID)) {
       tiles.add(ListTile(
           dense: true,
-          leading: Icon(Icons.content_copy),
+          leading: const Icon(Icons.content_copy),
           title: Text(
             getTranslated(contextForDialog, 'copy'),
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           onTap: () {
             Clipboard.setData(ClipboardData(text: mssgDoc[Dbkeys.content]));
@@ -1845,10 +1862,10 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
         true) {
       tiles.add(ListTile(
           dense: true,
-          leading: Icon(FontAwesomeIcons.share, size: 22),
+          leading: const Icon(FontAwesomeIcons.share, size: 22),
           title: Text(
             getTranslated(contextForDialog, 'forward'),
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           onTap: () async {
             Navigator.of(contextForDialog).pop();
@@ -1862,7 +1879,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                         model: widget.model,
                         prefs: widget.prefs,
                         onSelect: (selectedlist) async {
-                          if (selectedlist.length > 0) {
+                          if (selectedlist.isNotEmpty) {
                             setStateIfMounted(() {
                               isgeneratingSomethingLoader = true;
                               tempSendIndex = 0;
@@ -1962,7 +1979,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
             Dbkeys.isForward: true
           }, SetOptions(merge: true)).then((value) {
             unawaited(realtime.animateTo(0.0,
-                duration: Duration(milliseconds: 300), curve: Curves.easeOut));
+                duration: const Duration(milliseconds: 300), curve: Curves.easeOut));
             // _playPopSound();
             FirebaseFirestore.instance
                 .collection(DbPaths.collectiongroups)
@@ -1993,13 +2010,13 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
         }
       } else {
         try {
-          String? sharedSecret = (await e2ee.X25519().calculateSharedSecret(
+          String? sharedSecret = (await const e2ee.X25519().calculateSharedSecret(
                   e2ee.Key.fromBase64(privateKey, false),
                   e2ee.Key.fromBase64(
                       list[tempSendIndex][Dbkeys.publicKey], true)))
               .toBase64();
           final key = encrypt.Key.fromBase64(sharedSecret);
-          cryptor = new encrypt.Encrypter(encrypt.Salsa20(key));
+          cryptor = encrypt.Encrypter(encrypt.Salsa20(key));
           String content = mssgDoc[Dbkeys.content];
           final encrypted = encryptWithCRC(content);
           if (encrypted is String) {
@@ -2094,10 +2111,10 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
     if ((doc[Dbkeys.from] != widget.currentUserNo) && saved == false) {
       tiles.add(ListTile(
           dense: true,
-          leading: Icon(Icons.delete),
+          leading: const Icon(Icons.delete),
           title: Text(
             getTranslated(this.context, 'dltforme'),
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           onTap: () async {
             await FirebaseFirestore.instance
@@ -2119,10 +2136,10 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
     if (doc[Dbkeys.messageType] == MessageType.text.index) {
       tiles.add(ListTile(
           dense: true,
-          leading: Icon(Icons.content_copy),
+          leading: const Icon(Icons.content_copy),
           title: Text(
             getTranslated(context, 'copy'),
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           onTap: () {
             Clipboard.setData(ClipboardData(text: doc[Dbkeys.content]));
@@ -2136,10 +2153,10 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
         doc[Dbkeys.to] == widget.currentUserNo) {
       tiles.add(ListTile(
           dense: true,
-          leading: Icon(Icons.block),
+          leading: const Icon(Icons.block),
           title: Text(
             getTranslated(this.context, 'blockbroadcast'),
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           onTap: () {
             Fiberchat.toast(
@@ -2247,6 +2264,11 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                                             MessageType.audio.index
                                         ? MessageType.audio
                                         : MessageType.text,
+            isMe: isMe,
+            timestamp: doc[Dbkeys.timestamp],
+            delivered: _cachedModel.getMessageStatus(
+                widget.peerNo, doc[Dbkeys.timestamp]),
+            isContinuing: isContinuing,
             child: doc[Dbkeys.messageType] == MessageType.text.index
                 ? getTextMessage(isMe, doc)
                 : doc[Dbkeys.messageType] == MessageType.location.index
@@ -2268,25 +2290,20 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                                         saved: false)
                                     : getImageMessage(
                                         doc,
-                                      ),
-            isMe: isMe,
-            timestamp: doc[Dbkeys.timestamp],
-            delivered: _cachedModel.getMessageStatus(
-                widget.peerNo, doc[Dbkeys.timestamp]),
-            isContinuing: isContinuing));
+                                      )));
   }
 
   Widget buildLoadingThumbnail() {
     return Positioned(
       child: isgeneratingSomethingLoader
           ? Container(
+              color: DESIGN_TYPE == Themetype.whatsapp
+                  ? fiberchatBlack.withOpacity(0.6)
+                  : fiberchatWhite.withOpacity(0.6),
               child: Center(
                 child: CircularProgressIndicator(
                     valueColor: AlwaysStoppedAnimation<Color>(fiberchatBlue)),
               ),
-              color: DESIGN_TYPE == Themetype.whatsapp
-                  ? fiberchatBlack.withOpacity(0.6)
-                  : fiberchatWhite.withOpacity(0.6),
             )
           : Container(),
     );
@@ -2303,7 +2320,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   replyAttachedWidget(this.context, doc[Dbkeys.replyToMsgDoc]),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   selectablelinkify(doc[Dbkeys.content], 16),
@@ -2330,7 +2347,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                                   size: 12,
                                   color: fiberchatGrey.withOpacity(0.5),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   width: 5,
                                 ),
                                 Text(getTranslated(this.context, 'forwarded'),
@@ -2341,7 +2358,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                                         overflow: TextOverflow.ellipsis,
                                         fontSize: 13))
                               ])),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
                           selectablelinkify(doc[Dbkeys.content], 16),
@@ -2379,7 +2396,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                             size: 12,
                             color: fiberchatGrey.withOpacity(0.5),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 5,
                           ),
                           Text(getTranslated(this.context, 'forwarded'),
@@ -2390,7 +2407,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                                   overflow: TextOverflow.ellipsis,
                                   fontSize: 13))
                         ])),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     Image.asset(
@@ -2411,7 +2428,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
       BuildContext context, Map<String, dynamic> doc, String message,
       {bool saved = false, bool isMe = true}) {
     return Container(
-      margin: EdgeInsets.only(bottom: 10),
+      margin: const EdgeInsets.only(bottom: 10),
       // width: 250,
       // height: 116,
       child: Column(
@@ -2421,7 +2438,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
           doc.containsKey(Dbkeys.isForward) == true
               ? doc[Dbkeys.isForward] == true
                   ? Container(
-                      margin: EdgeInsets.only(bottom: 10),
+                      margin: const EdgeInsets.only(bottom: 10),
                       child: Row(
                           mainAxisAlignment: isMe == true
                               ? MainAxisAlignment.start
@@ -2433,7 +2450,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                               size: 12,
                               color: fiberchatGrey.withOpacity(0.5),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 5,
                             ),
                             Text(getTranslated(this.context, 'forwarded'),
@@ -2444,8 +2461,8 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                                     overflow: TextOverflow.ellipsis,
                                     fontSize: 13))
                           ]))
-                  : SizedBox(height: 0, width: 0)
-              : SizedBox(height: 0, width: 0),
+                  : const SizedBox(height: 0, width: 0)
+              : const SizedBox(height: 0, width: 0),
           SizedBox(
             width: 200,
             height: 80,
@@ -2482,7 +2499,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
           doc.containsKey(Dbkeys.isForward) == true
               ? doc[Dbkeys.isForward] == true
                   ? Container(
-                      margin: EdgeInsets.only(bottom: 10),
+                      margin: const EdgeInsets.only(bottom: 10),
                       child: Row(
                           mainAxisAlignment: isMe == true
                               ? MainAxisAlignment.start
@@ -2494,7 +2511,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                               size: 12,
                               color: fiberchatGrey.withOpacity(0.5),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 5,
                             ),
                             Text(getTranslated(this.context, 'forwarded'),
@@ -2505,18 +2522,18 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                                     overflow: TextOverflow.ellipsis,
                                     fontSize: 13))
                           ]))
-                  : SizedBox(height: 0, width: 0)
-              : SizedBox(height: 0, width: 0),
+                  : const SizedBox(height: 0, width: 0)
+              : const SizedBox(height: 0, width: 0),
           ListTile(
-            contentPadding: EdgeInsets.all(4),
+            contentPadding: const EdgeInsets.all(4),
             isThreeLine: false,
             leading: Container(
               decoration: BoxDecoration(
                 color: Colors.yellow[800],
                 borderRadius: BorderRadius.circular(7.0),
               ),
-              padding: EdgeInsets.all(12),
-              child: Icon(
+              padding: const EdgeInsets.all(12),
+              child: const Icon(
                 Icons.insert_drive_file,
                 size: 25,
                 color: Colors.white,
@@ -2526,13 +2543,13 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
               message.split('-BREAK-')[1],
               overflow: TextOverflow.ellipsis,
               maxLines: 2,
-              style: TextStyle(
+              style: const TextStyle(
                   height: 1.4,
                   fontWeight: FontWeight.w700,
                   color: Colors.black87),
             ),
           ),
-          Divider(
+          const Divider(
             height: 3,
           ),
           message.split('-BREAK-')[1].endsWith('.pdf')
@@ -2605,7 +2622,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
           doc.containsKey(Dbkeys.isForward) == true
               ? doc[Dbkeys.isForward] == true
                   ? Container(
-                      margin: EdgeInsets.only(bottom: 10),
+                      margin: const EdgeInsets.only(bottom: 10),
                       child: Row(
                           mainAxisAlignment: isMe == true
                               ? MainAxisAlignment.start
@@ -2617,7 +2634,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                               size: 12,
                               color: fiberchatGrey.withOpacity(0.5),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 5,
                             ),
                             Text(getTranslated(this.context, 'forwarded'),
@@ -2628,10 +2645,14 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                                     overflow: TextOverflow.ellipsis,
                                     fontSize: 13))
                           ]))
-                  : SizedBox(height: 0, width: 0)
-              : SizedBox(height: 0, width: 0),
+                  : const SizedBox(height: 0, width: 0)
+              : const SizedBox(height: 0, width: 0),
           saved
               ? Material(
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(8.0),
+                  ),
+                  clipBehavior: Clip.hardEdge,
                   child: Container(
                     decoration: BoxDecoration(
                       image: DecorationImage(
@@ -2642,28 +2663,28 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                     width: doc[Dbkeys.content].contains('giphy') ? 120 : 200.0,
                     height: doc[Dbkeys.content].contains('giphy') ? 102 : 200.0,
                   ),
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(8.0),
-                  ),
-                  clipBehavior: Clip.hardEdge,
                 )
               : CachedNetworkImage(
                   placeholder: (context, url) => Container(
-                    child: CircularProgressIndicator(
-                      valueColor:
-                          AlwaysStoppedAnimation<Color>(Colors.blueGrey[400]!),
-                    ),
                     width: doc[Dbkeys.content].contains('giphy') ? 120 : 200.0,
                     height: doc[Dbkeys.content].contains('giphy') ? 120 : 200.0,
-                    padding: EdgeInsets.all(80.0),
-                    decoration: BoxDecoration(
+                    padding: const EdgeInsets.all(80.0),
+                    decoration: const BoxDecoration(
                       color: Colors.blueGrey,
                       borderRadius: BorderRadius.all(
                         Radius.circular(8.0),
                       ),
                     ),
+                    child: CircularProgressIndicator(
+                      valueColor:
+                          AlwaysStoppedAnimation<Color>(Colors.blueGrey[400]!),
+                    ),
                   ),
                   errorWidget: (context, str, error) => Material(
+                    borderRadius: const BorderRadius.all(
+                      Radius.circular(8.0),
+                    ),
+                    clipBehavior: Clip.hardEdge,
                     child: Image.asset(
                       'assets/images/img_not_available.jpeg',
                       width:
@@ -2672,10 +2693,6 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                           doc[Dbkeys.content].contains('giphy') ? 120 : 200.0,
                       fit: BoxFit.cover,
                     ),
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(8.0),
-                    ),
-                    clipBehavior: Clip.hardEdge,
                   ),
                   imageUrl: doc[Dbkeys.content],
                   width: doc[Dbkeys.content].contains('giphy') ? 120 : 200.0,
@@ -2710,8 +2727,8 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
       onTap: () {
         Navigator.push(
             this.context,
-            new MaterialPageRoute(
-                builder: (context) => new PreviewVideo(
+            MaterialPageRoute(
+                builder: (context) => PreviewVideo(
                       isdownloadallowed: true,
                       filename: message.split('-BREAK-')[1],
                       id: null,
@@ -2726,7 +2743,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
           doc.containsKey(Dbkeys.isForward) == true
               ? doc[Dbkeys.isForward] == true
                   ? Container(
-                      margin: EdgeInsets.only(bottom: 10),
+                      margin: const EdgeInsets.only(bottom: 10),
                       child: Row(
                           mainAxisAlignment: isMe == true
                               ? MainAxisAlignment.start
@@ -2738,7 +2755,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                               size: 12,
                               color: fiberchatGrey.withOpacity(0.5),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 5,
                             ),
                             Text(getTranslated(this.context, 'forwarded'),
@@ -2749,8 +2766,8 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                                     overflow: TextOverflow.ellipsis,
                                     fontSize: 13))
                           ]))
-                  : SizedBox(height: 0, width: 0)
-              : SizedBox(height: 0, width: 0),
+                  : const SizedBox(height: 0, width: 0)
+              : const SizedBox(height: 0, width: 0),
           Container(
             color: Colors.blueGrey,
             height: 197,
@@ -2759,31 +2776,31 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
               children: [
                 CachedNetworkImage(
                   placeholder: (context, url) => Container(
-                    child: CircularProgressIndicator(
-                      valueColor:
-                          AlwaysStoppedAnimation<Color>(Colors.blueGrey[400]!),
-                    ),
                     width: 197,
                     height: 197,
-                    padding: EdgeInsets.all(80.0),
-                    decoration: BoxDecoration(
+                    padding: const EdgeInsets.all(80.0),
+                    decoration: const BoxDecoration(
                       color: Colors.blueGrey,
                       borderRadius: BorderRadius.all(
                         Radius.circular(0.0),
                       ),
                     ),
+                    child: CircularProgressIndicator(
+                      valueColor:
+                          AlwaysStoppedAnimation<Color>(Colors.blueGrey[400]!),
+                    ),
                   ),
                   errorWidget: (context, str, error) => Material(
+                    borderRadius: const BorderRadius.all(
+                      Radius.circular(0.0),
+                    ),
+                    clipBehavior: Clip.hardEdge,
                     child: Image.asset(
                       'assets/images/img_not_available.jpeg',
                       width: 197,
                       height: 197,
                       fit: BoxFit.cover,
                     ),
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(0.0),
-                    ),
-                    clipBehavior: Clip.hardEdge,
                   ),
                   imageUrl: message.split('-BREAK-')[1],
                   width: 197,
@@ -2795,7 +2812,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                   height: 197,
                   width: 197,
                 ),
-                Center(
+                const Center(
                   child: Icon(Icons.play_circle_fill_outlined,
                       color: Colors.white70, size: 65),
                 ),
@@ -2821,7 +2838,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
           doc.containsKey(Dbkeys.isForward) == true
               ? doc[Dbkeys.isForward] == true
                   ? Container(
-                      margin: EdgeInsets.only(bottom: 10),
+                      margin: const EdgeInsets.only(bottom: 10),
                       child: Row(
                           mainAxisAlignment: isMe == true
                               ? MainAxisAlignment.start
@@ -2833,7 +2850,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                               size: 12,
                               color: fiberchatGrey.withOpacity(0.5),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 5,
                             ),
                             Text(getTranslated(this.context, 'forwarded'),
@@ -2844,8 +2861,8 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                                     overflow: TextOverflow.ellipsis,
                                     fontSize: 13))
                           ]))
-                  : SizedBox(height: 0, width: 0)
-              : SizedBox(height: 0, width: 0),
+                  : const SizedBox(height: 0, width: 0)
+              : const SizedBox(height: 0, width: 0),
           ListTile(
             isThreeLine: false,
             leading: customCircleAvatar(url: null),
@@ -2862,14 +2879,14 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
               padding: const EdgeInsets.only(top: 3),
               child: Text(
                 message.split('-BREAK-')[1],
-                style: TextStyle(
+                style: const TextStyle(
                     height: 1.4,
                     fontWeight: FontWeight.w500,
                     color: Colors.black87),
               ),
             ),
           ),
-          Divider(
+          const Divider(
             height: 7,
           ),
           // ignore: deprecated_member_use
@@ -2883,7 +2900,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                 String? formattedphone;
 
                 setStateIfMounted(() {
-                  peerphone = peer.replaceAll(new RegExp(r'-'), '');
+                  peerphone = peer.replaceAll(RegExp(r'-'), '');
                   peerphone!.trim();
                 });
 
@@ -2930,15 +2947,15 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
 
                 await query.get().then((user) {
                   setStateIfMounted(() {
-                    isUser = user.docs.length == 0 ? false : true;
+                    isUser = user.docs.isEmpty ? false : true;
                   });
                   if (isUser) {
                     Map<String, dynamic> peer = user.docs[0].data();
                     widget.model.addUser(user.docs[0]);
                     Navigator.pushReplacement(
                         context,
-                        new MaterialPageRoute(
-                            builder: (context) => new ChatScreen(
+                        MaterialPageRoute(
+                            builder: (context) => ChatScreen(
                                 isSharingIntentForwarded: false,
                                 prefs: widget.prefs,
                                 unread: 0,
@@ -2969,15 +2986,15 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                     queryretrywithoutzero.get().then((user) {
                       setStateIfMounted(() {
                         isLoading = false;
-                        isUser = user.docs.length == 0 ? false : true;
+                        isUser = user.docs.isEmpty ? false : true;
                       });
                       if (isUser) {
                         Map<String, dynamic> peer = user.docs[0].data();
                         widget.model.addUser(user.docs[0]);
                         Navigator.pushReplacement(
                             context,
-                            new MaterialPageRoute(
-                                builder: (context) => new ChatScreen(
+                            MaterialPageRoute(
+                                builder: (context) => ChatScreen(
                                     isSharingIntentForwarded: true,
                                     prefs: widget.prefs,
                                     unread: 0,
@@ -3008,24 +3025,24 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
       child: Container(
           // width: 280,
           height: 76,
-          margin: EdgeInsets.only(left: 0, right: 0),
+          margin: const EdgeInsets.only(left: 0, right: 0),
           decoration: BoxDecoration(
               color: fiberchatWhite.withOpacity(0.55),
-              borderRadius: BorderRadius.all(Radius.circular(10))),
+              borderRadius: const BorderRadius.all(Radius.circular(10))),
           child: Stack(
             children: [
               Container(
-                  margin: EdgeInsetsDirectional.all(4),
+                  margin: const EdgeInsetsDirectional.all(4),
                   decoration: BoxDecoration(
                       color: fiberchatGrey.withOpacity(0.1),
-                      borderRadius: BorderRadius.all(Radius.circular(8))),
+                      borderRadius: const BorderRadius.all(Radius.circular(8))),
                   child: Row(children: [
                     Container(
                       decoration: BoxDecoration(
                         color: doc[Dbkeys.from] == widget.currentUserNo
                             ? fiberchatgreen
                             : Colors.purple,
-                        borderRadius: BorderRadius.only(
+                        borderRadius: const BorderRadius.only(
                             topRight: Radius.circular(0),
                             bottomRight: Radius.circular(0),
                             topLeft: Radius.circular(10),
@@ -3034,17 +3051,17 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                       height: 75,
                       width: 3.3,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 5,
                     ),
                     Expanded(
                         child: Container(
-                      padding: EdgeInsetsDirectional.all(5),
+                      padding: const EdgeInsetsDirectional.all(5),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Padding(
-                            padding: EdgeInsets.only(right: 30),
+                            padding: const EdgeInsets.only(right: 30),
                             child: Text(
                               doc[Dbkeys.from] == widget.currentUserNo
                                   ? getTranslated(this.context, 'you')
@@ -3058,7 +3075,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                                           : Colors.purple),
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 8,
                           ),
                           doc[Dbkeys.messageType] == MessageType.text.index
@@ -3113,7 +3130,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                   ])),
               doc[Dbkeys.messageType] == MessageType.text.index ||
                       doc[Dbkeys.messageType] == MessageType.location.index
-                  ? SizedBox(
+                  ? const SizedBox(
                       width: 0,
                       height: 0,
                     )
@@ -3124,44 +3141,44 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                           child: Container(
                             width: 74.0,
                             height: 74.0,
-                            padding: EdgeInsetsDirectional.all(6),
+                            padding: const EdgeInsetsDirectional.all(6),
                             child: ClipRRect(
-                              borderRadius: BorderRadius.only(
+                              borderRadius: const BorderRadius.only(
                                   topRight: Radius.circular(5),
                                   bottomRight: Radius.circular(5),
                                   topLeft: Radius.circular(0),
                                   bottomLeft: Radius.circular(0)),
                               child: CachedNetworkImage(
                                 placeholder: (context, url) => Container(
-                                  child: CircularProgressIndicator(
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                        fiberchatBlue),
-                                  ),
                                   width: doc[Dbkeys.content].contains('giphy')
                                       ? 60
                                       : 60.0,
                                   height: doc[Dbkeys.content].contains('giphy')
                                       ? 60
                                       : 60.0,
-                                  padding: EdgeInsets.all(8.0),
+                                  padding: const EdgeInsets.all(8.0),
                                   decoration: BoxDecoration(
                                     color: Colors.blueGrey[200],
-                                    borderRadius: BorderRadius.all(
+                                    borderRadius: const BorderRadius.all(
                                       Radius.circular(8.0),
                                     ),
                                   ),
+                                  child: CircularProgressIndicator(
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                        fiberchatBlue),
+                                  ),
                                 ),
                                 errorWidget: (context, str, error) => Material(
+                                  borderRadius: const BorderRadius.all(
+                                    Radius.circular(8.0),
+                                  ),
+                                  clipBehavior: Clip.hardEdge,
                                   child: Image.asset(
                                     'assets/images/img_not_available.jpeg',
                                     width: 60.0,
                                     height: 60,
                                     fit: BoxFit.cover,
                                   ),
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(8.0),
-                                  ),
-                                  clipBehavior: Clip.hardEdge,
                                 ),
                                 imageUrl: doc[Dbkeys.messageType] ==
                                         MessageType.video.index
@@ -3181,9 +3198,9 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                               child: Container(
                                   width: 74.0,
                                   height: 74.0,
-                                  padding: EdgeInsetsDirectional.all(6),
+                                  padding: const EdgeInsetsDirectional.all(6),
                                   child: ClipRRect(
-                                      borderRadius: BorderRadius.only(
+                                      borderRadius: const BorderRadius.only(
                                           topRight: Radius.circular(5),
                                           bottomRight: Radius.circular(5),
                                           topLeft: Radius.circular(0),
@@ -3197,36 +3214,36 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                                             CachedNetworkImage(
                                               placeholder: (context, url) =>
                                                   Container(
+                                                width: 74,
+                                                height: 74,
+                                                padding: const EdgeInsets.all(8.0),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.blueGrey[200],
+                                                  borderRadius:
+                                                      const BorderRadius.all(
+                                                    Radius.circular(0.0),
+                                                  ),
+                                                ),
                                                 child:
                                                     CircularProgressIndicator(
                                                   valueColor:
                                                       AlwaysStoppedAnimation<
                                                           Color>(fiberchatBlue),
                                                 ),
-                                                width: 74,
-                                                height: 74,
-                                                padding: EdgeInsets.all(8.0),
-                                                decoration: BoxDecoration(
-                                                  color: Colors.blueGrey[200],
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                    Radius.circular(0.0),
-                                                  ),
-                                                ),
                                               ),
                                               errorWidget:
                                                   (context, str, error) =>
                                                       Material(
+                                                borderRadius: const BorderRadius.all(
+                                                  Radius.circular(0.0),
+                                                ),
+                                                clipBehavior: Clip.hardEdge,
                                                 child: Image.asset(
                                                   'assets/images/img_not_available.jpeg',
                                                   width: 60,
                                                   height: 60,
                                                   fit: BoxFit.cover,
                                                 ),
-                                                borderRadius: BorderRadius.all(
-                                                  Radius.circular(0.0),
-                                                ),
-                                                clipBehavior: Clip.hardEdge,
                                               ),
                                               imageUrl: doc[Dbkeys.content]
                                                   .split('-BREAK-')[1],
@@ -3240,7 +3257,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                                               height: 74,
                                               width: 74,
                                             ),
-                                            Center(
+                                            const Center(
                                               child: Icon(
                                                   Icons
                                                       .play_circle_fill_outlined,
@@ -3256,9 +3273,9 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                               child: Container(
                                   width: 74.0,
                                   height: 74.0,
-                                  padding: EdgeInsetsDirectional.all(6),
+                                  padding: const EdgeInsetsDirectional.all(6),
                                   child: ClipRRect(
-                                      borderRadius: BorderRadius.only(
+                                      borderRadius: const BorderRadius.only(
                                           topRight: Radius.circular(5),
                                           bottomRight: Radius.circular(5),
                                           topLeft: Radius.circular(0),
@@ -3314,24 +3331,24 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
     return Flexible(
       child: Container(
           height: 80,
-          margin: EdgeInsets.only(left: 15, right: 70),
+          margin: const EdgeInsets.only(left: 15, right: 70),
           decoration: BoxDecoration(
               color: fiberchatWhite,
-              borderRadius: BorderRadius.all(Radius.circular(10))),
+              borderRadius: const BorderRadius.all(Radius.circular(10))),
           child: Stack(
             children: [
               Container(
-                  margin: EdgeInsetsDirectional.all(4),
+                  margin: const EdgeInsetsDirectional.all(4),
                   decoration: BoxDecoration(
                       color: fiberchatGrey.withOpacity(0.1),
-                      borderRadius: BorderRadius.all(Radius.circular(8))),
+                      borderRadius: const BorderRadius.all(Radius.circular(8))),
                   child: Row(children: [
                     Container(
                       decoration: BoxDecoration(
                         color: replyDoc![Dbkeys.from] == widget.currentUserNo
                             ? fiberchatgreen
                             : Colors.purple,
-                        borderRadius: BorderRadius.only(
+                        borderRadius: const BorderRadius.only(
                             topRight: Radius.circular(0),
                             bottomRight: Radius.circular(0),
                             topLeft: Radius.circular(10),
@@ -3340,17 +3357,17 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                       height: 75,
                       width: 3.3,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 5,
                     ),
                     Expanded(
                         child: Container(
-                      padding: EdgeInsetsDirectional.all(5),
+                      padding: const EdgeInsetsDirectional.all(5),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Padding(
-                            padding: EdgeInsets.only(right: 30),
+                            padding: const EdgeInsets.only(right: 30),
                             child: Text(
                               replyDoc![Dbkeys.from] == widget.currentUserNo
                                   ? getTranslated(this.context, 'you')
@@ -3364,7 +3381,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                                       : Colors.purple),
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 8,
                           ),
                           replyDoc![Dbkeys.messageType] ==
@@ -3427,7 +3444,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                     ))
                   ])),
               replyDoc![Dbkeys.messageType] == MessageType.text.index
-                  ? SizedBox(
+                  ? const SizedBox(
                       width: 0,
                       height: 0,
                     )
@@ -3438,19 +3455,15 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                           child: Container(
                             width: 84.0,
                             height: 84.0,
-                            padding: EdgeInsetsDirectional.all(6),
+                            padding: const EdgeInsetsDirectional.all(6),
                             child: ClipRRect(
-                              borderRadius: BorderRadius.only(
+                              borderRadius: const BorderRadius.only(
                                   topRight: Radius.circular(5),
                                   bottomRight: Radius.circular(5),
                                   topLeft: Radius.circular(0),
                                   bottomLeft: Radius.circular(0)),
                               child: CachedNetworkImage(
                                 placeholder: (context, url) => Container(
-                                  child: CircularProgressIndicator(
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                        fiberchatBlue),
-                                  ),
                                   width: replyDoc![Dbkeys.content]
                                           .contains('giphy')
                                       ? 60
@@ -3459,25 +3472,29 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                                           .contains('giphy')
                                       ? 60
                                       : 60.0,
-                                  padding: EdgeInsets.all(8.0),
+                                  padding: const EdgeInsets.all(8.0),
                                   decoration: BoxDecoration(
                                     color: Colors.blueGrey[200],
-                                    borderRadius: BorderRadius.all(
+                                    borderRadius: const BorderRadius.all(
                                       Radius.circular(8.0),
                                     ),
                                   ),
+                                  child: CircularProgressIndicator(
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                        fiberchatBlue),
+                                  ),
                                 ),
                                 errorWidget: (context, str, error) => Material(
+                                  borderRadius: const BorderRadius.all(
+                                    Radius.circular(8.0),
+                                  ),
+                                  clipBehavior: Clip.hardEdge,
                                   child: Image.asset(
                                     'assets/images/img_not_available.jpeg',
                                     width: 60.0,
                                     height: 60,
                                     fit: BoxFit.cover,
                                   ),
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(8.0),
-                                  ),
-                                  clipBehavior: Clip.hardEdge,
                                 ),
                                 imageUrl: replyDoc![Dbkeys.messageType] ==
                                         MessageType.video.index
@@ -3497,9 +3514,9 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                               child: Container(
                                   width: 84.0,
                                   height: 84.0,
-                                  padding: EdgeInsetsDirectional.all(6),
+                                  padding: const EdgeInsetsDirectional.all(6),
                                   child: ClipRRect(
-                                      borderRadius: BorderRadius.only(
+                                      borderRadius: const BorderRadius.only(
                                           topRight: Radius.circular(5),
                                           bottomRight: Radius.circular(5),
                                           topLeft: Radius.circular(0),
@@ -3513,36 +3530,36 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                                             CachedNetworkImage(
                                               placeholder: (context, url) =>
                                                   Container(
+                                                width: 84,
+                                                height: 84,
+                                                padding: const EdgeInsets.all(8.0),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.blueGrey[200],
+                                                  borderRadius:
+                                                      const BorderRadius.all(
+                                                    Radius.circular(0.0),
+                                                  ),
+                                                ),
                                                 child:
                                                     CircularProgressIndicator(
                                                   valueColor:
                                                       AlwaysStoppedAnimation<
                                                           Color>(fiberchatBlue),
                                                 ),
-                                                width: 84,
-                                                height: 84,
-                                                padding: EdgeInsets.all(8.0),
-                                                decoration: BoxDecoration(
-                                                  color: Colors.blueGrey[200],
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                    Radius.circular(0.0),
-                                                  ),
-                                                ),
                                               ),
                                               errorWidget:
                                                   (context, str, error) =>
                                                       Material(
+                                                borderRadius: const BorderRadius.all(
+                                                  Radius.circular(0.0),
+                                                ),
+                                                clipBehavior: Clip.hardEdge,
                                                 child: Image.asset(
                                                   'assets/images/img_not_available.jpeg',
                                                   width: 60,
                                                   height: 60,
                                                   fit: BoxFit.cover,
                                                 ),
-                                                borderRadius: BorderRadius.all(
-                                                  Radius.circular(0.0),
-                                                ),
-                                                clipBehavior: Clip.hardEdge,
                                               ),
                                               imageUrl:
                                                   replyDoc![Dbkeys.content]
@@ -3557,7 +3574,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                                               height: 84,
                                               width: 84,
                                             ),
-                                            Center(
+                                            const Center(
                                               child: Icon(
                                                   Icons
                                                       .play_circle_fill_outlined,
@@ -3573,9 +3590,9 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                               child: Container(
                                   width: 84.0,
                                   height: 84.0,
-                                  padding: EdgeInsetsDirectional.all(6),
+                                  padding: const EdgeInsetsDirectional.all(6),
                                   child: ClipRRect(
-                                      borderRadius: BorderRadius.only(
+                                      borderRadius: const BorderRadius.only(
                                           topRight: Radius.circular(5),
                                           bottomRight: Radius.circular(5),
                                           topLeft: Radius.circular(0),
@@ -3640,11 +3657,11 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                   child: Container(
                     width: 15,
                     height: 15,
-                    decoration: new BoxDecoration(
+                    decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.9),
                       shape: BoxShape.circle,
                     ),
-                    child: new Icon(
+                    child: const Icon(
                       Icons.close,
                       color: Colors.blueGrey,
                       size: 13,
@@ -3660,7 +3677,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
   Widget buildTempMessage(BuildContext context, MessageType type, content,
       timestamp, delivered, tempDoc) {
     final observer = Provider.of<Observer>(this.context, listen: false);
-    final bool isMe = true;
+    const bool isMe = true;
     return SeenProvider(
         timestamp: timestamp.toString(),
         data: seenState,
@@ -3682,6 +3699,10 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
               : false,
           isBroadcastMssg: false,
           messagetype: type,
+          isMe: isMe,
+          timestamp: timestamp,
+          delivered: delivered,
+          isContinuing: true,
           child: type == MessageType.text
               ? getTextMessage(content, tempDoc)
               : type == MessageType.location
@@ -3698,10 +3719,6 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                                   ? getContactMessage(context, tempDoc, content,
                                       saved: false)
                                   : getTempImageMessage(url: content),
-          isMe: isMe,
-          timestamp: timestamp,
-          delivered: delivered,
-          isContinuing: true,
           // messages.isNotEmpty && messages.last.from == currentUserNo,
         ));
   }
@@ -3710,13 +3727,13 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
     return Positioned(
       child: isLoading
           ? Container(
+              color: DESIGN_TYPE == Themetype.whatsapp
+                  ? fiberchatBlack.withOpacity(0.6)
+                  : fiberchatWhite.withOpacity(0.6),
               child: Center(
                 child: CircularProgressIndicator(
                     valueColor: AlwaysStoppedAnimation<Color>(fiberchatBlue)),
               ),
-              color: DESIGN_TYPE == Themetype.whatsapp
-                  ? fiberchatBlack.withOpacity(0.6)
-                  : fiberchatWhite.withOpacity(0.6),
             )
           : Container(),
     );
@@ -3725,17 +3742,17 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
   shareMedia(BuildContext context) {
     showModalBottomSheet(
         context: context,
-        shape: RoundedRectangleBorder(
+        shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
         ),
         builder: (BuildContext context) {
           const iconSize = 50.0;
           // return your layout
           return Container(
-            padding: EdgeInsets.all(12),
+            padding: const EdgeInsets.all(12),
             height: 250,
             child: Column(children: [
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               Row(
@@ -3778,6 +3795,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                           },
                           elevation: .5,
                           fillColor: Colors.indigo,
+                          shape: const CircleBorder(),
                           // child: Icon(
                           //   Icons.file_copy,
                           //   size: 25.0,
@@ -3790,9 +3808,8 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                             height: iconSize,
                             width: iconSize,
                           ),
-                          shape: CircleBorder(),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 8,
                         ),
                         Text(
@@ -3830,22 +3847,25 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                                   getTranslated(this.context, 'plswait'),
                                 );
                                 String thumbnailurl = await getThumbnail(url);
-                                onSendMessage(
-                                    context,
-                                    url +
-                                        '-BREAK-' +
-                                        thumbnailurl +
-                                        '-BREAK-' +
-                                        videometadata,
-                                    MessageType.video,
-                                    thumnailtimestamp);
-                                Fiberchat.toast(
-                                    getTranslated(this.context, 'sent'));
+                                if (mounted) {
+                                  onSendMessage(
+                                      context,
+                                      url +
+                                          '-BREAK-' +
+                                          thumbnailurl +
+                                          '-BREAK-' +
+                                          videometadata,
+                                      MessageType.video,
+                                      thumnailtimestamp);
+                                  Fiberchat.toast(
+                                      getTranslated(this.context, 'sent'));
+                                }
                               } else {}
                             });
                           },
                           elevation: .5,
                           fillColor: Colors.pink[600],
+                          shape: const CircleBorder(),
                           // child: Icon(
                           //   Icons.video_collection_sharp,
                           //   size: 25.0,
@@ -3858,9 +3878,8 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                             height: iconSize,
                             width: iconSize,
                           ),
-                          shape: CircleBorder(),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 8,
                         ),
                         Text(
@@ -3903,6 +3922,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                           },
                           elevation: .5,
                           fillColor: Colors.purple,
+                          shape: const CircleBorder(),
                           // child: Icon(
                           //   Icons.image_rounded,
                           //   size: 25.0,
@@ -3915,9 +3935,8 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                             height: iconSize,
                             width: iconSize,
                           ),
-                          shape: CircleBorder(),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 8,
                         ),
                         Text(
@@ -3933,7 +3952,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                   )
                 ],
               ),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               Row(
@@ -3973,6 +3992,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                           },
                           elevation: .5,
                           fillColor: Colors.yellow[900],
+                          shape: const CircleBorder(),
                           // child: Icon(
                           //   Icons.mic_rounded,
                           //   size: 25.0,
@@ -3985,9 +4005,8 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                             height: iconSize,
                             width: iconSize,
                           ),
-                          shape: CircleBorder(),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 8,
                         ),
                         Text(
@@ -4029,6 +4048,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                           },
                           elevation: .5,
                           fillColor: Colors.cyan[700],
+                          shape: const CircleBorder(),
                           // child: Icon(
                           //   Icons.location_on,
                           //   size: 25.0,
@@ -4041,9 +4061,8 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                             height: iconSize,
                             width: iconSize,
                           ),
-                          shape: CircleBorder(),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 8,
                         ),
                         Text(
@@ -4086,6 +4105,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                           },
                           elevation: .5,
                           fillColor: Colors.blue[800],
+                          shape: const CircleBorder(),
                           // child: Icon(
                           //   Icons.person,
                           //   size: 25.0,
@@ -4098,9 +4118,8 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                             height: iconSize,
                             width: iconSize,
                           ),
-                          shape: CircleBorder(),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 8,
                         ),
                         Text(
@@ -4138,14 +4157,14 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
   showDialOptions(BuildContext context) {
     showModalBottomSheet(
         context: context,
-        shape: RoundedRectangleBorder(
+        shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
         ),
         builder: (BuildContext context) {
           // return your layout
           return Consumer<Observer>(
               builder: (context, observer, _child) => Container(
-                  padding: EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(12),
                   height: 130,
                   child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -4185,7 +4204,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                                               this.context, 'pmc'));
                                           Navigator.push(
                                               context,
-                                              new MaterialPageRoute(
+                                              MaterialPageRoute(
                                                   builder: (context) =>
                                                       OpenSettings()));
                                         }
@@ -4194,7 +4213,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                                             getTranslated(this.context, 'pmc'));
                                         Navigator.push(
                                             context,
-                                            new MaterialPageRoute(
+                                            MaterialPageRoute(
                                                 builder: (context) =>
                                                     OpenSettings()));
                                       });
@@ -4204,13 +4223,13 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                SizedBox(height: 13),
+                                const SizedBox(height: 13),
                                 Icon(
                                   Icons.local_phone,
                                   size: 35,
                                   color: fiberchatLightGreen,
                                 ),
-                                SizedBox(height: 13),
+                                const SizedBox(height: 13),
                                 Text(
                                   getTranslated(context, 'audiocall'),
                                   textAlign: TextAlign.center,
@@ -4259,7 +4278,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                                                     this.context, 'pmc'));
                                             Navigator.push(
                                                 context,
-                                                new MaterialPageRoute(
+                                                MaterialPageRoute(
                                                     builder: (context) =>
                                                         OpenSettings()));
                                           }
@@ -4268,7 +4287,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                                               this.context, 'pmc'));
                                           Navigator.push(
                                               context,
-                                              new MaterialPageRoute(
+                                              MaterialPageRoute(
                                                   builder: (context) =>
                                                       OpenSettings()));
                                         });
@@ -4278,13 +4297,13 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  SizedBox(height: 13),
+                                  const SizedBox(height: 13),
                                   Icon(
                                     Icons.videocam,
                                     size: 39,
                                     color: fiberchatLightGreen,
                                   ),
-                                  SizedBox(height: 13),
+                                  const SizedBox(height: 13),
                                   Text(
                                     getTranslated(context, 'videocall'),
                                     textAlign: TextAlign.center,
@@ -4303,16 +4322,17 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
   getWhen(date) {
     DateTime now = DateTime.now();
     String when;
-    if (date.day == now.day)
+    if (date.day == now.day) {
       when = getTranslated(this.context, 'today');
-    else if (date.day == now.subtract(Duration(days: 1)).day)
+    } else if (date.day == now.subtract(const Duration(days: 1)).day) {
       when = getTranslated(this.context, 'yesterday');
-    else
+    } else {
       when = IsShowNativeTimDate == true
           ? getTranslated(this.context, DateFormat.MMMM().format(date)) +
               ' ' +
               DateFormat.d().format(date)
           : when = DateFormat.MMMd().format(date);
+    }
     return when;
   }
 
@@ -4328,8 +4348,9 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
           when = getWhen(date);
       return getTranslated(this.context, 'lastseen') + ' $when, $at';
     } else if (val is String) {
-      if (val == widget.currentUserNo)
+      if (val == widget.currentUserNo) {
         return getTranslated(this.context, 'typing');
+      }
       return getTranslated(this.context, 'online');
     }
     return getTranslated(this.context, 'loading');
@@ -4411,7 +4432,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                                 DESIGN_TYPE == Themetype.messenger ? 0.4 : 1,
                             titleSpacing: -14,
                             leading: Container(
-                              margin: EdgeInsets.only(right: 0),
+                              margin: const EdgeInsets.only(right: 0),
                               width: 10,
                               child: IconButton(
                                 icon: Icon(
@@ -4440,7 +4461,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                                                 peer!,
                                                 widget.currentUserNo,
                                                 _cachedModel,
-                                                widget.prefs, [])));
+                                                widget.prefs, const [])));
                               },
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
@@ -4450,7 +4471,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                                         const EdgeInsets.fromLTRB(0, 7, 0, 7),
                                     child: Fiberchat.avatar(peer, radius: 20),
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 7,
                                   ),
                                   Column(
@@ -4474,7 +4495,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                                               fontWeight: FontWeight.w500),
                                         ),
                                       ),
-                                      SizedBox(
+                                      const SizedBox(
                                         height: 4,
                                       ),
                                       chatId != null
@@ -4507,7 +4528,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                             ),
                             actions: [
                               observer.isCallFeatureTotallyHide == true
-                                  ? SizedBox()
+                                  ? const SizedBox()
                                   : SizedBox(
                                       width: 55,
                                       child: IconButton(
@@ -4544,7 +4565,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                                     ? 45
                                     : 25,
                                 child: PopupMenuButton(
-                                    padding: EdgeInsets.all(0),
+                                    padding: const EdgeInsets.all(0),
                                     icon: Padding(
                                       padding: const EdgeInsets.only(right: 0),
                                       child: Icon(
@@ -4561,7 +4582,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                                           showModalBottomSheet(
                                               isScrollControlled: true,
                                               context: context,
-                                              shape: RoundedRectangleBorder(
+                                              shape: const RoundedRectangleBorder(
                                                 borderRadius:
                                                     BorderRadius.vertical(
                                                         top: Radius.circular(
@@ -4580,7 +4601,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                                                               .bottom),
                                                   child: Container(
                                                       padding:
-                                                          EdgeInsets.all(16),
+                                                          const EdgeInsets.all(16),
                                                       height:
                                                           MediaQuery.of(context)
                                                                   .size
@@ -4593,10 +4614,10 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                                                               CrossAxisAlignment
                                                                   .stretch,
                                                           children: [
-                                                            SizedBox(
+                                                            const SizedBox(
                                                               height: 12,
                                                             ),
-                                                            SizedBox(
+                                                            const SizedBox(
                                                               height: 3,
                                                             ),
                                                             Padding(
@@ -4611,7 +4632,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                                                                 textAlign:
                                                                     TextAlign
                                                                         .left,
-                                                                style: TextStyle(
+                                                                style: const TextStyle(
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .bold,
@@ -4619,15 +4640,15 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                                                                         16.5),
                                                               ),
                                                             ),
-                                                            SizedBox(
+                                                            const SizedBox(
                                                               height: 10,
                                                             ),
                                                             Container(
-                                                              margin: EdgeInsets
+                                                              margin: const EdgeInsets
                                                                   .only(
                                                                       top: 10),
                                                               padding:
-                                                                  EdgeInsets
+                                                                  const EdgeInsets
                                                                       .fromLTRB(
                                                                           0,
                                                                           0,
@@ -4678,7 +4699,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                                                                     getTranslated(
                                                                         context,
                                                                         'report'),
-                                                                    style: TextStyle(
+                                                                    style: const TextStyle(
                                                                         color: Colors
                                                                             .white,
                                                                         fontSize:
@@ -4734,7 +4755,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                                                                         context:
                                                                             context,
                                                                         shape:
-                                                                            RoundedRectangleBorder(
+                                                                            const RoundedRectangleBorder(
                                                                           borderRadius:
                                                                               BorderRadius.vertical(top: Radius.circular(25.0)),
                                                                         ),
@@ -4751,7 +4772,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                                                                                 mainAxisAlignment: MainAxisAlignment.center,
                                                                                 children: [
                                                                                   Icon(Icons.check, color: Colors.green[400], size: 40),
-                                                                                  SizedBox(
+                                                                                  const SizedBox(
                                                                                     height: 30,
                                                                                   ),
                                                                                   Text(
@@ -4774,7 +4795,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                                                                             this
                                                                                 .context,
                                                                         shape:
-                                                                            RoundedRectangleBorder(
+                                                                            const RoundedRectangleBorder(
                                                                           borderRadius:
                                                                               BorderRadius.vertical(top: Radius.circular(25.0)),
                                                                         ),
@@ -4791,7 +4812,7 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                                                                                 mainAxisAlignment: MainAxisAlignment.center,
                                                                                 children: [
                                                                                   Icon(Icons.check, color: Colors.green[400], size: 40),
-                                                                                  SizedBox(
+                                                                                  const SizedBox(
                                                                                     height: 30,
                                                                                   ),
                                                                                   Text(
@@ -4955,12 +4976,12 @@ class _LazyLoadingChatState extends State<LazyLoadingChat>
                             ],
                           ),
                           body: Stack(children: <Widget>[
-                            new Container(
-                              decoration: new BoxDecoration(
+                            Container(
+                              decoration: BoxDecoration(
                                 color: DESIGN_TYPE == Themetype.whatsapp
                                     ? fiberchatChatbackground
                                     : fiberchatWhite,
-                                image: new DecorationImage(
+                                image: const DecorationImage(
                                     image: AssetImage(
                                         "assets/images/background.png"),
                                     fit: BoxFit.cover),

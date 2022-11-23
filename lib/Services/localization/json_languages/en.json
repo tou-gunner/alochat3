@@ -374,5 +374,15 @@
 
     "selectlanguage": "Select Language",
 
-    "reply": "Reply"
+    "reply": "Reply",
+    "addtask": "Add task",
+    "task_ongoing": "Ongoing",
+    "task_received": "Received",
+    "task_assigned": "Assigned",
+    "task_following": "Following",
+    "task_completed": "Completed",
+    "task_overdue": "Overdue",
+    "task_next7days": "Next 7 days",
+    "task_later": "Later or not scheduled",
+    "task_completedon": "Completed on"
 }

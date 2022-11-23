@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'dart:io';
+import 'package:alochat/Screens/task/task.dart';
 import 'package:alochat/Services/Providers/AvailableContactsProvider.dart';
 import 'package:alochat/Utils/custom_url_launcher.dart';
 import 'package:alochat/Utils/setStatusBarColor.dart';
@@ -112,14 +113,14 @@ class ChatScreen extends StatefulWidget {
     this.sharedFiles,
     this.sharedFilestype,
     this.sharedText,
-  });
+  }) : super(key: key);
 
   @override
-  State createState() => new _ChatScreenState();
+  State createState() => _ChatScreenState();
 }
 
 class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
-  GlobalKey<ScaffoldState> _scaffold = new GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _scaffold = GlobalKey<ScaffoldState>();
   bool isReplyKeyboard = false;
   bool isPeerMuted = false;
   Map<String, dynamic>? replyDoc;
@@ -127,8 +128,8 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
   late bool locked, hidden;
   Map<String, dynamic>? peer, currentUser;
   int? chatStatus, unread;
-  GlobalKey<State> _keyLoader34 =
-      new GlobalKey<State>(debugLabel: 'qqqeqeqsse xcb h vgcxhvhaadsqeqe');
+  final GlobalKey<State> _keyLoader34 =
+      GlobalKey<State>(debugLabel: 'qqqeqeqsse xcb h vgcxhvhaadsqeqe');
   bool isCurrentUserMuted = false;
   String? chatId;
   bool isMessageLoading = true;
@@ -140,9 +141,9 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
   // int tempSendIndex = 0;
   String? imageUrl;
   SeenState? seenState;
-  List<Message> messages = new List.from(<Message>[]);
+  List<Message> messages = List.from(<Message>[]);
   List<Map<String, dynamic>> _savedMessageDocs =
-      new List.from(<Map<String, dynamic>>[]);
+      List.from(<Map<String, dynamic>>[]);
   bool isDeletedDoc = false;
   int? uploadTimestamp;
 
@@ -152,11 +153,11 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
       chatStatusSubscriptionForPeer;
 
   final TextEditingController textEditingController =
-      new TextEditingController();
+      TextEditingController();
   final TextEditingController reportEditingController =
-      new TextEditingController();
-  final ScrollController realtime = new ScrollController();
-  final ScrollController saved = new ScrollController();
+      TextEditingController();
+  final ScrollController realtime = ScrollController();
+  final ScrollController saved = ScrollController();
   late DataModel _cachedModel;
 
   Duration? duration;
@@ -204,7 +205,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
       var currentpeer =
           Provider.of<CurrentChatPeer>(this.context, listen: false);
       currentpeer.setpeer(newpeerid: widget.peerNo);
-      seenState = new SeenState(false);
+      seenState = SeenState(false);
       WidgetsBinding.instance.addObserver(this);
       chatId = '';
       unread = widget.unread;
@@ -250,7 +251,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
   void _createInterstitialAd() {
     InterstitialAd.load(
         adUnitId: getInterstitialAdUnitId()!,
-        request: AdRequest(
+        request: const AdRequest(
           nonPersonalizedAds: true,
         ),
         adLoadCallback: InterstitialAdLoadCallback(
@@ -297,7 +298,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
   void _createRewardedAd() {
     RewardedAd.load(
         adUnitId: getRewardBasedVideoAdUnitId()!,
-        request: AdRequest(
+        request: const AdRequest(
           nonPersonalizedAds: true,
         ),
         rewardedAdLoadCallback: RewardedAdLoadCallback(
@@ -432,10 +433,11 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed)
+    if (state == AppLifecycleState.resumed) {
       setIsActive();
-    else
+    } else {
       setLastSeen();
+    }
   }
 
   void setIsActive() async {
@@ -450,7 +452,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
 
   dynamic lastSeen;
 
-  FlutterSecureStorage storage = new FlutterSecureStorage();
+  FlutterSecureStorage storage = const FlutterSecureStorage();
   late encrypt.Encrypter cryptor;
   final iv = encrypt.IV.fromLength(8);
 
@@ -460,12 +462,12 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     // Fiberchat.toast("triggered !");
     try {
       privateKey = await storage.read(key: Dbkeys.privateKey);
-      sharedSecret = (await e2ee.X25519().calculateSharedSecret(
+      sharedSecret = (await const e2ee.X25519().calculateSharedSecret(
               e2ee.Key.fromBase64(privateKey!, false),
               e2ee.Key.fromBase64(peer![Dbkeys.publicKey], true)))
           .toBase64();
       final key = encrypt.Key.fromBase64(sharedSecret!);
-      cryptor = new encrypt.Encrypter(encrypt.Salsa20(key));
+      cryptor = encrypt.Encrypter(encrypt.Salsa20(key));
     } catch (e) {
       sharedSecret = null;
     }
@@ -688,9 +690,8 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
       );
       pickedFile = File(info!.path!);
     } else if (isthumbnail == false && isImage(pickedFile!.path) == true) {
-      final targetPath = pickedFile!.absolute.path
-              .replaceAll(basename(pickedFile!.absolute.path), "") +
-          "compress_temp.jpg";
+      final targetPath = "${pickedFile!.absolute.path
+              .replaceAll(basename(pickedFile!.absolute.path), "")}compress_temp.jpg";
 
       compressedImage = await FlutterImageCompress.compressAndGetFile(
         pickedFile!.absolute.path,
@@ -710,7 +711,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
         context: this.context,
         barrierDismissible: false,
         builder: (BuildContext context) {
-          return new WillPopScope(
+          return WillPopScope(
               onWillPop: () async => false,
               child: SimpleDialog(
                   shape: RoundedRectangleBorder(
@@ -860,8 +861,9 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
       try {
         content = content.trim();
         tempcontent = content.trim();
-        if (chatStatus == null || chatStatus == 4)
+        if (chatStatus == null || chatStatus == 4) {
           ChatController.request(currentUserNo, peerNo, chatId);
+        }
         textEditingController.clear();
         final encrypted = AESEncryptData.encryptAES(content, sharedSecret);
 
@@ -966,7 +968,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
           });
 
           unawaited(realtime.animateTo(0.0,
-              duration: Duration(milliseconds: 300), curve: Curves.easeOut));
+              duration: const Duration(milliseconds: 300), curve: Curves.easeOut));
 
           if (type == MessageType.doc ||
               type == MessageType.audio ||
@@ -1048,10 +1050,10 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     List<Widget> tiles = List.from(<Widget>[]);
     tiles.add(ListTile(
         dense: true,
-        leading: Icon(Icons.delete_outline),
+        leading: const Icon(Icons.delete_outline),
         title: Text(
           getTranslated(this.context, 'delete'),
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         onTap: () async {
           Save.deleteMessage(peerNo, doc);
@@ -1078,10 +1080,10 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     if (mssgDoc[Dbkeys.hasSenderDeleted] == false) {
       tiles.add(ListTile(
           dense: true,
-          leading: Icon(Icons.reply),
+          leading: const Icon(Icons.reply),
           title: Text(
             getTranslated(contextForDialog, 'reply'),
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           onTap: () {
             Navigator.pop(contextForDialog);
@@ -1093,18 +1095,34 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
             keyboardFocusNode.requestFocus();
           },
       ));
-    }  
-    
+    }
+
+    //Seng add - add task
+    if (mssgDoc[Dbkeys.hasSenderDeleted] == false) {
+      tiles.add(ListTile(
+        dense: true,
+        leading: const Icon(Icons.task),
+        title: Text(
+          getTranslated(contextForDialog, 'addtask'),
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        onTap: () {
+          Navigator.pop(contextForDialog);
+          Navigator.push(contextForDialog, MaterialPageRoute(builder: (_) => TaskPage(currentUserNo: currentUserNo!)));
+        },
+      ));
+    }
+
     //####################----------------------- Delete Msgs for SENDER ---------------------------------------------------
     if ((mssgDoc[Dbkeys.from] == currentUserNo &&
             mssgDoc[Dbkeys.hasSenderDeleted] == false) &&
         saved == false) {
       tiles.add(ListTile(
           dense: true,
-          leading: Icon(Icons.delete_outline),
+          leading: const Icon(Icons.delete_outline),
           title: Text(
             getTranslated(contextForDialog, 'dltforme'),
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           onTap: () async {
             Fiberchat.toast(getTranslated(contextForDialog, 'deleting'));
@@ -1219,10 +1237,10 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
 
       tiles.add(ListTile(
           dense: true,
-          leading: Icon(Icons.delete),
+          leading: const Icon(Icons.delete),
           title: Text(
             getTranslated(contextForDialog, 'dltforeveryone'),
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           onTap: () async {
             if ((mssgDoc.containsKey(Dbkeys.isbroadcast) == true
@@ -1290,10 +1308,10 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
         saved == false) {
       tiles.add(ListTile(
           dense: true,
-          leading: Icon(Icons.delete_outline),
+          leading: const Icon(Icons.delete_outline),
           title: Text(
             getTranslated(contextForDialog, 'dltforme'),
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           onTap: () async {
             Fiberchat.toast(
@@ -1406,10 +1424,10 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
         mssgDoc[Dbkeys.to] == widget.currentUserNo) {
       tiles.add(ListTile(
           dense: true,
-          leading: Icon(Icons.block),
+          leading: const Icon(Icons.block),
           title: Text(
             getTranslated(contextForDialog, 'blockbroadcast'),
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           onTap: () {
             Fiberchat.toast(
@@ -1462,10 +1480,10 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
         !mssgDoc.containsKey(Dbkeys.broadcastID)) {
       tiles.add(ListTile(
           dense: true,
-          leading: Icon(Icons.content_copy),
+          leading: const Icon(Icons.content_copy),
           title: Text(
             getTranslated(contextForDialog, 'copy'),
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           onTap: () {
             Clipboard.setData(ClipboardData(text: mssgDoc[Dbkeys.content]));
@@ -1483,10 +1501,10 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
         true) {
       tiles.add(ListTile(
           dense: true,
-          leading: Icon(FontAwesomeIcons.share, size: 22),
+          leading: const Icon(FontAwesomeIcons.share, size: 22),
           title: Text(
             getTranslated(contextForDialog, 'forward'),
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           onTap: () async {
             Navigator.of(contextForDialog).pop();
@@ -1500,7 +1518,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                         model: widget.model,
                         prefs: widget.prefs,
                         onSelect: (selectedlist) async {
-                          if (selectedlist.length > 0) {
+                          if (selectedlist.isNotEmpty) {
                             setStateIfMounted(() {
                               isgeneratingSomethingLoader = true;
                               // tempSendIndex = 0;
@@ -1561,7 +1579,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
             Dbkeys.isForward: true
           }, SetOptions(merge: true)).then((value) {
             unawaited(realtime.animateTo(0.0,
-                duration: Duration(milliseconds: 300), curve: Curves.easeOut));
+                duration: const Duration(milliseconds: 300), curve: Curves.easeOut));
             // _playPopSound();
             FirebaseFirestore.instance
                 .collection(DbPaths.collectiongroups)
@@ -1591,12 +1609,12 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
         }
       } else {
         try {
-          String? sharedSecret = (await e2ee.X25519().calculateSharedSecret(
+          String? sharedSecret = (await const e2ee.X25519().calculateSharedSecret(
                   e2ee.Key.fromBase64(privateKey, false),
                   e2ee.Key.fromBase64(list[index][Dbkeys.publicKey], true)))
               .toBase64();
           final key = encrypt.Key.fromBase64(sharedSecret);
-          cryptor = new encrypt.Encrypter(encrypt.Salsa20(key));
+          cryptor = encrypt.Encrypter(encrypt.Salsa20(key));
           String content = mssgDoc[Dbkeys.content];
           // final encrypted = encryptWithCRC(content);
           final encrypted = AESEncryptData.encryptAES(content, sharedSecret);
@@ -1707,10 +1725,10 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     if ((doc[Dbkeys.from] != currentUserNo) && saved == false) {
       tiles.add(ListTile(
           dense: true,
-          leading: Icon(Icons.delete),
+          leading: const Icon(Icons.delete),
           title: Text(
             getTranslated(this.context, 'dltforme'),
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           onTap: () async {
             await FirebaseFirestore.instance
@@ -1738,10 +1756,10 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     if (doc[Dbkeys.messageType] == MessageType.text.index) {
       tiles.add(ListTile(
           dense: true,
-          leading: Icon(Icons.content_copy),
+          leading: const Icon(Icons.content_copy),
           title: Text(
             getTranslated(context, 'copy'),
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           onTap: () {
             Clipboard.setData(ClipboardData(text: doc[Dbkeys.content]));
@@ -1755,10 +1773,10 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
         doc[Dbkeys.to] == widget.currentUserNo) {
       tiles.add(ListTile(
           dense: true,
-          leading: Icon(Icons.block),
+          leading: const Icon(Icons.block),
           title: Text(
             getTranslated(this.context, 'blockbroadcast'),
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           onTap: () {
             Fiberchat.toast(
@@ -1845,10 +1863,10 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
             graphicFit: BoxFit.contain,
             borderRadius: 5,
             showDomain: true,
-            titleStyle: TextStyle(
+            titleStyle: const TextStyle(
                 fontSize: 13, height: 1.4, fontWeight: FontWeight.bold),
             showBody: true,
-            bodyStyle: TextStyle(fontSize: 11.6, color: Colors.black45),
+            bodyStyle: const TextStyle(fontSize: 11.6, color: Colors.black45),
             placeholderWidget: SelectableLinkify(
               style: TextStyle(fontSize: fontsize, color: Colors.black87),
               text: text!,
@@ -1892,7 +1910,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   replyAttachedWidget(this.context, doc[Dbkeys.replyToMsgDoc]),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   selectablelinkify(doc[Dbkeys.content], 16),
@@ -1919,7 +1937,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                   size: 12,
                                   color: fiberchatGrey.withOpacity(0.5),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   width: 5,
                                 ),
                                 Text(getTranslated(this.context, 'forwarded'),
@@ -1930,7 +1948,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                         overflow: TextOverflow.ellipsis,
                                         fontSize: 13))
                               ])),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
                           selectablelinkify(doc[Dbkeys.content], 16),
@@ -1954,7 +1972,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   replyAttachedWidget(this.context, doc[Dbkeys.replyToMsgDoc]),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   selectablelinkify(message, 16)
@@ -1981,7 +1999,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                   size: 12,
                                   color: fiberchatGrey.withOpacity(0.5),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   width: 5,
                                 ),
                                 Text(getTranslated(this.context, 'forwarded'),
@@ -1992,7 +2010,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                         overflow: TextOverflow.ellipsis,
                                         fontSize: 13))
                               ])),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
                           selectablelinkify(message, 16)
@@ -2030,7 +2048,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                             size: 12,
                             color: fiberchatGrey.withOpacity(0.5),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 5,
                           ),
                           Text(getTranslated(this.context, 'forwarded'),
@@ -2041,7 +2059,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                   overflow: TextOverflow.ellipsis,
                                   fontSize: 13))
                         ])),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     Image.asset(
@@ -2062,7 +2080,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
       BuildContext context, Map<String, dynamic> doc, String message,
       {bool saved = false, bool isMe = true}) {
     return Container(
-      margin: EdgeInsets.only(bottom: 10),
+      margin: const EdgeInsets.only(bottom: 10),
       // width: 250,
       // height: 116,
       child: Column(
@@ -2072,7 +2090,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
           doc.containsKey(Dbkeys.isForward) == true
               ? doc[Dbkeys.isForward] == true
                   ? Container(
-                      margin: EdgeInsets.only(bottom: 10),
+                      margin: const EdgeInsets.only(bottom: 10),
                       child: Row(
                           mainAxisAlignment: isMe == true
                               ? MainAxisAlignment.start
@@ -2084,7 +2102,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                               size: 12,
                               color: fiberchatGrey.withOpacity(0.5),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 5,
                             ),
                             Text(getTranslated(this.context, 'forwarded'),
@@ -2095,8 +2113,8 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                     overflow: TextOverflow.ellipsis,
                                     fontSize: 13))
                           ]))
-                  : SizedBox(height: 0, width: 0)
-              : SizedBox(height: 0, width: 0),
+                  : const SizedBox(height: 0, width: 0)
+              : const SizedBox(height: 0, width: 0),
           SizedBox(
             width: 200,
             height: 80,
@@ -2133,7 +2151,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
           doc.containsKey(Dbkeys.isForward) == true
               ? doc[Dbkeys.isForward] == true
                   ? Container(
-                      margin: EdgeInsets.only(bottom: 10),
+                      margin: const EdgeInsets.only(bottom: 10),
                       child: Row(
                           mainAxisAlignment: isMe == true
                               ? MainAxisAlignment.start
@@ -2145,7 +2163,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                               size: 12,
                               color: fiberchatGrey.withOpacity(0.5),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 5,
                             ),
                             Text(getTranslated(this.context, 'forwarded'),
@@ -2156,18 +2174,18 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                     overflow: TextOverflow.ellipsis,
                                     fontSize: 13))
                           ]))
-                  : SizedBox(height: 0, width: 0)
-              : SizedBox(height: 0, width: 0),
+                  : const SizedBox(height: 0, width: 0)
+              : const SizedBox(height: 0, width: 0),
           ListTile(
-            contentPadding: EdgeInsets.all(4),
+            contentPadding: const EdgeInsets.all(4),
             isThreeLine: false,
             leading: Container(
               decoration: BoxDecoration(
                 color: Colors.yellow[800],
                 borderRadius: BorderRadius.circular(7.0),
               ),
-              padding: EdgeInsets.all(12),
-              child: Icon(
+              padding: const EdgeInsets.all(12),
+              child: const Icon(
                 Icons.insert_drive_file,
                 size: 25,
                 color: Colors.white,
@@ -2177,13 +2195,13 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
               message.split('-BREAK-')[1],
               overflow: TextOverflow.ellipsis,
               maxLines: 2,
-              style: TextStyle(
+              style: const TextStyle(
                   height: 1.4,
                   fontWeight: FontWeight.w700,
                   color: Colors.black87),
             ),
           ),
-          Divider(
+          const Divider(
             height: 3,
           ),
           message.split('-BREAK-')[1].endsWith('.pdf')
@@ -2256,7 +2274,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
           doc.containsKey(Dbkeys.isForward) == true
               ? doc[Dbkeys.isForward] == true
                   ? Container(
-                      margin: EdgeInsets.only(bottom: 10),
+                      margin: const EdgeInsets.only(bottom: 10),
                       child: Row(
                           mainAxisAlignment: isMe == true
                               ? MainAxisAlignment.start
@@ -2268,7 +2286,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                               size: 12,
                               color: fiberchatGrey.withOpacity(0.5),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 5,
                             ),
                             Text(getTranslated(this.context, 'forwarded'),
@@ -2279,10 +2297,14 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                     overflow: TextOverflow.ellipsis,
                                     fontSize: 13))
                           ]))
-                  : SizedBox(height: 0, width: 0)
-              : SizedBox(height: 0, width: 0),
+                  : const SizedBox(height: 0, width: 0)
+              : const SizedBox(height: 0, width: 0),
           saved
               ? Material(
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(8.0),
+                  ),
+                  clipBehavior: Clip.hardEdge,
                   child: Container(
                     decoration: BoxDecoration(
                       image: DecorationImage(
@@ -2293,28 +2315,28 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                     width: doc[Dbkeys.content].contains('giphy') ? 120 : 200.0,
                     height: doc[Dbkeys.content].contains('giphy') ? 102 : 200.0,
                   ),
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(8.0),
-                  ),
-                  clipBehavior: Clip.hardEdge,
                 )
               : CachedNetworkImage(
                   placeholder: (context, url) => Container(
-                    child: CircularProgressIndicator(
-                      valueColor:
-                          AlwaysStoppedAnimation<Color>(Colors.blueGrey[400]!),
-                    ),
                     width: doc[Dbkeys.content].contains('giphy') ? 120 : 200.0,
                     height: doc[Dbkeys.content].contains('giphy') ? 120 : 200.0,
-                    padding: EdgeInsets.all(80.0),
-                    decoration: BoxDecoration(
+                    padding: const EdgeInsets.all(80.0),
+                    decoration: const BoxDecoration(
                       color: Colors.blueGrey,
                       borderRadius: BorderRadius.all(
                         Radius.circular(8.0),
                       ),
                     ),
+                    child: CircularProgressIndicator(
+                      valueColor:
+                          AlwaysStoppedAnimation<Color>(Colors.blueGrey[400]!),
+                    ),
                   ),
                   errorWidget: (context, str, error) => Material(
+                    borderRadius: const BorderRadius.all(
+                      Radius.circular(8.0),
+                    ),
+                    clipBehavior: Clip.hardEdge,
                     child: Image.asset(
                       'assets/images/img_not_available.jpeg',
                       width:
@@ -2323,10 +2345,6 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                           doc[Dbkeys.content].contains('giphy') ? 120 : 200.0,
                       fit: BoxFit.cover,
                     ),
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(8.0),
-                    ),
-                    clipBehavior: Clip.hardEdge,
                   ),
                   imageUrl: doc[Dbkeys.content],
                   width: doc[Dbkeys.content].contains('giphy') ? 120 : 200.0,
@@ -2361,8 +2379,8 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
       onTap: () {
         Navigator.push(
             this.context,
-            new MaterialPageRoute(
-                builder: (context) => new PreviewVideo(
+            MaterialPageRoute(
+                builder: (context) => PreviewVideo(
                       isdownloadallowed: true,
                       filename: message.split('-BREAK-').length > 3
                           ? message.split('-BREAK-')[3]
@@ -2379,7 +2397,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
           doc.containsKey(Dbkeys.isForward) == true
               ? doc[Dbkeys.isForward] == true
                   ? Container(
-                      margin: EdgeInsets.only(bottom: 10),
+                      margin: const EdgeInsets.only(bottom: 10),
                       child: Row(
                           mainAxisAlignment: isMe == true
                               ? MainAxisAlignment.start
@@ -2391,7 +2409,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                               size: 12,
                               color: fiberchatGrey.withOpacity(0.5),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 5,
                             ),
                             Text(getTranslated(this.context, 'forwarded'),
@@ -2402,8 +2420,8 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                     overflow: TextOverflow.ellipsis,
                                     fontSize: 13))
                           ]))
-                  : SizedBox(height: 0, width: 0)
-              : SizedBox(height: 0, width: 0),
+                  : const SizedBox(height: 0, width: 0)
+              : const SizedBox(height: 0, width: 0),
           Container(
             color: Colors.blueGrey,
             height: 197,
@@ -2412,31 +2430,31 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
               children: [
                 CachedNetworkImage(
                   placeholder: (context, url) => Container(
-                    child: CircularProgressIndicator(
-                      valueColor:
-                          AlwaysStoppedAnimation<Color>(Colors.blueGrey[400]!),
-                    ),
                     width: 197,
                     height: 197,
-                    padding: EdgeInsets.all(80.0),
-                    decoration: BoxDecoration(
+                    padding: const EdgeInsets.all(80.0),
+                    decoration: const BoxDecoration(
                       color: Colors.blueGrey,
                       borderRadius: BorderRadius.all(
                         Radius.circular(0.0),
                       ),
                     ),
+                    child: CircularProgressIndicator(
+                      valueColor:
+                          AlwaysStoppedAnimation<Color>(Colors.blueGrey[400]!),
+                    ),
                   ),
                   errorWidget: (context, str, error) => Material(
+                    borderRadius: const BorderRadius.all(
+                      Radius.circular(0.0),
+                    ),
+                    clipBehavior: Clip.hardEdge,
                     child: Image.asset(
                       'assets/images/img_not_available.jpeg',
                       width: 197,
                       height: 197,
                       fit: BoxFit.cover,
                     ),
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(0.0),
-                    ),
-                    clipBehavior: Clip.hardEdge,
                   ),
                   imageUrl: message.split('-BREAK-')[1],
                   width: 197,
@@ -2448,7 +2466,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                   height: 197,
                   width: 197,
                 ),
-                Center(
+                const Center(
                   child: Icon(Icons.play_circle_fill_outlined,
                       color: Colors.white70, size: 65),
                 ),
@@ -2474,7 +2492,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
           doc.containsKey(Dbkeys.isForward) == true
               ? doc[Dbkeys.isForward] == true
                   ? Container(
-                      margin: EdgeInsets.only(bottom: 10),
+                      margin: const EdgeInsets.only(bottom: 10),
                       child: Row(
                           mainAxisAlignment: isMe == true
                               ? MainAxisAlignment.start
@@ -2486,7 +2504,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                               size: 12,
                               color: fiberchatGrey.withOpacity(0.5),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 5,
                             ),
                             Text(getTranslated(this.context, 'forwarded'),
@@ -2497,8 +2515,8 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                     overflow: TextOverflow.ellipsis,
                                     fontSize: 13))
                           ]))
-                  : SizedBox(height: 0, width: 0)
-              : SizedBox(height: 0, width: 0),
+                  : const SizedBox(height: 0, width: 0)
+              : const SizedBox(height: 0, width: 0),
           ListTile(
             isThreeLine: false,
             leading: customCircleAvatar(url: null),
@@ -2515,14 +2533,14 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
               padding: const EdgeInsets.only(top: 3),
               child: Text(
                 message.split('-BREAK-')[1],
-                style: TextStyle(
+                style: const TextStyle(
                     height: 1.4,
                     fontWeight: FontWeight.w500,
                     color: Colors.black87),
               ),
             ),
           ),
-          Divider(
+          const Divider(
             height: 7,
           ),
           // ignore: deprecated_member_use
@@ -2536,7 +2554,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                 String? formattedphone;
 
                 setStateIfMounted(() {
-                  peerphone = peer.replaceAll(new RegExp(r'-'), '');
+                  peerphone = peer.replaceAll(RegExp(r'-'), '');
                   peerphone!.trim();
                 });
 
@@ -2583,15 +2601,15 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
 
                 await query.get().then((user) {
                   setStateIfMounted(() {
-                    isUser = user.docs.length == 0 ? false : true;
+                    isUser = user.docs.isEmpty ? false : true;
                   });
                   if (isUser) {
                     Map<String, dynamic> peer = user.docs[0].data();
                     widget.model.addUser(user.docs[0]);
                     Navigator.pushReplacement(
                         context,
-                        new MaterialPageRoute(
-                            builder: (context) => new ChatScreen(
+                        MaterialPageRoute(
+                            builder: (context) => ChatScreen(
                                 isSharingIntentForwarded: false,
                                 prefs: widget.prefs,
                                 unread: 0,
@@ -2622,15 +2640,15 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                     queryretrywithoutzero.get().then((user) {
                       setStateIfMounted(() {
                         // isLoading = false;
-                        isUser = user.docs.length == 0 ? false : true;
+                        isUser = user.docs.isEmpty ? false : true;
                       });
                       if (isUser) {
                         Map<String, dynamic> peer = user.docs[0].data();
                         widget.model.addUser(user.docs[0]);
                         Navigator.pushReplacement(
                             context,
-                            new MaterialPageRoute(
-                                builder: (context) => new ChatScreen(
+                            MaterialPageRoute(
+                                builder: (context) => ChatScreen(
                                     isSharingIntentForwarded: true,
                                     prefs: widget.prefs,
                                     unread: 0,
@@ -2685,10 +2703,10 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     final observer = Provider.of<Observer>(context, listen: false);
     final bool isMe = doc[Dbkeys.from] == currentUserNo;
     bool isContinuing;
-    if (savedMsgs == null)
+    if (savedMsgs == null) {
       isContinuing =
           messages.isNotEmpty ? messages.last.from == doc[Dbkeys.from] : false;
-    else {
+    } else {
       isContinuing = savedMsgs.isNotEmpty
           ? savedMsgs.last.from == doc[Dbkeys.from]
           : false;
@@ -2739,6 +2757,11 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                             MessageType.audio.index
                                         ? MessageType.audio
                                         : MessageType.text,
+            isMe: isMe,
+            timestamp: doc[Dbkeys.timestamp],
+            delivered:
+                _cachedModel.getMessageStatus(peerNo, doc[Dbkeys.timestamp]),
+            isContinuing: isContinuing,
             child: doc[Dbkeys.messageType] == MessageType.text.index
                 ? getTextMessage(isMe, doc, saved)
                 : doc[Dbkeys.messageType] == MessageType.location.index
@@ -2761,12 +2784,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                     : getImageMessage(
                                         doc,
                                         saved: saved,
-                                      ),
-            isMe: isMe,
-            timestamp: doc[Dbkeys.timestamp],
-            delivered:
-                _cachedModel.getMessageStatus(peerNo, doc[Dbkeys.timestamp]),
-            isContinuing: isContinuing));
+                                      )));
   }
 
   replyAttachedWidget(BuildContext context, var doc) {
@@ -2774,24 +2792,24 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
       child: Container(
           // width: 280,
           height: 76,
-          margin: EdgeInsets.only(left: 0, right: 0),
+          margin: const EdgeInsets.only(left: 0, right: 0),
           decoration: BoxDecoration(
               color: fiberchatWhite.withOpacity(0.55),
-              borderRadius: BorderRadius.all(Radius.circular(10))),
+              borderRadius: const BorderRadius.all(Radius.circular(10))),
           child: Stack(
             children: [
               Container(
-                  margin: EdgeInsetsDirectional.all(4),
+                  margin: const EdgeInsetsDirectional.all(4),
                   decoration: BoxDecoration(
                       color: fiberchatGrey.withOpacity(0.1),
-                      borderRadius: BorderRadius.all(Radius.circular(8))),
+                      borderRadius: const BorderRadius.all(Radius.circular(8))),
                   child: Row(children: [
                     Container(
                       decoration: BoxDecoration(
                         color: doc[Dbkeys.from] == currentUserNo
                             ? fiberchatgreen
                             : Colors.purple,
-                        borderRadius: BorderRadius.only(
+                        borderRadius: const BorderRadius.only(
                             topRight: Radius.circular(0),
                             bottomRight: Radius.circular(0),
                             topLeft: Radius.circular(10),
@@ -2800,17 +2818,17 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                       height: 75,
                       width: 3.3,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 5,
                     ),
                     Expanded(
                         child: Container(
-                      padding: EdgeInsetsDirectional.all(5),
+                      padding: const EdgeInsetsDirectional.all(5),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Padding(
-                            padding: EdgeInsets.only(right: 30),
+                            padding: const EdgeInsets.only(right: 30),
                             child: Text(
                               doc[Dbkeys.from] == currentUserNo
                                   ? getTranslated(this.context, 'you')
@@ -2823,7 +2841,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                       : Colors.purple),
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 8,
                           ),
                           doc[Dbkeys.messageType] == MessageType.text.index
@@ -2878,7 +2896,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                   ])),
               doc[Dbkeys.messageType] == MessageType.text.index ||
                       doc[Dbkeys.messageType] == MessageType.location.index
-                  ? SizedBox(
+                  ? const SizedBox(
                       width: 0,
                       height: 0,
                     )
@@ -2889,44 +2907,44 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                           child: Container(
                             width: 74.0,
                             height: 74.0,
-                            padding: EdgeInsetsDirectional.all(6),
+                            padding: const EdgeInsetsDirectional.all(6),
                             child: ClipRRect(
-                              borderRadius: BorderRadius.only(
+                              borderRadius: const BorderRadius.only(
                                   topRight: Radius.circular(5),
                                   bottomRight: Radius.circular(5),
                                   topLeft: Radius.circular(0),
                                   bottomLeft: Radius.circular(0)),
                               child: CachedNetworkImage(
                                 placeholder: (context, url) => Container(
-                                  child: CircularProgressIndicator(
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                        fiberchatBlue),
-                                  ),
                                   width: doc[Dbkeys.content].contains('giphy')
                                       ? 60
                                       : 60.0,
                                   height: doc[Dbkeys.content].contains('giphy')
                                       ? 60
                                       : 60.0,
-                                  padding: EdgeInsets.all(8.0),
+                                  padding: const EdgeInsets.all(8.0),
                                   decoration: BoxDecoration(
                                     color: Colors.blueGrey[200],
-                                    borderRadius: BorderRadius.all(
+                                    borderRadius: const BorderRadius.all(
                                       Radius.circular(8.0),
                                     ),
                                   ),
+                                  child: CircularProgressIndicator(
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                        fiberchatBlue),
+                                  ),
                                 ),
                                 errorWidget: (context, str, error) => Material(
+                                  borderRadius: const BorderRadius.all(
+                                    Radius.circular(8.0),
+                                  ),
+                                  clipBehavior: Clip.hardEdge,
                                   child: Image.asset(
                                     'assets/images/img_not_available.jpeg',
                                     width: 60.0,
                                     height: 60,
                                     fit: BoxFit.cover,
                                   ),
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(8.0),
-                                  ),
-                                  clipBehavior: Clip.hardEdge,
                                 ),
                                 imageUrl: doc[Dbkeys.messageType] ==
                                         MessageType.video.index
@@ -2946,9 +2964,9 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                               child: Container(
                                   width: 74.0,
                                   height: 74.0,
-                                  padding: EdgeInsetsDirectional.all(6),
+                                  padding: const EdgeInsetsDirectional.all(6),
                                   child: ClipRRect(
-                                      borderRadius: BorderRadius.only(
+                                      borderRadius: const BorderRadius.only(
                                           topRight: Radius.circular(5),
                                           bottomRight: Radius.circular(5),
                                           topLeft: Radius.circular(0),
@@ -2962,36 +2980,36 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                             CachedNetworkImage(
                                               placeholder: (context, url) =>
                                                   Container(
+                                                width: 74,
+                                                height: 74,
+                                                padding: const EdgeInsets.all(8.0),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.blueGrey[200],
+                                                  borderRadius:
+                                                      const BorderRadius.all(
+                                                    Radius.circular(0.0),
+                                                  ),
+                                                ),
                                                 child:
                                                     CircularProgressIndicator(
                                                   valueColor:
                                                       AlwaysStoppedAnimation<
                                                           Color>(fiberchatBlue),
                                                 ),
-                                                width: 74,
-                                                height: 74,
-                                                padding: EdgeInsets.all(8.0),
-                                                decoration: BoxDecoration(
-                                                  color: Colors.blueGrey[200],
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                    Radius.circular(0.0),
-                                                  ),
-                                                ),
                                               ),
                                               errorWidget:
                                                   (context, str, error) =>
                                                       Material(
+                                                borderRadius: const BorderRadius.all(
+                                                  Radius.circular(0.0),
+                                                ),
+                                                clipBehavior: Clip.hardEdge,
                                                 child: Image.asset(
                                                   'assets/images/img_not_available.jpeg',
                                                   width: 60,
                                                   height: 60,
                                                   fit: BoxFit.cover,
                                                 ),
-                                                borderRadius: BorderRadius.all(
-                                                  Radius.circular(0.0),
-                                                ),
-                                                clipBehavior: Clip.hardEdge,
                                               ),
                                               imageUrl: doc[Dbkeys.content]
                                                   .split('-BREAK-')[1],
@@ -3005,7 +3023,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                               height: 74,
                                               width: 74,
                                             ),
-                                            Center(
+                                            const Center(
                                               child: Icon(
                                                   Icons
                                                       .play_circle_fill_outlined,
@@ -3021,9 +3039,9 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                               child: Container(
                                   width: 74.0,
                                   height: 74.0,
-                                  padding: EdgeInsetsDirectional.all(6),
+                                  padding: const EdgeInsetsDirectional.all(6),
                                   child: ClipRRect(
-                                      borderRadius: BorderRadius.only(
+                                      borderRadius: const BorderRadius.only(
                                           topRight: Radius.circular(5),
                                           bottomRight: Radius.circular(5),
                                           topLeft: Radius.circular(0),
@@ -3079,24 +3097,24 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     return Flexible(
       child: Container(
           height: 80,
-          margin: EdgeInsets.only(left: 15, right: 70),
+          margin: const EdgeInsets.only(left: 15, right: 70),
           decoration: BoxDecoration(
               color: fiberchatWhite,
-              borderRadius: BorderRadius.all(Radius.circular(10))),
+              borderRadius: const BorderRadius.all(Radius.circular(10))),
           child: Stack(
             children: [
               Container(
-                  margin: EdgeInsetsDirectional.all(4),
+                  margin: const EdgeInsetsDirectional.all(4),
                   decoration: BoxDecoration(
                       color: fiberchatGrey.withOpacity(0.1),
-                      borderRadius: BorderRadius.all(Radius.circular(8))),
+                      borderRadius: const BorderRadius.all(Radius.circular(8))),
                   child: Row(children: [
                     Container(
                       decoration: BoxDecoration(
                         color: replyDoc![Dbkeys.from] == currentUserNo
                             ? fiberchatgreen
                             : Colors.purple,
-                        borderRadius: BorderRadius.only(
+                        borderRadius: const BorderRadius.only(
                             topRight: Radius.circular(0),
                             bottomRight: Radius.circular(0),
                             topLeft: Radius.circular(10),
@@ -3105,17 +3123,17 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                       height: 75,
                       width: 3.3,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 5,
                     ),
                     Expanded(
                         child: Container(
-                      padding: EdgeInsetsDirectional.all(5),
+                      padding: const EdgeInsetsDirectional.all(5),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Padding(
-                            padding: EdgeInsets.only(right: 30),
+                            padding: const EdgeInsets.only(right: 30),
                             child: Text(
                               replyDoc![Dbkeys.from] == currentUserNo
                                   ? getTranslated(this.context, 'you')
@@ -3128,7 +3146,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                       : Colors.purple),
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 8,
                           ),
                           replyDoc![Dbkeys.messageType] ==
@@ -3191,7 +3209,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                     ))
                   ])),
               replyDoc![Dbkeys.messageType] == MessageType.text.index
-                  ? SizedBox(
+                  ? const SizedBox(
                       width: 0,
                       height: 0,
                     )
@@ -3202,19 +3220,15 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                           child: Container(
                             width: 84.0,
                             height: 84.0,
-                            padding: EdgeInsetsDirectional.all(6),
+                            padding: const EdgeInsetsDirectional.all(6),
                             child: ClipRRect(
-                              borderRadius: BorderRadius.only(
+                              borderRadius: const BorderRadius.only(
                                   topRight: Radius.circular(5),
                                   bottomRight: Radius.circular(5),
                                   topLeft: Radius.circular(0),
                                   bottomLeft: Radius.circular(0)),
                               child: CachedNetworkImage(
                                 placeholder: (context, url) => Container(
-                                  child: CircularProgressIndicator(
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                        fiberchatBlue),
-                                  ),
                                   width: replyDoc![Dbkeys.content]
                                           .contains('giphy')
                                       ? 60
@@ -3223,25 +3237,29 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                           .contains('giphy')
                                       ? 60
                                       : 60.0,
-                                  padding: EdgeInsets.all(8.0),
+                                  padding: const EdgeInsets.all(8.0),
                                   decoration: BoxDecoration(
                                     color: Colors.blueGrey[200],
-                                    borderRadius: BorderRadius.all(
+                                    borderRadius: const BorderRadius.all(
                                       Radius.circular(8.0),
                                     ),
                                   ),
+                                  child: CircularProgressIndicator(
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                        fiberchatBlue),
+                                  ),
                                 ),
                                 errorWidget: (context, str, error) => Material(
+                                  borderRadius: const BorderRadius.all(
+                                    Radius.circular(8.0),
+                                  ),
+                                  clipBehavior: Clip.hardEdge,
                                   child: Image.asset(
                                     'assets/images/img_not_available.jpeg',
                                     width: 60.0,
                                     height: 60,
                                     fit: BoxFit.cover,
                                   ),
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(8.0),
-                                  ),
-                                  clipBehavior: Clip.hardEdge,
                                 ),
                                 imageUrl: replyDoc![Dbkeys.messageType] ==
                                         MessageType.video.index
@@ -3261,9 +3279,9 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                               child: Container(
                                   width: 84.0,
                                   height: 84.0,
-                                  padding: EdgeInsetsDirectional.all(6),
+                                  padding: const EdgeInsetsDirectional.all(6),
                                   child: ClipRRect(
-                                      borderRadius: BorderRadius.only(
+                                      borderRadius: const BorderRadius.only(
                                           topRight: Radius.circular(5),
                                           bottomRight: Radius.circular(5),
                                           topLeft: Radius.circular(0),
@@ -3277,36 +3295,36 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                             CachedNetworkImage(
                                               placeholder: (context, url) =>
                                                   Container(
+                                                width: 84,
+                                                height: 84,
+                                                padding: const EdgeInsets.all(8.0),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.blueGrey[200],
+                                                  borderRadius:
+                                                      const BorderRadius.all(
+                                                    Radius.circular(0.0),
+                                                  ),
+                                                ),
                                                 child:
                                                     CircularProgressIndicator(
                                                   valueColor:
                                                       AlwaysStoppedAnimation<
                                                           Color>(fiberchatBlue),
                                                 ),
-                                                width: 84,
-                                                height: 84,
-                                                padding: EdgeInsets.all(8.0),
-                                                decoration: BoxDecoration(
-                                                  color: Colors.blueGrey[200],
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                    Radius.circular(0.0),
-                                                  ),
-                                                ),
                                               ),
                                               errorWidget:
                                                   (context, str, error) =>
                                                       Material(
+                                                borderRadius: const BorderRadius.all(
+                                                  Radius.circular(0.0),
+                                                ),
+                                                clipBehavior: Clip.hardEdge,
                                                 child: Image.asset(
                                                   'assets/images/img_not_available.jpeg',
                                                   width: 60,
                                                   height: 60,
                                                   fit: BoxFit.cover,
                                                 ),
-                                                borderRadius: BorderRadius.all(
-                                                  Radius.circular(0.0),
-                                                ),
-                                                clipBehavior: Clip.hardEdge,
                                               ),
                                               imageUrl:
                                                   replyDoc![Dbkeys.content]
@@ -3321,7 +3339,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                               height: 84,
                                               width: 84,
                                             ),
-                                            Center(
+                                            const Center(
                                               child: Icon(
                                                   Icons
                                                       .play_circle_fill_outlined,
@@ -3337,9 +3355,9 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                               child: Container(
                                   width: 84.0,
                                   height: 84.0,
-                                  padding: EdgeInsetsDirectional.all(6),
+                                  padding: const EdgeInsetsDirectional.all(6),
                                   child: ClipRRect(
-                                      borderRadius: BorderRadius.only(
+                                      borderRadius: const BorderRadius.only(
                                           topRight: Radius.circular(5),
                                           bottomRight: Radius.circular(5),
                                           topLeft: Radius.circular(0),
@@ -3404,11 +3422,11 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                   child: Container(
                     width: 15,
                     height: 15,
-                    decoration: new BoxDecoration(
+                    decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.9),
                       shape: BoxShape.circle,
                     ),
-                    child: new Icon(
+                    child: const Icon(
                       Icons.close,
                       color: Colors.blueGrey,
                       size: 13,
@@ -3424,7 +3442,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
   Widget buildTempMessage(BuildContext context, MessageType type, content,
       timestamp, delivered, tempDoc) {
     final observer = Provider.of<Observer>(this.context, listen: false);
-    final bool isMe = true;
+    const bool isMe = true;
     bool isContainURL = false;
     try {
       isContainURL = Uri.tryParse(tempDoc[Dbkeys.tempcontent]!) == null
@@ -3454,6 +3472,11 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
               : false,
           isBroadcastMssg: false,
           messagetype: type,
+          isMe: isMe,
+          timestamp: timestamp,
+          delivered: delivered,
+          isContinuing:
+              messages.isNotEmpty && messages.last.from == currentUserNo,
           child: type == MessageType.text
               ? getTempTextMessage(content, tempDoc)
               : type == MessageType.location
@@ -3470,11 +3493,6 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                   ? getContactMessage(context, tempDoc, content,
                                       saved: false)
                                   : getTempImageMessage(url: content),
-          isMe: isMe,
-          timestamp: timestamp,
-          delivered: delivered,
-          isContinuing:
-              messages.isNotEmpty && messages.last.from == currentUserNo,
         ));
   }
 
@@ -3498,13 +3516,13 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     return Positioned(
       child: isgeneratingSomethingLoader
           ? Container(
+              color: DESIGN_TYPE == Themetype.whatsapp
+                  ? fiberchatBlack.withOpacity(0.6)
+                  : fiberchatWhite.withOpacity(0.6),
               child: Center(
                 child: CircularProgressIndicator(
                     valueColor: AlwaysStoppedAnimation<Color>(fiberchatBlue)),
               ),
-              color: DESIGN_TYPE == Themetype.whatsapp
-                  ? fiberchatBlack.withOpacity(0.6)
-                  : fiberchatWhite.withOpacity(0.6),
             )
           : Container(),
     );
@@ -3513,7 +3531,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
   shareMedia(BuildContext context) {
     showModalBottomSheet(
         context: context,
-        shape: RoundedRectangleBorder(
+        shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
         ),
         builder: (BuildContext context) {
@@ -3521,10 +3539,10 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
           const padding = 0.0;
           // return your layout
           return Container(
-            padding: EdgeInsets.all(12),
+            padding: const EdgeInsets.all(12),
             height: 250,
             child: Column(children: [
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               Row(
@@ -3567,6 +3585,8 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                           },
                           elevation: .5,
                           fillColor: Colors.indigo,
+                          padding: const EdgeInsets.all(padding),
+                          shape: const CircleBorder(),
                           // child: Icon(
                           //   Icons.file_copy,
                           //   size: 25.0,
@@ -3578,10 +3598,8 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                             height: iconSize,
                             width: iconSize,
                           ),
-                          padding: EdgeInsets.all(padding),
-                          shape: CircleBorder(),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 8,
                         ),
                         Text(
@@ -3631,8 +3649,8 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
 
                                 await Navigator.push(
                                     this.context,
-                                    new MaterialPageRoute(
-                                        builder: (context) => new VideoEditor(
+                                    MaterialPageRoute(
+                                        builder: (context) => VideoEditor(
                                             onClose: () {
                                               setStatusBarColor();
                                             },
@@ -3690,6 +3708,8 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                           },
                           elevation: .5,
                           fillColor: Colors.pink[600],
+                          padding: const EdgeInsets.all(padding),
+                          shape: const CircleBorder(),
                           // child: Icon(
                           //   Icons.video_collection_sharp,
                           //   size: 25.0,
@@ -3701,10 +3721,8 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                             height: iconSize,
                             width: iconSize,
                           ),
-                          padding: EdgeInsets.all(padding),
-                          shape: CircleBorder(),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 8,
                         ),
                         Text(
@@ -3759,7 +3777,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                 setStatusBarColor();
 
                                 for (var tempFile in tempFiles) {
-                                  await Future.delayed(Duration(milliseconds: 1)).then((_) async {
+                                  await Future.delayed(const Duration(milliseconds: 1)).then((_) async {
                                     int timeStamp = DateTime.now()
                                         .millisecondsSinceEpoch;
                                     String? url =
@@ -3780,6 +3798,8 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                           },
                           elevation: .5,
                           fillColor: Colors.purple,
+                          padding: const EdgeInsets.all(padding),
+                          shape: const CircleBorder(),
                           // child: Icon(
                           //   Icons.image_rounded,
                           //   size: 25.0,
@@ -3791,10 +3811,8 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                             height: iconSize,
                             width: iconSize,
                           ),
-                          padding: EdgeInsets.all(padding),
-                          shape: CircleBorder(),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 8,
                         ),
                         Text(
@@ -3810,7 +3828,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                   )
                 ],
               ),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               Row(
@@ -3850,6 +3868,8 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                           },
                           elevation: .5,
                           fillColor: Colors.yellow[900],
+                          padding: const EdgeInsets.all(padding),
+                          shape: const CircleBorder(),
                           // child: Icon(
                           //   Icons.mic_rounded,
                           //   size: 25.0,
@@ -3861,10 +3881,8 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                             height: iconSize,
                             width: iconSize,
                           ),
-                          padding: EdgeInsets.all(padding),
-                          shape: CircleBorder(),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 8,
                         ),
                         Text(
@@ -3906,6 +3924,8 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                           },
                           elevation: .5,
                           fillColor: Colors.cyan[700],
+                          padding: const EdgeInsets.all(padding),
+                          shape: const CircleBorder(),
                           // child: Icon(
                           //   Icons.location_on,
                           //   size: 25.0,
@@ -3917,10 +3937,8 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                             height: iconSize,
                             width: iconSize,
                           ),
-                          padding: EdgeInsets.all(padding),
-                          shape: CircleBorder(),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 8,
                         ),
                         Text(
@@ -3963,6 +3981,8 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                           },
                           elevation: .5,
                           fillColor: Colors.blue[800],
+                          padding: const EdgeInsets.all(padding),
+                          shape: const CircleBorder(),
                           // child: Icon(
                           //   Icons.person,
                           //   size: 25.0,
@@ -3974,10 +3994,8 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                             height: iconSize,
                             width: iconSize,
                           ),
-                          padding: EdgeInsets.all(padding),
-                          shape: CircleBorder(),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 8,
                         ),
                         Text(
@@ -4001,13 +4019,11 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
       File selectedFile, bool isVideo, bool isthumbnail, int timeEpoch,
       {String? filenameoptional}) async {
     String ext = p.extension(selectedFile.path);
-    String fileName = filenameoptional != null
-        ? filenameoptional
-        : isthumbnail == true
+    String fileName = filenameoptional ?? (isthumbnail == true
             ? 'Thumbnail-$timeEpoch$ext'
             : isVideo
                 ? 'Video-$timeEpoch$ext'
-                : 'IMG-$timeEpoch$ext';
+                : 'IMG-$timeEpoch$ext');
     // isthumbnail == false
     //     ? isVideo == true
     //         ? 'Video-$timeEpoch.mp4'
@@ -4023,7 +4039,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
         context: this.context,
         barrierDismissible: false,
         builder: (BuildContext context) {
-          return new WillPopScope(
+          return WillPopScope(
               onWillPop: () async => false,
               child: SimpleDialog(
                   shape: RoundedRectangleBorder(
@@ -4111,7 +4127,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     return downloadedurl;
   }
 
-  FocusNode keyboardFocusNode = new FocusNode();
+  FocusNode keyboardFocusNode = FocusNode();
   Widget buildInputAndroid(BuildContext context, bool isemojiShowing,
       Function refreshThisInput, bool keyboardVisible) {
     final observer = Provider.of<Observer>(context, listen: true);
@@ -4154,19 +4170,25 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
               ? buildReplyMessageForInput(
                   context,
                 )
-              : SizedBox(),
+              : const SizedBox(),
           Container(
             margin: EdgeInsets.only(bottom: Platform.isIOS == true ? 20 : 0),
+            width: double.infinity,
+            height: 60.0,
+            decoration: const BoxDecoration(
+              // border: new Border(top: new BorderSide(color: Colors.grey, width: 0.5)),
+              color: Colors.transparent,
+            ),
             child: Row(
               children: <Widget>[
                 Flexible(
                   child: Container(
-                    margin: EdgeInsets.only(
+                    margin: const EdgeInsets.only(
                       left: 10,
                     ),
                     decoration: BoxDecoration(
                         color: fiberchatWhite,
-                        borderRadius: BorderRadius.all(Radius.circular(30))),
+                        borderRadius: const BorderRadius.all(Radius.circular(30))),
                     child: Row(
                       children: [
                         SizedBox(
@@ -4214,29 +4236,29 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                               enabledBorder: OutlineInputBorder(
                                 // width: 0.0 produces a thin "hairline" border
                                 borderRadius: BorderRadius.circular(1),
-                                borderSide: BorderSide(
+                                borderSide: const BorderSide(
                                     color: Colors.transparent, width: 1.5),
                               ),
                               hoverColor: Colors.transparent,
                               focusedBorder: OutlineInputBorder(
                                 // width: 0.0 produces a thin "hairline" border
                                 borderRadius: BorderRadius.circular(1),
-                                borderSide: BorderSide(
+                                borderSide: const BorderSide(
                                     color: Colors.transparent, width: 1.5),
                               ),
                               border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(1),
                                   borderSide:
-                                      BorderSide(color: Colors.transparent)),
-                              contentPadding: EdgeInsets.fromLTRB(10, 4, 7, 4),
+                                      const BorderSide(color: Colors.transparent)),
+                              contentPadding: const EdgeInsets.fromLTRB(10, 4, 7, 4),
                               hintText: getTranslated(this.context, 'msg'),
                               hintStyle:
-                                  TextStyle(color: Colors.grey, fontSize: 15),
+                                  const TextStyle(color: Colors.grey, fontSize: 15),
                             ),
                           ),
                         ),
                         Container(
-                            margin: EdgeInsets.fromLTRB(0, 0, 5, 0),
+                            margin: const EdgeInsets.fromLTRB(0, 0, 5, 0),
                             width: textEditingController.text.isNotEmpty
                                 ? 10
                                 : IsShowGIFsenderButtonByGIPHY == false
@@ -4246,15 +4268,15 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
                                 textEditingController.text.isNotEmpty
-                                    ? SizedBox()
+                                    ? const SizedBox()
                                     : SizedBox(
                                         width: 30,
                                         child: IconButton(
-                                          icon: new Icon(
+                                          icon: Icon(
                                             Icons.attachment_outlined,
                                             color: fiberchatGrey,
                                           ),
-                                          padding: EdgeInsets.all(0.0),
+                                          padding: const EdgeInsets.all(0.0),
                                           onPressed: isMessageLoading == true
                                               ? null
                                               : observer.ismediamessagingallowed ==
@@ -4282,16 +4304,16 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                         ),
                                       ),
                                 textEditingController.text.isNotEmpty
-                                    ? SizedBox()
+                                    ? const SizedBox()
                                     : SizedBox(
                                         width: 30,
                                         child: IconButton(
-                                          icon: new Icon(
+                                          icon: Icon(
                                             Icons.camera_alt_rounded,
                                             size: 20,
                                             color: fiberchatGrey,
                                           ),
-                                          padding: EdgeInsets.all(0.0),
+                                          padding: const EdgeInsets.all(0.0),
                                           onPressed: isMessageLoading == true
                                               ? null
                                               : observer.ismediamessagingallowed ==
@@ -4315,10 +4337,10 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                                           hidekeyboard(context);
                                                           await Navigator.push(
                                                               context,
-                                                              new MaterialPageRoute(
+                                                              MaterialPageRoute(
                                                                   builder:
                                                                       (context) =>
-                                                                          new AllinOneCameraGalleryImageVideoPicker(
+                                                                          AllinOneCameraGalleryImageVideoPicker(
                                                                             onTakeFile: (file,
                                                                                 isVideo,
                                                                                 thumnail) async {
@@ -4352,19 +4374,19 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                           color: fiberchatWhite,
                                         ),
                                       ),
-                                textEditingController.text.length != 0 ||
+                                textEditingController.text.isNotEmpty ||
                                         IsShowGIFsenderButtonByGIPHY == false
-                                    ? SizedBox(
+                                    ? const SizedBox(
                                         width: 0,
                                       )
                                     : Container(
-                                        margin: EdgeInsets.only(bottom: 5),
+                                        margin: const EdgeInsets.only(bottom: 5),
                                         height: 35,
                                         alignment: Alignment.topLeft,
                                         width: 40,
                                         child: IconButton(
                                             color: fiberchatWhite,
-                                            padding: EdgeInsets.all(0.0),
+                                            padding: const EdgeInsets.all(0.0),
                                             icon: Icon(
                                               Icons.gif_rounded,
                                               size: 40,
@@ -4421,7 +4443,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                   height: 47,
                   width: 47,
                   // alignment: Alignment.center,
-                  margin: EdgeInsets.only(left: 6, right: 10),
+                  margin: const EdgeInsets.only(left: 6, right: 10),
                   decoration: BoxDecoration(
                       color: DESIGN_TYPE == Themetype.whatsapp
                           ? fiberchatgreen
@@ -4429,12 +4451,12 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                       // border: Border.all(
                       //   color: Colors.red[500],
                       // ),
-                      borderRadius: BorderRadius.all(Radius.circular(30))),
+                      borderRadius: const BorderRadius.all(Radius.circular(30))),
                   child: Padding(
                     padding: const EdgeInsets.all(2.0),
                     child: IconButton(
-                      icon: new Icon(
-                        textEditingController.text.length == 0
+                      icon: Icon(
+                        textEditingController.text.isEmpty
                             ? Icons.mic
                             : Icons.send,
                         color: fiberchatWhite.withOpacity(0.99),
@@ -4442,7 +4464,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                       onPressed: isMessageLoading == true
                           ? null
                           : observer.ismediamessagingallowed == true
-                              ? textEditingController.text.length == 0
+                              ? textEditingController.text.isEmpty
                                   ? () {
                                       hidekeyboard(context);
 
@@ -4489,12 +4511,6 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                 ),
               ],
             ),
-            width: double.infinity,
-            height: 60.0,
-            decoration: new BoxDecoration(
-              // border: new Border(top: new BorderSide(color: Colors.grey, width: 0.5)),
-              color: Colors.transparent,
-            ),
           ),
           isemojiShowing == true && keyboardVisible == false
               ? Offstage(
@@ -4513,7 +4529,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                             verticalSpacing: 0,
                             horizontalSpacing: 0,
                             initCategory: emojipic.Category.RECENT,
-                            bgColor: Color(0xFFF2F2F2),
+                            bgColor: const Color(0xFFF2F2F2),
                             indicatorColor: fiberchatgreen,
                             iconColor: Colors.grey,
                             iconColorSelected: fiberchatgreen,
@@ -4521,11 +4537,11 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                             backspaceColor: fiberchatgreen,
                             showRecentsTab: true,
                             recentsLimit: 28,
-                            categoryIcons: CategoryIcons(),
+                            categoryIcons: const CategoryIcons(),
                             buttonMode: ButtonMode.MATERIAL)),
                   ),
                 )
-              : SizedBox(),
+              : const SizedBox(),
         ]);
   }
 
@@ -5037,7 +5053,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
   uploadEach(
     int index,
   ) async {
-    File file = new File(widget.sharedFiles![index].path);
+    File file = File(widget.sharedFiles![index].path);
     String fileName = file.path.split('/').last.toLowerCase();
 
     if (index >= widget.sharedFiles!.length) {
@@ -5117,20 +5133,20 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
 
 //-- GROUP BY DATE ---
   List<Widget> getGroupedMessages() {
-    List<Widget> _groupedMessages = new List.from(<Widget>[
+    List<Widget> _groupedMessages = List.from(<Widget>[
       Card(
         elevation: 0.5,
-        color: Color(0xffFFF2BE),
-        margin: EdgeInsets.fromLTRB(10, 20, 10, 20),
+        color: const Color(0xffFFF2BE),
+        margin: const EdgeInsets.fromLTRB(10, 20, 10, 20),
         child: Container(
-            padding: EdgeInsets.fromLTRB(8, 10, 8, 10),
+            padding: const EdgeInsets.fromLTRB(8, 10, 8, 10),
             child: RichText(
               textAlign: TextAlign.center,
               text: TextSpan(
                 children: [
-                  WidgetSpan(
+                  const WidgetSpan(
                     child: Padding(
-                      padding: const EdgeInsets.only(bottom: 2.5, right: 4),
+                      padding: EdgeInsets.only(bottom: 2.5, right: 4),
                       child: Icon(
                         Icons.lock,
                         color: Color(0xff78754A),
@@ -5140,7 +5156,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                   ),
                   TextSpan(
                       text: getTranslated(this.context, 'chatencryption'),
-                      style: TextStyle(
+                      style: const TextStyle(
                           color: Color(0xff78754A),
                           height: 1.3,
                           fontSize: 13,
@@ -5161,11 +5177,11 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
           int.tryParse(li[0])!, int.tryParse(li[1])!, int.tryParse(li[2])!));
       _groupedMessages.add(Center(
           child: Chip(
-        labelStyle: TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
+        labelStyle: const TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
         backgroundColor: Colors.blue[50],
         label: Text(
           w,
-          style: TextStyle(
+          style: const TextStyle(
               color: Colors.black54, fontWeight: FontWeight.w400, fontSize: 14),
         ),
       )));
@@ -5289,10 +5305,11 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     return Flexible(
         child: chatId == '' || messages.isEmpty || sharedSecret == null
             ? ListView(
+                controller: realtime,
                 children: <Widget>[
-                  Card(),
+                  const Card(),
                   Padding(
-                      padding: EdgeInsets.only(top: 200.0),
+                      padding: const EdgeInsets.only(top: 200.0),
                       child: sharedSecret == null || isMessageLoading == true
                           ? Center(
                               child: CircularProgressIndicator(
@@ -5307,29 +5324,29 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                       : fiberchatGrey,
                                   fontSize: 18))),
                 ],
-                controller: realtime,
               )
             : ListView(
-                padding: EdgeInsets.all(10.0),
-                children: getGroupedMessages(),
+                padding: const EdgeInsets.all(10.0),
                 controller: realtime,
                 reverse: true,
+                children: getGroupedMessages(),
               ));
   }
 
   getWhen(date) {
     DateTime now = DateTime.now();
     String when;
-    if (date.day == now.day)
+    if (date.day == now.day) {
       when = getTranslated(this.context, 'today');
-    else if (date.day == now.subtract(Duration(days: 1)).day)
+    } else if (date.day == now.subtract(const Duration(days: 1)).day) {
       when = getTranslated(this.context, 'yesterday');
-    else
+    } else {
       when = IsShowNativeTimDate == true
           ? getTranslated(this.context, DateFormat.MMMM().format(date)) +
               ' ' +
               DateFormat.d().format(date)
           : when = DateFormat.MMMd().format(date);
+    }
     return when;
   }
 
@@ -5412,7 +5429,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                   this.context, 'pmc'));
           Navigator.push(
               context,
-              new MaterialPageRoute(
+              MaterialPageRoute(
                   builder: (context) =>
                       OpenSettings()));
         }
@@ -5421,7 +5438,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
             this.context, 'pmc'));
         Navigator.push(
             context,
-            new MaterialPageRoute(
+            MaterialPageRoute(
                 builder: (context) =>
                     OpenSettings()));
       });
@@ -5453,7 +5470,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                   this.context, 'pmc'));
           Navigator.push(
               context,
-              new MaterialPageRoute(
+              MaterialPageRoute(
                   builder: (context) =>
                       OpenSettings()));
         }
@@ -5462,7 +5479,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
             this.context, 'pmc'));
         Navigator.push(
             context,
-            new MaterialPageRoute(
+            MaterialPageRoute(
                 builder: (context) =>
                     OpenSettings()));
       });
@@ -5472,14 +5489,14 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
   showDialOptions(BuildContext context) {
     showModalBottomSheet(
         context: context,
-        shape: RoundedRectangleBorder(
+        shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
         ),
         builder: (BuildContext context) {
           // return your layout
           return Consumer<Observer>(
               builder: (context, observer, _child) => Container(
-                  padding: EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(12),
                   height: 130,
                   child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -5519,7 +5536,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                               this.context, 'pmc'));
                                           Navigator.push(
                                               context,
-                                              new MaterialPageRoute(
+                                              MaterialPageRoute(
                                                   builder: (context) =>
                                                       OpenSettings()));
                                         }
@@ -5528,7 +5545,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                             getTranslated(this.context, 'pmc'));
                                         Navigator.push(
                                             context,
-                                            new MaterialPageRoute(
+                                            MaterialPageRoute(
                                                 builder: (context) =>
                                                     OpenSettings()));
                                       });
@@ -5538,13 +5555,13 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                SizedBox(height: 13),
+                                const SizedBox(height: 13),
                                 Icon(
                                   Icons.local_phone,
                                   size: 35,
                                   color: fiberchatLightGreen,
                                 ),
-                                SizedBox(height: 13),
+                                const SizedBox(height: 13),
                                 Text(
                                   getTranslated(context, 'audiocall'),
                                   textAlign: TextAlign.center,
@@ -5593,7 +5610,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                                     this.context, 'pmc'));
                                             Navigator.push(
                                                 context,
-                                                new MaterialPageRoute(
+                                                MaterialPageRoute(
                                                     builder: (context) =>
                                                         OpenSettings()));
                                           }
@@ -5602,7 +5619,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                               this.context, 'pmc'));
                                           Navigator.push(
                                               context,
-                                              new MaterialPageRoute(
+                                              MaterialPageRoute(
                                                   builder: (context) =>
                                                       OpenSettings()));
                                         });
@@ -5612,13 +5629,13 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  SizedBox(height: 13),
+                                  const SizedBox(height: 13),
                                   Icon(
                                     Icons.videocam,
                                     size: 39,
                                     color: fiberchatLightGreen,
                                   ),
-                                  SizedBox(height: 13),
+                                  const SizedBox(height: 13),
                                   Text(
                                     getTranslated(context, 'videocall'),
                                     textAlign: TextAlign.center,
@@ -5662,13 +5679,14 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                             this.context,
                             listen: false);
                         currentpeer.setpeer(newpeerid: '');
-                        if (lastSeen == peerNo)
+                        if (lastSeen == peerNo) {
                           await FirebaseFirestore.instance
                               .collection(DbPaths.collectionusers)
                               .doc(currentUserNo)
                               .update(
                             {Dbkeys.lastSeen: true},
                           );
+                        }
                       });
 
                       return Future.value(true);
@@ -5688,7 +5706,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                 elevation: 0.4,
                                 titleSpacing: -14,
                                 leading: Container(
-                                  margin: EdgeInsets.only(right: 0),
+                                  margin: const EdgeInsets.only(right: 0),
                                   width: 10,
                                   child: IconButton(
                                     icon: Icon(
@@ -5704,7 +5722,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                             .pushAndRemoveUntil(
                                           MaterialPageRoute(
                                             builder: (BuildContext context) =>
-                                                FiberchatWrapper(),
+                                                const FiberchatWrapper(),
                                           ),
                                           (Route route) => false,
                                         );
@@ -5781,7 +5799,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                                 child: Fiberchat.avatar(peer,
                                                     radius: 20),
                                               ),
-                                        SizedBox(
+                                        const SizedBox(
                                           width: 7,
                                         ),
                                         Column(
@@ -5895,11 +5913,11 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                                             size: 17,
                                                           ),
                                                         )
-                                                      : SizedBox(),
+                                                      : const SizedBox(),
                                                 ],
                                               ),
                                             ),
-                                            SizedBox(
+                                            const SizedBox(
                                               height: 0,
                                             ),
                                             chatId != null
@@ -5938,7 +5956,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                 actions: [
                                   observer.isCallFeatureTotallyHide == true ||
                                           observer.isOngoingCall
-                                      ? SizedBox()
+                                      ? const SizedBox()
                                       : Row(
                                         children: [
                                           SizedBox(
@@ -6013,7 +6031,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                         ? 45
                                         : 25,
                                     child: PopupMenuButton(
-                                        padding: EdgeInsets.all(0),
+                                        padding: const EdgeInsets.all(0),
                                         icon: Padding(
                                           padding:
                                               const EdgeInsets.only(right: 10),
@@ -6032,7 +6050,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                               showModalBottomSheet(
                                                   isScrollControlled: true,
                                                   context: context,
-                                                  shape: RoundedRectangleBorder(
+                                                  shape: const RoundedRectangleBorder(
                                                     borderRadius:
                                                         BorderRadius.vertical(
                                                             top:
@@ -6054,7 +6072,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                                               .bottom),
                                                       child: Container(
                                                           padding:
-                                                              EdgeInsets.all(
+                                                              const EdgeInsets.all(
                                                                   16),
                                                           height: MediaQuery.of(
                                                                       context)
@@ -6069,10 +6087,10 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                                                   CrossAxisAlignment
                                                                       .stretch,
                                                               children: [
-                                                                SizedBox(
+                                                                const SizedBox(
                                                                   height: 12,
                                                                 ),
-                                                                SizedBox(
+                                                                const SizedBox(
                                                                   height: 3,
                                                                 ),
                                                                 Padding(
@@ -6086,7 +6104,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                                                     textAlign:
                                                                         TextAlign
                                                                             .left,
-                                                                    style: TextStyle(
+                                                                    style: const TextStyle(
                                                                         fontWeight:
                                                                             FontWeight
                                                                                 .bold,
@@ -6094,15 +6112,15 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                                                             16.5),
                                                                   ),
                                                                 ),
-                                                                SizedBox(
+                                                                const SizedBox(
                                                                   height: 10,
                                                                 ),
                                                                 Container(
-                                                                  margin: EdgeInsets
+                                                                  margin: const EdgeInsets
                                                                       .only(
                                                                           top:
                                                                               10),
-                                                                  padding: EdgeInsets
+                                                                  padding: const EdgeInsets
                                                                       .fromLTRB(
                                                                           0,
                                                                           0,
@@ -6158,7 +6176,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                                                         getTranslated(
                                                                             context,
                                                                             'report'),
-                                                                        style: TextStyle(
+                                                                        style: const TextStyle(
                                                                             color:
                                                                                 Colors.white,
                                                                             fontSize: 18),
@@ -6211,7 +6229,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                                                             context:
                                                                                 context,
                                                                             shape:
-                                                                                RoundedRectangleBorder(
+                                                                                const RoundedRectangleBorder(
                                                                               borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
                                                                             ),
                                                                             builder:
@@ -6224,7 +6242,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                                                                     mainAxisAlignment: MainAxisAlignment.center,
                                                                                     children: [
                                                                                       Icon(Icons.check, color: Colors.green[400], size: 40),
-                                                                                      SizedBox(
+                                                                                      const SizedBox(
                                                                                         height: 30,
                                                                                       ),
                                                                                       Text(
@@ -6246,7 +6264,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                                                             context: this
                                                                                 .context,
                                                                             shape:
-                                                                                RoundedRectangleBorder(
+                                                                                const RoundedRectangleBorder(
                                                                               borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
                                                                             ),
                                                                             builder:
@@ -6259,7 +6277,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                                                                     mainAxisAlignment: MainAxisAlignment.center,
                                                                                     children: [
                                                                                       Icon(Icons.check, color: Colors.green[400], size: 40),
-                                                                                      SizedBox(
+                                                                                      const SizedBox(
                                                                                         height: 30,
                                                                                       ),
                                                                                       Text(
@@ -6464,14 +6482,14 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                               ),
                               body: Stack(
                                 children: <Widget>[
-                                  new Container(
-                                    decoration: new BoxDecoration(
+                                  Container(
+                                    decoration: BoxDecoration(
                                       color: DESIGN_TYPE == Themetype.whatsapp
                                           ? fiberchatChatbackground
                                           : fiberchatChatbackground,
-                                      image: new DecorationImage(
+                                      image: DecorationImage(
                                           image: peer![Dbkeys.wallpaper] == null
-                                              ? AssetImage(
+                                              ? const AssetImage(
                                                   "assets/images/background.png")
                                               : Image.file(File(
                                                       peer![Dbkeys.wallpaper]))
@@ -6560,7 +6578,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                                         ? Container(
                                                             alignment: Alignment
                                                                 .center,
-                                                            padding: EdgeInsets
+                                                            padding: const EdgeInsets
                                                                 .fromLTRB(14, 7,
                                                                     14, 7),
                                                             color: Colors.white
@@ -6580,12 +6598,12 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                                                   MainAxisAlignment
                                                                       .center,
                                                               children: [
-                                                                Icon(
+                                                                const Icon(
                                                                     Icons
                                                                         .error_outline_rounded,
                                                                     color: Colors
                                                                         .red),
-                                                                SizedBox(
+                                                                const SizedBox(
                                                                     width: 10),
                                                                 Text(
                                                                   getTranslated(
@@ -6594,7 +6612,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                                                   textAlign:
                                                                       TextAlign
                                                                           .center,
-                                                                  style: TextStyle(
+                                                                  style: const TextStyle(
                                                                       height:
                                                                           1.3),
                                                                 ),

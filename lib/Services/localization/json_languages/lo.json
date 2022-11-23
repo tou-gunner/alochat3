@@ -374,5 +374,15 @@
 
     "selectlanguage": "ເລືອກພາສາ",
 
-    "reply": "ຕອບກັບ"
+    "reply": "ຕອບກັບ",
+    "addtask": "ເພີ່ມວຽກ",
+    "task_ongoing": "ກຳລັງດຳເນີນການ",
+    "task_received": "ໄດ້ຮັບມອບໝາຍ",
+    "task_assigned": "ໄດ້ມອບໝາຍ",
+    "task_following": "ກຳລັງຕິດຕາມ",
+    "task_completed": "ສຳເລັດແລ້ວ",
+    "task_overdue": "ເກີນເວລານັດໝາຍ",
+    "task_next7days": "ອີກພາຍໃນ 7 ວັນ",
+    "task_later": "ພາຍຫຼັງ ຫຼື ບໍ່ໄດ້ຕັ້ງເວລານັດໝາຍ",
+    "task_completedon": "ສຳເລັດໃນວັນທີ"
 }

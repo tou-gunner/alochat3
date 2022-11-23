@@ -111,12 +111,12 @@ class _GroupChatPageState extends State<GroupChatPage>
   late String messageReplyOwnerName;
   late Stream<QuerySnapshot> groupChatMessages;
   final TextEditingController reportEditingController =
-      new TextEditingController();
+      TextEditingController();
   late Query firestoreChatquery;
-  GlobalKey<ScaffoldState> _scaffold = new GlobalKey<ScaffoldState>();
-  GlobalKey<State> _keyLoader =
-      new GlobalKey<State>(debugLabel: 'qqqeqeqsssaadqeqe');
-  final ScrollController realtime = new ScrollController();
+  final GlobalKey<ScaffoldState> _scaffold = GlobalKey<ScaffoldState>();
+  final GlobalKey<State> _keyLoader =
+      GlobalKey<State>(debugLabel: 'qqqeqeqsssaadqeqe');
+  final ScrollController realtime = ScrollController();
   Map<String, dynamic>? replyDoc;
   bool isReplyKeyboard = false;
   InterstitialAd? _interstitialAd;
@@ -245,7 +245,7 @@ class _GroupChatPageState extends State<GroupChatPage>
   uploadEach(
     int index,
   ) async {
-    File file = new File(widget.sharedFiles![index].path);
+    File file = File(widget.sharedFiles![index].path);
     String fileName = file.path.split('/').last.toLowerCase();
 
     if (index >= widget.sharedFiles!.length) {
@@ -510,7 +510,7 @@ class _GroupChatPageState extends State<GroupChatPage>
         context: this.context,
         barrierDismissible: false,
         builder: (BuildContext context) {
-          return new WillPopScope(
+          return WillPopScope(
               onWillPop: () async => false,
               child: SimpleDialog(
                   shape: RoundedRectangleBorder(
@@ -607,13 +607,11 @@ class _GroupChatPageState extends State<GroupChatPage>
       File selectedFile, bool isVideo, bool isthumbnail, int timeEpoch,
       {String? filenameoptional}) async {
     String ext = p.extension(selectedFile.path);
-    String fileName = filenameoptional != null
-        ? filenameoptional
-        : isthumbnail == true
+    String fileName = filenameoptional ?? (isthumbnail == true
             ? 'Thumbnail-$timeEpoch$ext'
             : isVideo
                 ? 'Video-$timeEpoch$ext'
-                : 'IMG-$timeEpoch$ext';
+                : 'IMG-$timeEpoch$ext');
     // String fileName = getFileName(widget.currentUserno,
     //     isthumbnail == false ? '$timeEpoch' : '${timeEpoch}Thumbnail');
     Reference reference = FirebaseStorage.instance
@@ -626,7 +624,7 @@ class _GroupChatPageState extends State<GroupChatPage>
         context: this.context,
         barrierDismissible: false,
         builder: (BuildContext context) {
-          return new WillPopScope(
+          return WillPopScope(
               onWillPop: () async => false,
               child: SimpleDialog(
                   shape: RoundedRectangleBorder(
@@ -761,7 +759,7 @@ class _GroupChatPageState extends State<GroupChatPage>
       }, SetOptions(merge: true));
 
       unawaited(realtime.animateTo(0.0,
-          duration: Duration(milliseconds: 300), curve: Curves.easeOut));
+          duration: const Duration(milliseconds: 300), curve: Curves.easeOut));
       // _playPopSound();
       FirebaseFirestore.instance
           .collection(DbPaths.collectiongroups)
@@ -775,7 +773,7 @@ class _GroupChatPageState extends State<GroupChatPage>
       });
       setStatusBarColor();
       unawaited(realtime.animateTo(0.0,
-          duration: Duration(milliseconds: 300), curve: Curves.easeOut));
+          duration: const Duration(milliseconds: 300), curve: Curves.easeOut));
       if (type == MessageType.doc ||
           type == MessageType.audio ||
           // (type == MessageType.image && !content.contains('giphy')) ||
@@ -805,7 +803,7 @@ class _GroupChatPageState extends State<GroupChatPage>
   void _createInterstitialAd() {
     InterstitialAd.load(
         adUnitId: getInterstitialAdUnitId()!,
-        request: AdRequest(
+        request: const AdRequest(
           nonPersonalizedAds: true,
         ),
         adLoadCallback: InterstitialAdLoadCallback(
@@ -852,7 +850,7 @@ class _GroupChatPageState extends State<GroupChatPage>
   void _createRewardedAd() {
     RewardedAd.load(
         adUnitId: getRewardBasedVideoAdUnitId()!,
-        request: AdRequest(
+        request: const AdRequest(
           nonPersonalizedAds: true,
         ),
         rewardedAdLoadCallback: RewardedAdLoadCallback(
@@ -927,8 +925,8 @@ class _GroupChatPageState extends State<GroupChatPage>
   }
 
   final TextEditingController textEditingController =
-      new TextEditingController();
-  FocusNode keyboardFocusNode = new FocusNode();
+      TextEditingController();
+  FocusNode keyboardFocusNode = FocusNode();
   Widget buildInputAndroid(BuildContext context, bool isemojiShowing,
       Function refreshThisInput, bool keyboardVisible) {
     final observer = Provider.of<Observer>(context, listen: true);
@@ -941,19 +939,25 @@ class _GroupChatPageState extends State<GroupChatPage>
               ? buildReplyMessageForInput(
                   context,
                 )
-              : SizedBox(),
+              : const SizedBox(),
           Container(
             margin: EdgeInsets.only(bottom: Platform.isIOS == true ? 20 : 0),
+            width: double.infinity,
+            height: 60.0,
+            decoration: const BoxDecoration(
+              // border: new Border(top: new BorderSide(color: Colors.grey, width: 0.5)),
+              color: Colors.transparent,
+            ),
             child: Row(
               children: <Widget>[
                 Flexible(
                   child: Container(
-                    margin: EdgeInsets.only(
+                    margin: const EdgeInsets.only(
                       left: 10,
                     ),
                     decoration: BoxDecoration(
                         color: fiberchatWhite,
-                        borderRadius: BorderRadius.all(Radius.circular(30))),
+                        borderRadius: const BorderRadius.all(Radius.circular(30))),
                     child: Row(
                       children: [
                         SizedBox(
@@ -993,29 +997,29 @@ class _GroupChatPageState extends State<GroupChatPage>
                               enabledBorder: OutlineInputBorder(
                                 // width: 0.0 produces a thin "hairline" border
                                 borderRadius: BorderRadius.circular(1),
-                                borderSide: BorderSide(
+                                borderSide: const BorderSide(
                                     color: Colors.transparent, width: 1.5),
                               ),
                               hoverColor: Colors.transparent,
                               focusedBorder: OutlineInputBorder(
                                 // width: 0.0 produces a thin "hairline" border
                                 borderRadius: BorderRadius.circular(1),
-                                borderSide: BorderSide(
+                                borderSide: const BorderSide(
                                     color: Colors.transparent, width: 1.5),
                               ),
                               border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(1),
                                   borderSide:
-                                      BorderSide(color: Colors.transparent)),
-                              contentPadding: EdgeInsets.fromLTRB(10, 4, 7, 4),
+                                      const BorderSide(color: Colors.transparent)),
+                              contentPadding: const EdgeInsets.fromLTRB(10, 4, 7, 4),
                               hintText: getTranslated(this.context, 'msg'),
                               hintStyle:
-                                  TextStyle(color: Colors.grey, fontSize: 15),
+                                  const TextStyle(color: Colors.grey, fontSize: 15),
                             ),
                           ),
                         ),
                         Container(
-                            margin: EdgeInsets.fromLTRB(0, 0, 5, 0),
+                            margin: const EdgeInsets.fromLTRB(0, 0, 5, 0),
                             width: textEditingController.text.isNotEmpty
                                 ? 10
                                 : IsShowGIFsenderButtonByGIPHY == false
@@ -1025,15 +1029,15 @@ class _GroupChatPageState extends State<GroupChatPage>
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
                                 textEditingController.text.isNotEmpty
-                                    ? SizedBox()
+                                    ? const SizedBox()
                                     : SizedBox(
                                         width: 30,
                                         child: IconButton(
-                                          icon: new Icon(
+                                          icon: Icon(
                                             Icons.attachment_outlined,
                                             color: fiberchatGrey,
                                           ),
-                                          padding: EdgeInsets.all(0.0),
+                                          padding: const EdgeInsets.all(0.0),
                                           onPressed:
                                               observer.ismediamessagingallowed ==
                                                       false
@@ -1051,16 +1055,16 @@ class _GroupChatPageState extends State<GroupChatPage>
                                         ),
                                       ),
                                 textEditingController.text.isNotEmpty
-                                    ? SizedBox()
+                                    ? const SizedBox()
                                     : SizedBox(
                                         width: 30,
                                         child: IconButton(
-                                          icon: new Icon(
+                                          icon: Icon(
                                             Icons.camera_alt_rounded,
                                             size: 20,
                                             color: fiberchatGrey,
                                           ),
-                                          padding: EdgeInsets.all(0.0),
+                                          padding: const EdgeInsets.all(0.0),
                                           onPressed:
                                               observer.ismediamessagingallowed ==
                                                       false
@@ -1074,9 +1078,9 @@ class _GroupChatPageState extends State<GroupChatPage>
                                                       hidekeyboard(context);
                                                       await Navigator.push(
                                                           context,
-                                                          new MaterialPageRoute(
+                                                          MaterialPageRoute(
                                                               builder: (context) =>
-                                                                  new AllinOneCameraGalleryImageVideoPicker(
+                                                                  AllinOneCameraGalleryImageVideoPicker(
                                                                     onTakeFile: (file,
                                                                         isVideo,
                                                                         thumnail) async {
@@ -1150,19 +1154,19 @@ class _GroupChatPageState extends State<GroupChatPage>
                                           color: fiberchatWhite,
                                         ),
                                       ),
-                                textEditingController.text.length != 0 ||
+                                textEditingController.text.isNotEmpty ||
                                         IsShowGIFsenderButtonByGIPHY == false
-                                    ? SizedBox(
+                                    ? const SizedBox(
                                         width: 0,
                                       )
                                     : Container(
-                                        margin: EdgeInsets.only(bottom: 5),
+                                        margin: const EdgeInsets.only(bottom: 5),
                                         height: 35,
                                         alignment: Alignment.topLeft,
                                         width: 40,
                                         child: IconButton(
                                             color: fiberchatWhite,
-                                            padding: EdgeInsets.all(0.0),
+                                            padding: const EdgeInsets.all(0.0),
                                             icon: Icon(
                                               Icons.gif_rounded,
                                               size: 40,
@@ -1210,7 +1214,7 @@ class _GroupChatPageState extends State<GroupChatPage>
                   height: 47,
                   width: 47,
                   // alignment: Alignment.center,
-                  margin: EdgeInsets.only(left: 6, right: 10),
+                  margin: const EdgeInsets.only(left: 6, right: 10),
                   decoration: BoxDecoration(
                       color: DESIGN_TYPE == Themetype.whatsapp
                           ? fiberchatgreen
@@ -1218,11 +1222,11 @@ class _GroupChatPageState extends State<GroupChatPage>
                       // border: Border.all(
                       //   color: Colors.red[500],
                       // ),
-                      borderRadius: BorderRadius.all(Radius.circular(30))),
+                      borderRadius: const BorderRadius.all(Radius.circular(30))),
                   child: Padding(
                     padding: const EdgeInsets.all(2.0),
                     child: IconButton(
-                      icon: new Icon(
+                      icon: Icon(
                         textEditingController.text.isNotEmpty == true
                             ? Icons.send
                             : Icons.mic,
@@ -1274,12 +1278,6 @@ class _GroupChatPageState extends State<GroupChatPage>
                 ),
               ],
             ),
-            width: double.infinity,
-            height: 60.0,
-            decoration: new BoxDecoration(
-              // border: new Border(top: new BorderSide(color: Colors.grey, width: 0.5)),
-              color: Colors.transparent,
-            ),
           ),
           isemojiShowing == true && keyboardVisible == false
               ? Offstage(
@@ -1298,7 +1296,7 @@ class _GroupChatPageState extends State<GroupChatPage>
                             verticalSpacing: 0,
                             horizontalSpacing: 0,
                             initCategory: emojipic.Category.RECENT,
-                            bgColor: Color(0xFFF2F2F2),
+                            bgColor: const Color(0xFFF2F2F2),
                             indicatorColor: fiberchatgreen,
                             iconColor: Colors.grey,
                             iconColorSelected: fiberchatgreen,
@@ -1307,11 +1305,11 @@ class _GroupChatPageState extends State<GroupChatPage>
                             showRecentsTab: true,
                             recentsLimit: 28,
                           
-                            categoryIcons: CategoryIcons(),
+                            categoryIcons: const CategoryIcons(),
                             buttonMode: ButtonMode.MATERIAL)),
                   ),
                 )
-              : SizedBox(),
+              : const SizedBox(),
         ]);
   }
 
@@ -1777,17 +1775,17 @@ class _GroupChatPageState extends State<GroupChatPage>
     return Flexible(
       child: Container(
           height: 80,
-          margin: EdgeInsets.only(left: 15, right: 70),
+          margin: const EdgeInsets.only(left: 15, right: 70),
           decoration: BoxDecoration(
               color: fiberchatWhite,
-              borderRadius: BorderRadius.all(Radius.circular(10))),
+              borderRadius: const BorderRadius.all(Radius.circular(10))),
           child: Stack(
             children: [
               Container(
-                  margin: EdgeInsetsDirectional.all(4),
+                  margin: const EdgeInsetsDirectional.all(4),
                   decoration: BoxDecoration(
                       color: fiberchatGrey.withOpacity(0.1),
-                      borderRadius: BorderRadius.all(Radius.circular(8))),
+                      borderRadius: const BorderRadius.all(Radius.circular(8))),
                   child: Row(children: [
                     Container(
                       decoration: BoxDecoration(
@@ -1795,7 +1793,7 @@ class _GroupChatPageState extends State<GroupChatPage>
                                 widget.currentUserno
                             ? fiberchatgreen
                             : Colors.purple,
-                        borderRadius: BorderRadius.only(
+                        borderRadius: const BorderRadius.only(
                             topRight: Radius.circular(0),
                             bottomRight: Radius.circular(0),
                             topLeft: Radius.circular(10),
@@ -1804,17 +1802,17 @@ class _GroupChatPageState extends State<GroupChatPage>
                       height: 75,
                       width: 3.3,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 5,
                     ),
                     Expanded(
                         child: Container(
-                      padding: EdgeInsetsDirectional.all(5),
+                      padding: const EdgeInsetsDirectional.all(5),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Padding(
-                            padding: EdgeInsets.only(right: 30),
+                            padding: const EdgeInsets.only(right: 30),
                             child: Text(
                               replyDoc![Dbkeys.groupmsgSENDBY] ==
                                       widget.currentUserno
@@ -1829,7 +1827,7 @@ class _GroupChatPageState extends State<GroupChatPage>
                                       : Colors.purple),
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 8,
                           ),
                           replyDoc![Dbkeys.messageType] ==
@@ -1891,7 +1889,7 @@ class _GroupChatPageState extends State<GroupChatPage>
                     ))
                   ])),
               replyDoc![Dbkeys.messageType] == MessageType.text.index
-                  ? SizedBox(
+                  ? const SizedBox(
                       width: 0,
                       height: 0,
                     )
@@ -1902,19 +1900,15 @@ class _GroupChatPageState extends State<GroupChatPage>
                           child: Container(
                             width: 84.0,
                             height: 84.0,
-                            padding: EdgeInsetsDirectional.all(6),
+                            padding: const EdgeInsetsDirectional.all(6),
                             child: ClipRRect(
-                              borderRadius: BorderRadius.only(
+                              borderRadius: const BorderRadius.only(
                                   topRight: Radius.circular(5),
                                   bottomRight: Radius.circular(5),
                                   topLeft: Radius.circular(0),
                                   bottomLeft: Radius.circular(0)),
                               child: CachedNetworkImage(
                                 placeholder: (context, url) => Container(
-                                  child: CircularProgressIndicator(
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                        fiberchatBlue),
-                                  ),
                                   width: replyDoc![Dbkeys.content]
                                           .contains('giphy')
                                       ? 60
@@ -1923,25 +1917,29 @@ class _GroupChatPageState extends State<GroupChatPage>
                                           .contains('giphy')
                                       ? 60
                                       : 60.0,
-                                  padding: EdgeInsets.all(8.0),
+                                  padding: const EdgeInsets.all(8.0),
                                   decoration: BoxDecoration(
                                     color: Colors.blueGrey[200],
-                                    borderRadius: BorderRadius.all(
+                                    borderRadius: const BorderRadius.all(
                                       Radius.circular(8.0),
                                     ),
                                   ),
+                                  child: CircularProgressIndicator(
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                        fiberchatBlue),
+                                  ),
                                 ),
                                 errorWidget: (context, str, error) => Material(
+                                  borderRadius: const BorderRadius.all(
+                                    Radius.circular(8.0),
+                                  ),
+                                  clipBehavior: Clip.hardEdge,
                                   child: Image.asset(
                                     'assets/images/img_not_available.jpeg',
                                     width: 60.0,
                                     height: 60,
                                     fit: BoxFit.cover,
                                   ),
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(8.0),
-                                  ),
-                                  clipBehavior: Clip.hardEdge,
                                 ),
                                 imageUrl: replyDoc![Dbkeys.messageType] ==
                                         MessageType.video.index
@@ -1961,9 +1959,9 @@ class _GroupChatPageState extends State<GroupChatPage>
                               child: Container(
                                   width: 84.0,
                                   height: 84.0,
-                                  padding: EdgeInsetsDirectional.all(6),
+                                  padding: const EdgeInsetsDirectional.all(6),
                                   child: ClipRRect(
-                                      borderRadius: BorderRadius.only(
+                                      borderRadius: const BorderRadius.only(
                                           topRight: Radius.circular(5),
                                           bottomRight: Radius.circular(5),
                                           topLeft: Radius.circular(0),
@@ -1977,36 +1975,36 @@ class _GroupChatPageState extends State<GroupChatPage>
                                             CachedNetworkImage(
                                               placeholder: (context, url) =>
                                                   Container(
+                                                width: 84,
+                                                height: 84,
+                                                padding: const EdgeInsets.all(8.0),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.blueGrey[200],
+                                                  borderRadius:
+                                                      const BorderRadius.all(
+                                                    Radius.circular(0.0),
+                                                  ),
+                                                ),
                                                 child:
                                                     CircularProgressIndicator(
                                                   valueColor:
                                                       AlwaysStoppedAnimation<
                                                           Color>(fiberchatBlue),
                                                 ),
-                                                width: 84,
-                                                height: 84,
-                                                padding: EdgeInsets.all(8.0),
-                                                decoration: BoxDecoration(
-                                                  color: Colors.blueGrey[200],
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                    Radius.circular(0.0),
-                                                  ),
-                                                ),
                                               ),
                                               errorWidget:
                                                   (context, str, error) =>
                                                       Material(
+                                                borderRadius: const BorderRadius.all(
+                                                  Radius.circular(0.0),
+                                                ),
+                                                clipBehavior: Clip.hardEdge,
                                                 child: Image.asset(
                                                   'assets/images/img_not_available.jpeg',
                                                   width: 60,
                                                   height: 60,
                                                   fit: BoxFit.cover,
                                                 ),
-                                                borderRadius: BorderRadius.all(
-                                                  Radius.circular(0.0),
-                                                ),
-                                                clipBehavior: Clip.hardEdge,
                                               ),
                                               imageUrl:
                                                   replyDoc![Dbkeys.content]
@@ -2021,7 +2019,7 @@ class _GroupChatPageState extends State<GroupChatPage>
                                               height: 84,
                                               width: 84,
                                             ),
-                                            Center(
+                                            const Center(
                                               child: Icon(
                                                   Icons
                                                       .play_circle_fill_outlined,
@@ -2037,9 +2035,9 @@ class _GroupChatPageState extends State<GroupChatPage>
                               child: Container(
                                   width: 84.0,
                                   height: 84.0,
-                                  padding: EdgeInsetsDirectional.all(6),
+                                  padding: const EdgeInsetsDirectional.all(6),
                                   child: ClipRRect(
-                                      borderRadius: BorderRadius.only(
+                                      borderRadius: const BorderRadius.only(
                                           topRight: Radius.circular(5),
                                           bottomRight: Radius.circular(5),
                                           topLeft: Radius.circular(0),
@@ -2104,11 +2102,11 @@ class _GroupChatPageState extends State<GroupChatPage>
                   child: Container(
                     width: 15,
                     height: 15,
-                    decoration: new BoxDecoration(
+                    decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.9),
                       shape: BoxShape.circle,
                     ),
-                    child: new Icon(
+                    child: const Icon(
                       Icons.close,
                       color: Colors.blueGrey,
                       size: 13,
@@ -2125,7 +2123,7 @@ class _GroupChatPageState extends State<GroupChatPage>
     if (doc[Dbkeys.groupmsgTYPE] == Dbkeys.groupmsgTYPEnotificationAddedUser) {
       return Center(
           child: Chip(
-        labelStyle: TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
+        labelStyle: const TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
         backgroundColor: Colors.blueGrey[50],
         label: Text(
           doc[Dbkeys.groupmsgLISToptional].contains(widget.currentUserno) &&
@@ -2155,27 +2153,27 @@ class _GroupChatPageState extends State<GroupChatPage>
                               groupData.docmap[Dbkeys.groupCREATEDBY]
                           ? '${getTranslated(this.context, 'adminahasadded')} ${doc[Dbkeys.groupmsgLISToptional].length} ${getTranslated(this.context, 'users')}'
                           : '${doc[Dbkeys.groupmsgSENDBY]} ${getTranslated(this.context, 'added')} ${doc[Dbkeys.groupmsgLISToptional].length} ${getTranslated(this.context, 'users')}',
-          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
+          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
         ),
       ));
     } else if (doc[Dbkeys.groupmsgTYPE] ==
         Dbkeys.groupmsgTYPEnotificationCreatedGroup) {
       return Center(
           child: Chip(
-        labelStyle: TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
+        labelStyle: const TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
         backgroundColor: Colors.blueGrey[50],
         label: Text(
           groupData.docmap[Dbkeys.groupCREATEDBY].contains(widget.currentUserno)
               ? getTranslated(this.context, 'youcreatedthisgroup')
               : '${groupData.docmap[Dbkeys.groupCREATEDBY]} ${getTranslated(this.context, 'hascreatedthisgroup')}',
-          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
+          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
         ),
       ));
     } else if (doc[Dbkeys.groupmsgTYPE] ==
         Dbkeys.groupmsgTYPEnotificationUpdatedGroupDetails) {
       return Center(
           child: Chip(
-        labelStyle: TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
+        labelStyle: const TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
         backgroundColor: Colors.blueGrey[50],
         label: Text(
           doc[Dbkeys.groupmsgSENDBY] == widget.currentUserno
@@ -2184,14 +2182,14 @@ class _GroupChatPageState extends State<GroupChatPage>
                       .contains(groupData.docmap[Dbkeys.groupCREATEDBY])
                   ? getTranslated(this.context, 'grpdetailsupdatebyadmin')
                   : '${doc[Dbkeys.groupmsgSENDBY]} ${getTranslated(this.context, 'hasupdatedgrpdetails')}',
-          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
+          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
         ),
       ));
     } else if (doc[Dbkeys.groupmsgTYPE] ==
         Dbkeys.groupmsgTYPEnotificationUserSetAsAdmin) {
       return Center(
           child: Chip(
-        labelStyle: TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
+        labelStyle: const TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
         backgroundColor: Colors.blueGrey[50],
         label: Text(
           doc[Dbkeys.groupmsgSENDBY] == widget.currentUserno
@@ -2199,14 +2197,14 @@ class _GroupChatPageState extends State<GroupChatPage>
               : doc[Dbkeys.groupmsgLISToptional][0] == widget.currentUserno
                   ? '${doc[Dbkeys.groupmsgSENDBY]} ${getTranslated(this.context, 'hvsetuasadsmin')}'
                   : '${doc[Dbkeys.groupmsgSENDBY]} ${getTranslated(this.context, 'set')} ${doc[Dbkeys.groupmsgLISToptional][0]} ${getTranslated(this.context, 'asadmin')}',
-          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
+          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
         ),
       ));
     } else if (doc[Dbkeys.groupmsgTYPE] ==
         Dbkeys.groupmsgTYPEnotificationUserRemovedAsAdmin) {
       return Center(
           child: Chip(
-        labelStyle: TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
+        labelStyle: const TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
         backgroundColor: Colors.blueGrey[50],
         label: Text(
           doc[Dbkeys.groupmsgSENDBY] == widget.currentUserno
@@ -2214,40 +2212,40 @@ class _GroupChatPageState extends State<GroupChatPage>
               : doc[Dbkeys.groupmsgLISToptional][0] == widget.currentUserno
                   ? '${doc[Dbkeys.groupmsgSENDBY]} ${getTranslated(this.context, 'theyremoveduasadmin')}'
                   : '${doc[Dbkeys.groupmsgSENDBY]} ${getTranslated(this.context, 'hasremoved')} ${doc[Dbkeys.groupmsgLISToptional][0]} ${getTranslated(this.context, 'fromadmin')}',
-          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
+          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
         ),
       ));
     } else if (doc[Dbkeys.groupmsgTYPE] ==
         Dbkeys.groupmsgTYPEnotificationUpdatedGroupicon) {
       return Center(
           child: Chip(
-        labelStyle: TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
+        labelStyle: const TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
         backgroundColor: Colors.blueGrey[50],
         label: Text(
           doc[Dbkeys.groupmsgSENDBY] == widget.currentUserno
               ? getTranslated(this.context, 'youupdatedgrpicon')
               : '${doc[Dbkeys.groupmsgSENDBY]} ${getTranslated(this.context, 'hasupdatedgrpicon')}',
-          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
+          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
         ),
       ));
     } else if (doc[Dbkeys.groupmsgTYPE] ==
         Dbkeys.groupmsgTYPEnotificationDeletedGroupicon) {
       return Center(
           child: Chip(
-        labelStyle: TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
+        labelStyle: const TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
         backgroundColor: Colors.blueGrey[50],
         label: Text(
           doc[Dbkeys.groupmsgSENDBY] == widget.currentUserno
               ? getTranslated(this.context, 'youremovedgrpicon')
               : '${doc[Dbkeys.groupmsgSENDBY]} ${getTranslated(this.context, 'hasremovedgrpicon')}',
-          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
+          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
         ),
       ));
     } else if (doc[Dbkeys.groupmsgTYPE] ==
         Dbkeys.groupmsgTYPEnotificationRemovedUser) {
       return Center(
           child: Chip(
-        labelStyle: TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
+        labelStyle: const TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
         backgroundColor: Colors.blueGrey[50],
         label: Text(
           doc[Dbkeys.groupmsgCONTENT].contains('by ' + widget.currentUserno)
@@ -2256,20 +2254,20 @@ class _GroupChatPageState extends State<GroupChatPage>
                       groupData.docmap[Dbkeys.groupCREATEDBY]
                   ? '${doc[Dbkeys.groupmsgLISToptional][0]} ${getTranslated(this.context, 'removedbyadmin')}'
                   : '${doc[Dbkeys.groupmsgSENDBY]} ${getTranslated(this.context, 'hasremoved')} ${doc[Dbkeys.groupmsgLISToptional][0]}',
-          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
+          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
         ),
       ));
     } else if (doc[Dbkeys.groupmsgTYPE] ==
         Dbkeys.groupmsgTYPEnotificationUserLeft) {
       return Center(
           child: Chip(
-        labelStyle: TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
+        labelStyle: const TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
         backgroundColor: Colors.blueGrey[50],
         label: Text(
           doc[Dbkeys.groupmsgCONTENT].contains(widget.currentUserno)
               ? getTranslated(this.context, 'youleftthegroup')
               : '${doc[Dbkeys.groupmsgCONTENT]}',
-          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
+          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
         ),
       ));
     } else if (doc[Dbkeys.groupmsgTYPE] == MessageType.image.index ||
@@ -2320,7 +2318,7 @@ class _GroupChatPageState extends State<GroupChatPage>
     }
   }
 
-  FlutterSecureStorage storage = new FlutterSecureStorage();
+  FlutterSecureStorage storage = const FlutterSecureStorage();
   late encrypt.Encrypter cryptor;
   final iv = encrypt.IV.fromLength(8);
 
@@ -2333,10 +2331,10 @@ class _GroupChatPageState extends State<GroupChatPage>
       if (mssgDoc[Dbkeys.groupmsgISDELETED] == false) {
         tiles.add(ListTile(
           dense: true,
-          leading: Icon(Icons.reply),
+          leading: const Icon(Icons.reply),
           title: Text(
             getTranslated(context, 'reply'),
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           onTap: () {
             Navigator.pop(context);
@@ -2366,13 +2364,30 @@ class _GroupChatPageState extends State<GroupChatPage>
       }
     }
 
+    //Seng add - Add task
+    if ((mssgDoc[Dbkeys.content] == '' || mssgDoc[Dbkeys.content] == null) == false) {
+      if (mssgDoc[Dbkeys.groupmsgISDELETED] == false) {
+        tiles.add(ListTile(
+          dense: true,
+          leading: const Icon(Icons.task),
+          title: Text(
+            getTranslated(context, 'addtask'),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+          onTap: () {
+            // TODO: Go to task page
+          },
+        ));
+      }
+    }
+
     if (mssgDoc[Dbkeys.groupmsgSENDBY] == widget.currentUserno) {
       tiles.add(ListTile(
           dense: true,
-          leading: Icon(Icons.delete),
+          leading: const Icon(Icons.delete),
           title: Text(
             getTranslated(context, 'dltforeveryone'),
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           onTap: () async {
             Navigator.of(this.context).pop();
@@ -2417,10 +2432,10 @@ class _GroupChatPageState extends State<GroupChatPage>
     if (mssgDoc[Dbkeys.groupmsgISDELETED] == false) {
       tiles.add(ListTile(
           dense: true,
-          leading: Icon(FontAwesomeIcons.share, size: 22),
+          leading: const Icon(FontAwesomeIcons.share, size: 22),
           title: Text(
             getTranslated(this.context, 'forward'),
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           onTap: () async {
             Navigator.of(this.context).pop();
@@ -2434,7 +2449,7 @@ class _GroupChatPageState extends State<GroupChatPage>
                         model: widget.model,
                         prefs: widget.prefs,
                         onSelect: (selectedlist) async {
-                          if (selectedlist.length > 0) {
+                          if (selectedlist.isNotEmpty) {
                             setStateIfMounted(() {
                               isgeneratingSomethingLoader = true;
                               // tempSendIndex = 0;
@@ -2495,7 +2510,7 @@ class _GroupChatPageState extends State<GroupChatPage>
             Dbkeys.isForward: true
           }, SetOptions(merge: true)).then((value) {
             unawaited(realtime.animateTo(0.0,
-                duration: Duration(milliseconds: 300), curve: Curves.easeOut));
+                duration: const Duration(milliseconds: 300), curve: Curves.easeOut));
             // _playPopSound();
             FirebaseFirestore.instance
                 .collection(DbPaths.collectiongroups)
@@ -2525,12 +2540,12 @@ class _GroupChatPageState extends State<GroupChatPage>
         }
       } else {
         try {
-          String? sharedSecret = (await e2ee.X25519().calculateSharedSecret(
+          String? sharedSecret = (await const e2ee.X25519().calculateSharedSecret(
                   e2ee.Key.fromBase64(privateKey, false),
                   e2ee.Key.fromBase64(list[index][Dbkeys.publicKey], true)))
               .toBase64();
           final key = encrypt.Key.fromBase64(sharedSecret);
-          cryptor = new encrypt.Encrypter(encrypt.Salsa20(key));
+          cryptor = encrypt.Encrypter(encrypt.Salsa20(key));
           String content = mssgDoc[Dbkeys.content];
           final encrypted = AESEncryptData.encryptAES(content, sharedSecret);
           if (encrypted is String) {
@@ -2700,6 +2715,10 @@ class _GroupChatPageState extends State<GroupChatPage>
                                                     MessageType.audio.index
                                                 ? MessageType.audio
                                                 : MessageType.text,
+                isMe: isMe,
+                delivered: true,
+                isContinuing: true,
+                timestamp: doc[Dbkeys.groupmsgTIME],
                 child: doc[Dbkeys.groupmsgISDELETED] == true
                     ? Text(
                         getTranslated(context, 'msgdeleted'),
@@ -2736,10 +2755,6 @@ class _GroupChatPageState extends State<GroupChatPage>
                                                 doc,
                                                 saved: saved,
                                               ),
-                isMe: isMe,
-                delivered: true,
-                isContinuing: true,
-                timestamp: doc[Dbkeys.groupmsgTIME],
               ),
             ));
   }
@@ -2755,8 +2770,8 @@ class _GroupChatPageState extends State<GroupChatPage>
         onTap: () {
           Navigator.push(
               this.context,
-              new MaterialPageRoute(
-                  builder: (context) => new PreviewVideo(
+              MaterialPageRoute(
+                  builder: (context) => PreviewVideo(
                         isdownloadallowed: true,
                         filename: message.split('-BREAK-')[1],
                         id: null,
@@ -2770,7 +2785,7 @@ class _GroupChatPageState extends State<GroupChatPage>
             doc.containsKey(Dbkeys.isForward) == true
                 ? doc[Dbkeys.isForward] == true
                     ? Container(
-                        margin: EdgeInsets.only(bottom: 10),
+                        margin: const EdgeInsets.only(bottom: 10),
                         child: Row(
                             mainAxisAlignment: isMe == true
                                 ? MainAxisAlignment.start
@@ -2782,7 +2797,7 @@ class _GroupChatPageState extends State<GroupChatPage>
                                 size: 12,
                                 color: fiberchatGrey.withOpacity(0.5),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 5,
                               ),
                               Text(getTranslated(this.context, 'forwarded'),
@@ -2793,8 +2808,8 @@ class _GroupChatPageState extends State<GroupChatPage>
                                       overflow: TextOverflow.ellipsis,
                                       fontSize: 13))
                             ]))
-                    : SizedBox(height: 0, width: 0)
-                : SizedBox(height: 0, width: 0),
+                    : const SizedBox(height: 0, width: 0)
+                : const SizedBox(height: 0, width: 0),
             Container(
               color: Colors.blueGrey,
               width: 245,
@@ -2803,33 +2818,33 @@ class _GroupChatPageState extends State<GroupChatPage>
                 children: [
                   CachedNetworkImage(
                     placeholder: (context, url) => Container(
+                      width: 245,
+                      height: 245,
+                      padding: const EdgeInsets.all(80.0),
+                      decoration: const BoxDecoration(
+                        color: Colors.blueGrey,
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(0.0),
+                        ),
+                      ),
                       child: Center(
                         child: CircularProgressIndicator(
                           valueColor: AlwaysStoppedAnimation<Color>(
                               Colors.blueGrey[400]!),
                         ),
                       ),
-                      width: 245,
-                      height: 245,
-                      padding: EdgeInsets.all(80.0),
-                      decoration: BoxDecoration(
-                        color: Colors.blueGrey,
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(0.0),
-                        ),
-                      ),
                     ),
                     errorWidget: (context, str, error) => Material(
+                      borderRadius: const BorderRadius.all(
+                        Radius.circular(0.0),
+                      ),
+                      clipBehavior: Clip.hardEdge,
                       child: Image.asset(
                         'assets/images/img_not_available.jpeg',
                         width: 245,
                         height: 245,
                         fit: BoxFit.cover,
                       ),
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(0.0),
-                      ),
-                      clipBehavior: Clip.hardEdge,
                     ),
                     imageUrl: message.split('-BREAK-')[1],
                     width: 245,
@@ -2841,7 +2856,7 @@ class _GroupChatPageState extends State<GroupChatPage>
                     width: 245,
                     height: 245,
                   ),
-                  Center(
+                  const Center(
                     child: Icon(Icons.play_circle_fill_outlined,
                         color: Colors.white70, size: 65),
                   ),
@@ -2867,7 +2882,7 @@ class _GroupChatPageState extends State<GroupChatPage>
           doc.containsKey(Dbkeys.isForward) == true
               ? doc[Dbkeys.isForward] == true
                   ? Container(
-                      margin: EdgeInsets.only(bottom: 10),
+                      margin: const EdgeInsets.only(bottom: 10),
                       child: Row(
                           mainAxisAlignment: isMe == true
                               ? MainAxisAlignment.start
@@ -2879,7 +2894,7 @@ class _GroupChatPageState extends State<GroupChatPage>
                               size: 12,
                               color: fiberchatGrey.withOpacity(0.5),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 5,
                             ),
                             Text(getTranslated(this.context, 'forwarded'),
@@ -2890,8 +2905,8 @@ class _GroupChatPageState extends State<GroupChatPage>
                                     overflow: TextOverflow.ellipsis,
                                     fontSize: 13))
                           ]))
-                  : SizedBox(height: 0, width: 0)
-              : SizedBox(height: 0, width: 0),
+                  : const SizedBox(height: 0, width: 0)
+              : const SizedBox(height: 0, width: 0),
           ListTile(
             isThreeLine: false,
             leading: customCircleAvatar(url: null, radius: 20),
@@ -2908,7 +2923,7 @@ class _GroupChatPageState extends State<GroupChatPage>
               padding: const EdgeInsets.only(top: 3),
               child: Text(
                 message.split('-BREAK-')[1],
-                style: TextStyle(
+                style: const TextStyle(
                     height: 1.4,
                     fontWeight: FontWeight.w500,
                     color: Colors.black87),
@@ -2932,7 +2947,7 @@ class _GroupChatPageState extends State<GroupChatPage>
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   replyAttachedWidget(this.context, doc[Dbkeys.replyToMsgDoc]),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   selectablelinkify(doc[Dbkeys.content], 15.5, TextAlign.left),
@@ -2959,7 +2974,7 @@ class _GroupChatPageState extends State<GroupChatPage>
                                   size: 12,
                                   color: fiberchatGrey.withOpacity(0.5),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   width: 5,
                                 ),
                                 Text(getTranslated(this.context, 'forwarded'),
@@ -2970,7 +2985,7 @@ class _GroupChatPageState extends State<GroupChatPage>
                                         overflow: TextOverflow.ellipsis,
                                         fontSize: 13))
                               ])),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
                           selectablelinkify(
@@ -3010,7 +3025,7 @@ class _GroupChatPageState extends State<GroupChatPage>
                             size: 12,
                             color: fiberchatGrey.withOpacity(0.5),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 5,
                           ),
                           Text(getTranslated(this.context, 'forwarded'),
@@ -3021,7 +3036,7 @@ class _GroupChatPageState extends State<GroupChatPage>
                                   overflow: TextOverflow.ellipsis,
                                   fontSize: 13))
                         ])),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     Image.asset(
@@ -3049,7 +3064,7 @@ class _GroupChatPageState extends State<GroupChatPage>
       BuildContext context, String message, Map<String, dynamic> doc,
       {bool saved = false, bool isMe = true}) {
     return Container(
-      margin: EdgeInsets.only(bottom: 10),
+      margin: const EdgeInsets.only(bottom: 10),
       // width: 250,
       // height: 116,
       child: Column(
@@ -3058,7 +3073,7 @@ class _GroupChatPageState extends State<GroupChatPage>
           doc.containsKey(Dbkeys.isForward) == true
               ? doc[Dbkeys.isForward] == true
                   ? Container(
-                      margin: EdgeInsets.only(bottom: 10),
+                      margin: const EdgeInsets.only(bottom: 10),
                       child: Row(
                           mainAxisAlignment: isMe == true
                               ? MainAxisAlignment.start
@@ -3070,7 +3085,7 @@ class _GroupChatPageState extends State<GroupChatPage>
                               size: 12,
                               color: fiberchatGrey.withOpacity(0.5),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 5,
                             ),
                             Text(getTranslated(this.context, 'forwarded'),
@@ -3081,8 +3096,8 @@ class _GroupChatPageState extends State<GroupChatPage>
                                     overflow: TextOverflow.ellipsis,
                                     fontSize: 13))
                           ]))
-                  : SizedBox(height: 0, width: 0)
-              : SizedBox(height: 0, width: 0),
+                  : const SizedBox(height: 0, width: 0)
+              : const SizedBox(height: 0, width: 0),
           SizedBox(
             width: 200,
             height: 80,
@@ -3118,7 +3133,7 @@ class _GroupChatPageState extends State<GroupChatPage>
           doc.containsKey(Dbkeys.isForward) == true
               ? doc[Dbkeys.isForward] == true
                   ? Container(
-                      margin: EdgeInsets.only(bottom: 10),
+                      margin: const EdgeInsets.only(bottom: 10),
                       child: Row(
                           mainAxisAlignment: isMe == true
                               ? MainAxisAlignment.start
@@ -3130,7 +3145,7 @@ class _GroupChatPageState extends State<GroupChatPage>
                               size: 12,
                               color: fiberchatGrey.withOpacity(0.5),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 5,
                             ),
                             Text(getTranslated(this.context, 'forwarded'),
@@ -3141,18 +3156,18 @@ class _GroupChatPageState extends State<GroupChatPage>
                                     overflow: TextOverflow.ellipsis,
                                     fontSize: 13))
                           ]))
-                  : SizedBox(height: 0, width: 0)
-              : SizedBox(height: 0, width: 0),
+                  : const SizedBox(height: 0, width: 0)
+              : const SizedBox(height: 0, width: 0),
           ListTile(
-            contentPadding: EdgeInsets.all(4),
+            contentPadding: const EdgeInsets.all(4),
             isThreeLine: false,
             leading: Container(
               decoration: BoxDecoration(
                 color: Colors.yellow[800],
                 borderRadius: BorderRadius.circular(7.0),
               ),
-              padding: EdgeInsets.all(12),
-              child: Icon(
+              padding: const EdgeInsets.all(12),
+              child: const Icon(
                 Icons.insert_drive_file,
                 size: 25,
                 color: Colors.white,
@@ -3162,13 +3177,13 @@ class _GroupChatPageState extends State<GroupChatPage>
               message.split('-BREAK-')[1],
               overflow: TextOverflow.ellipsis,
               maxLines: 2,
-              style: TextStyle(
+              style: const TextStyle(
                   height: 1.4,
                   fontWeight: FontWeight.w700,
                   color: Colors.black87),
             ),
           ),
-          Divider(
+          const Divider(
             height: 3,
           ),
           message.split('-BREAK-')[1].endsWith('.pdf')
@@ -3240,7 +3255,7 @@ class _GroupChatPageState extends State<GroupChatPage>
           doc.containsKey(Dbkeys.isForward) == true
               ? doc[Dbkeys.isForward] == true
                   ? Container(
-                      margin: EdgeInsets.only(bottom: 10),
+                      margin: const EdgeInsets.only(bottom: 10),
                       child: Row(
                           mainAxisAlignment: isMe == true
                               ? MainAxisAlignment.start
@@ -3252,7 +3267,7 @@ class _GroupChatPageState extends State<GroupChatPage>
                               size: 12,
                               color: fiberchatGrey.withOpacity(0.5),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 5,
                             ),
                             Text(getTranslated(this.context, 'forwarded'),
@@ -3263,10 +3278,14 @@ class _GroupChatPageState extends State<GroupChatPage>
                                     overflow: TextOverflow.ellipsis,
                                     fontSize: 13))
                           ]))
-                  : SizedBox(height: 0, width: 0)
-              : SizedBox(height: 0, width: 0),
+                  : const SizedBox(height: 0, width: 0)
+              : const SizedBox(height: 0, width: 0),
           saved
               ? Material(
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(8.0),
+                  ),
+                  clipBehavior: Clip.hardEdge,
                   child: Container(
                     decoration: BoxDecoration(
                       image: DecorationImage(
@@ -3277,10 +3296,6 @@ class _GroupChatPageState extends State<GroupChatPage>
                     width: doc[Dbkeys.content].contains('giphy') ? 160 : 245.0,
                     height: doc[Dbkeys.content].contains('giphy') ? 160 : 245.0,
                   ),
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(8.0),
-                  ),
-                  clipBehavior: Clip.hardEdge,
                 )
               : InkWell(
                   onTap: () => Navigator.push(
@@ -3297,6 +3312,17 @@ class _GroupChatPageState extends State<GroupChatPage>
                       )),
                   child: CachedNetworkImage(
                     placeholder: (context, url) => Container(
+                      width:
+                          doc[Dbkeys.content].contains('giphy') ? 160 : 245.0,
+                      height:
+                          doc[Dbkeys.content].contains('giphy') ? 160 : 245.0,
+                      padding: const EdgeInsets.all(20.0),
+                      decoration: const BoxDecoration(
+                        color: Colors.blueGrey,
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(8.0),
+                        ),
+                      ),
                       child: Center(
                         child: SizedBox(
                           height: 60.0,
@@ -3307,19 +3333,12 @@ class _GroupChatPageState extends State<GroupChatPage>
                           ),
                         ),
                       ),
-                      width:
-                          doc[Dbkeys.content].contains('giphy') ? 160 : 245.0,
-                      height:
-                          doc[Dbkeys.content].contains('giphy') ? 160 : 245.0,
-                      padding: EdgeInsets.all(20.0),
-                      decoration: BoxDecoration(
-                        color: Colors.blueGrey,
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(8.0),
-                        ),
-                      ),
                     ),
                     errorWidget: (context, str, error) => Material(
+                      borderRadius: const BorderRadius.all(
+                        Radius.circular(8.0),
+                      ),
+                      clipBehavior: Clip.hardEdge,
                       child: Image.asset(
                         'assets/images/img_not_available.jpeg',
                         width:
@@ -3328,10 +3347,6 @@ class _GroupChatPageState extends State<GroupChatPage>
                             doc[Dbkeys.content].contains('giphy') ? 160 : 245.0,
                         fit: BoxFit.cover,
                       ),
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(8.0),
-                      ),
-                      clipBehavior: Clip.hardEdge,
                     ),
                     imageUrl: doc[Dbkeys.content],
                     width: doc[Dbkeys.content].contains('giphy') ? 160 : 245.0,
@@ -3350,18 +3365,18 @@ class _GroupChatPageState extends State<GroupChatPage>
               child: Container(
                   // width: 280,
                   height: 76,
-                  margin: EdgeInsets.only(left: 0, right: 0),
+                  margin: const EdgeInsets.only(left: 0, right: 0),
                   decoration: BoxDecoration(
                       color: fiberchatWhite.withOpacity(0.55),
-                      borderRadius: BorderRadius.all(Radius.circular(10))),
+                      borderRadius: const BorderRadius.all(Radius.circular(10))),
                   child: Stack(
                     children: [
                       Container(
-                          margin: EdgeInsetsDirectional.all(4),
+                          margin: const EdgeInsetsDirectional.all(4),
                           decoration: BoxDecoration(
                               color: fiberchatGrey.withOpacity(0.1),
                               borderRadius:
-                                  BorderRadius.all(Radius.circular(8))),
+                                  const BorderRadius.all(Radius.circular(8))),
                           child: Row(children: [
                             Container(
                               decoration: BoxDecoration(
@@ -3369,7 +3384,7 @@ class _GroupChatPageState extends State<GroupChatPage>
                                         widget.currentUserno
                                     ? fiberchatgreen
                                     : Colors.purple,
-                                borderRadius: BorderRadius.only(
+                                borderRadius: const BorderRadius.only(
                                     topRight: Radius.circular(0),
                                     bottomRight: Radius.circular(0),
                                     topLeft: Radius.circular(10),
@@ -3378,17 +3393,17 @@ class _GroupChatPageState extends State<GroupChatPage>
                               height: 75,
                               width: 3.3,
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 5,
                             ),
                             Expanded(
                                 child: Container(
-                              padding: EdgeInsetsDirectional.all(5),
+                              padding: const EdgeInsetsDirectional.all(5),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Padding(
-                                    padding: EdgeInsets.only(right: 30),
+                                    padding: const EdgeInsets.only(right: 30),
                                     child: Text(
                                       doc[Dbkeys.groupmsgSENDBY] ==
                                               widget.currentUserno
@@ -3423,7 +3438,7 @@ class _GroupChatPageState extends State<GroupChatPage>
                                               : Colors.purple),
                                     ),
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 8,
                                   ),
                                   doc[Dbkeys.messageType] ==
@@ -3484,7 +3499,7 @@ class _GroupChatPageState extends State<GroupChatPage>
                       doc[Dbkeys.messageType] == MessageType.text.index ||
                               doc[Dbkeys.messageType] ==
                                   MessageType.location.index
-                          ? SizedBox(
+                          ? const SizedBox(
                               width: 0,
                               height: 0,
                             )
@@ -3495,9 +3510,9 @@ class _GroupChatPageState extends State<GroupChatPage>
                                   child: Container(
                                     width: 74.0,
                                     height: 74.0,
-                                    padding: EdgeInsetsDirectional.all(6),
+                                    padding: const EdgeInsetsDirectional.all(6),
                                     child: ClipRRect(
-                                      borderRadius: BorderRadius.only(
+                                      borderRadius: const BorderRadius.only(
                                           topRight: Radius.circular(5),
                                           bottomRight: Radius.circular(5),
                                           topLeft: Radius.circular(0),
@@ -3505,11 +3520,6 @@ class _GroupChatPageState extends State<GroupChatPage>
                                       child: CachedNetworkImage(
                                         placeholder: (context, url) =>
                                             Container(
-                                          child: CircularProgressIndicator(
-                                            valueColor:
-                                                AlwaysStoppedAnimation<Color>(
-                                                    fiberchatBlue),
-                                          ),
                                           width: doc[Dbkeys.content]
                                                   .contains('giphy')
                                               ? 60
@@ -3518,26 +3528,31 @@ class _GroupChatPageState extends State<GroupChatPage>
                                                   .contains('giphy')
                                               ? 60
                                               : 60.0,
-                                          padding: EdgeInsets.all(8.0),
+                                          padding: const EdgeInsets.all(8.0),
                                           decoration: BoxDecoration(
                                             color: Colors.blueGrey[200],
-                                            borderRadius: BorderRadius.all(
+                                            borderRadius: const BorderRadius.all(
                                               Radius.circular(8.0),
                                             ),
+                                          ),
+                                          child: CircularProgressIndicator(
+                                            valueColor:
+                                                AlwaysStoppedAnimation<Color>(
+                                                    fiberchatBlue),
                                           ),
                                         ),
                                         errorWidget: (context, str, error) =>
                                             Material(
+                                          borderRadius: const BorderRadius.all(
+                                            Radius.circular(8.0),
+                                          ),
+                                          clipBehavior: Clip.hardEdge,
                                           child: Image.asset(
                                             'assets/images/img_not_available.jpeg',
                                             width: 60.0,
                                             height: 60,
                                             fit: BoxFit.cover,
                                           ),
-                                          borderRadius: BorderRadius.all(
-                                            Radius.circular(8.0),
-                                          ),
-                                          clipBehavior: Clip.hardEdge,
                                         ),
                                         imageUrl: doc[Dbkeys.messageType] ==
                                                 MessageType.video.index
@@ -3558,9 +3573,9 @@ class _GroupChatPageState extends State<GroupChatPage>
                                       child: Container(
                                           width: 74.0,
                                           height: 74.0,
-                                          padding: EdgeInsetsDirectional.all(6),
+                                          padding: const EdgeInsetsDirectional.all(6),
                                           child: ClipRRect(
-                                              borderRadius: BorderRadius.only(
+                                              borderRadius: const BorderRadius.only(
                                                   topRight: Radius.circular(5),
                                                   bottomRight:
                                                       Radius.circular(5),
@@ -3577,6 +3592,20 @@ class _GroupChatPageState extends State<GroupChatPage>
                                                       placeholder:
                                                           (context, url) =>
                                                               Container(
+                                                        width: 74,
+                                                        height: 74,
+                                                        padding:
+                                                            const EdgeInsets.all(8.0),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: Colors
+                                                              .blueGrey[200],
+                                                          borderRadius:
+                                                              const BorderRadius.all(
+                                                            Radius.circular(
+                                                                0.0),
+                                                          ),
+                                                        ),
                                                         child:
                                                             CircularProgressIndicator(
                                                           valueColor:
@@ -3584,36 +3613,22 @@ class _GroupChatPageState extends State<GroupChatPage>
                                                                       Color>(
                                                                   fiberchatBlue),
                                                         ),
-                                                        width: 74,
-                                                        height: 74,
-                                                        padding:
-                                                            EdgeInsets.all(8.0),
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          color: Colors
-                                                              .blueGrey[200],
-                                                          borderRadius:
-                                                              BorderRadius.all(
-                                                            Radius.circular(
-                                                                0.0),
-                                                          ),
-                                                        ),
                                                       ),
                                                       errorWidget: (context,
                                                               str, error) =>
                                                           Material(
+                                                        borderRadius:
+                                                            const BorderRadius.all(
+                                                          Radius.circular(0.0),
+                                                        ),
+                                                        clipBehavior:
+                                                            Clip.hardEdge,
                                                         child: Image.asset(
                                                           'assets/images/img_not_available.jpeg',
                                                           width: 60,
                                                           height: 60,
                                                           fit: BoxFit.cover,
                                                         ),
-                                                        borderRadius:
-                                                            BorderRadius.all(
-                                                          Radius.circular(0.0),
-                                                        ),
-                                                        clipBehavior:
-                                                            Clip.hardEdge,
                                                       ),
                                                       imageUrl:
                                                           doc[Dbkeys.content]
@@ -3629,7 +3644,7 @@ class _GroupChatPageState extends State<GroupChatPage>
                                                       height: 74,
                                                       width: 74,
                                                     ),
-                                                    Center(
+                                                    const Center(
                                                       child: Icon(
                                                           Icons
                                                               .play_circle_fill_outlined,
@@ -3645,9 +3660,9 @@ class _GroupChatPageState extends State<GroupChatPage>
                                       child: Container(
                                           width: 74.0,
                                           height: 74.0,
-                                          padding: EdgeInsetsDirectional.all(6),
+                                          padding: const EdgeInsetsDirectional.all(6),
                                           child: ClipRRect(
-                                              borderRadius: BorderRadius.only(
+                                              borderRadius: const BorderRadius.only(
                                                   topRight: Radius.circular(5),
                                                   bottomRight:
                                                       Radius.circular(5),
@@ -3766,8 +3781,8 @@ class _GroupChatPageState extends State<GroupChatPage>
                       refdata: firestoreChatquery,
                       list: ListView.builder(
                           reverse: true,
-                          padding: EdgeInsets.all(7),
-                          physics: ScrollPhysics(),
+                          padding: const EdgeInsets.all(7),
+                          physics: const ScrollPhysics(),
                           shrinkWrap: true,
                           itemCount: firestoreDataProvider.recievedDocs.length,
                           itemBuilder: (BuildContext context, int i) {
@@ -3786,13 +3801,13 @@ class _GroupChatPageState extends State<GroupChatPage>
     return Positioned(
       child: isgeneratingSomethingLoader
           ? Container(
+              color: DESIGN_TYPE == Themetype.whatsapp
+                  ? fiberchatBlack.withOpacity(0.2)
+                  : fiberchatWhite.withOpacity(0.2),
               child: Center(
                 child: CircularProgressIndicator(
                     valueColor: AlwaysStoppedAnimation<Color>(fiberchatBlue)),
               ),
-              color: DESIGN_TYPE == Themetype.whatsapp
-                  ? fiberchatBlack.withOpacity(0.2)
-                  : fiberchatWhite.withOpacity(0.2),
             )
           : Container(),
     );
@@ -3801,17 +3816,17 @@ class _GroupChatPageState extends State<GroupChatPage>
   shareMedia(BuildContext context) {
     showModalBottomSheet(
         context: context,
-        shape: RoundedRectangleBorder(
+        shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
         ),
         builder: (BuildContext context) {
           const iconSize = 50.0;
           // return your layout
           return Container(
-            padding: EdgeInsets.all(12),
+            padding: const EdgeInsets.all(12),
             height: 250,
             child: Column(children: [
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               Row(
@@ -3854,6 +3869,7 @@ class _GroupChatPageState extends State<GroupChatPage>
                           },
                           elevation: .5,
                           fillColor: Colors.indigo,
+                          shape: const CircleBorder(),
                           // child: Icon(
                           //   Icons.file_copy,
                           //   size: 25.0,
@@ -3866,9 +3882,8 @@ class _GroupChatPageState extends State<GroupChatPage>
                             height: iconSize,
                             width: iconSize,
                           ),
-                          shape: CircleBorder(),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 8,
                         ),
                         Text(
@@ -3918,8 +3933,8 @@ class _GroupChatPageState extends State<GroupChatPage>
 
                                 await Navigator.push(
                                     this.context,
-                                    new MaterialPageRoute(
-                                        builder: (context) => new VideoEditor(
+                                    MaterialPageRoute(
+                                        builder: (context) => VideoEditor(
                                             onClose: () {
                                               setStatusBarColor();
                                             },
@@ -3975,6 +3990,7 @@ class _GroupChatPageState extends State<GroupChatPage>
                           },
                           elevation: .5,
                           fillColor: Colors.pink[600],
+                          shape: const CircleBorder(),
                           // child: Icon(
                           //   Icons.video_collection_sharp,
                           //   size: 25.0,
@@ -3987,9 +4003,8 @@ class _GroupChatPageState extends State<GroupChatPage>
                             height: iconSize,
                             width: iconSize,
                           ),
-                          shape: CircleBorder(),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 8,
                         ),
                         Text(
@@ -4044,7 +4059,7 @@ class _GroupChatPageState extends State<GroupChatPage>
                                 setStatusBarColor();
 
                                 for (var tempFile in tempFiles) {
-                                  await Future.delayed(Duration(milliseconds: 1)).then((_) async {
+                                  await Future.delayed(const Duration(milliseconds: 1)).then((_) async {
                                     int timeStamp = DateTime.now()
                                         .millisecondsSinceEpoch;
                                     String? url =
@@ -4068,6 +4083,7 @@ class _GroupChatPageState extends State<GroupChatPage>
                           },
                           elevation: .5,
                           fillColor: Colors.purple,
+                          shape: const CircleBorder(),
                           // child: Icon(
                           //   Icons.image_rounded,
                           //   size: 25.0,
@@ -4080,9 +4096,8 @@ class _GroupChatPageState extends State<GroupChatPage>
                             height: iconSize,
                             width: iconSize,
                           ),
-                          shape: CircleBorder(),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 8,
                         ),
                         Text(
@@ -4098,7 +4113,7 @@ class _GroupChatPageState extends State<GroupChatPage>
                   )
                 ],
               ),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               Row(
@@ -4138,6 +4153,7 @@ class _GroupChatPageState extends State<GroupChatPage>
                           },
                           elevation: .5,
                           fillColor: Colors.yellow[900],
+                          shape: const CircleBorder(),
                           // child: Icon(
                           //   Icons.mic_rounded,
                           //   size: 25.0,
@@ -4150,9 +4166,8 @@ class _GroupChatPageState extends State<GroupChatPage>
                             height: iconSize,
                             width: iconSize,
                           ),
-                          shape: CircleBorder(),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 8,
                         ),
                         Text(
@@ -4194,6 +4209,7 @@ class _GroupChatPageState extends State<GroupChatPage>
                           },
                           elevation: .5,
                           fillColor: Colors.cyan[700],
+                          shape: const CircleBorder(),
                           // child: Icon(
                           //   Icons.location_on,
                           //   size: 25.0,
@@ -4206,9 +4222,8 @@ class _GroupChatPageState extends State<GroupChatPage>
                             height: iconSize,
                             width: iconSize,
                           ),
-                          shape: CircleBorder(),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 8,
                         ),
                         Text(
@@ -4250,6 +4265,7 @@ class _GroupChatPageState extends State<GroupChatPage>
                           },
                           elevation: .5,
                           fillColor: Colors.blue[800],
+                          shape: const CircleBorder(),
                           // child: Icon(
                           //   Icons.person,
                           //   size: 25.0,
@@ -4262,9 +4278,8 @@ class _GroupChatPageState extends State<GroupChatPage>
                             height: iconSize,
                             width: iconSize,
                           ),
-                          shape: CircleBorder(),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 8,
                         ),
                         Text(
@@ -4350,7 +4365,7 @@ class _GroupChatPageState extends State<GroupChatPage>
                             elevation: 0.4,
                             titleSpacing: -10,
                             leading: Container(
-                              margin: EdgeInsets.only(right: 0),
+                              margin: const EdgeInsets.only(right: 0),
                               width: 10,
                               child: IconButton(
                                 icon: Icon(
@@ -4370,8 +4385,8 @@ class _GroupChatPageState extends State<GroupChatPage>
                               onTap: () {
                                 Navigator.push(
                                     context,
-                                    new MaterialPageRoute(
-                                        builder: (context) => new GroupDetails(
+                                    MaterialPageRoute(
+                                        builder: (context) => GroupDetails(
                                             model: widget.model,
                                             prefs: widget.prefs,
                                             currentUserno: widget.currentUserno,
@@ -4391,7 +4406,7 @@ class _GroupChatPageState extends State<GroupChatPage>
                                                       .docmap[Dbkeys.groupID] ==
                                                   widget.groupID)
                                               .docmap[Dbkeys.groupPHOTOURL])),
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 7,
                                   ),
                                   Column(
@@ -4436,10 +4451,10 @@ class _GroupChatPageState extends State<GroupChatPage>
                                                     size: 17,
                                                   ),
                                                 )
-                                              : SizedBox(),
+                                              : const SizedBox(),
                                         ],
                                       ),
-                                      SizedBox(
+                                      const SizedBox(
                                         height: 6,
                                       ),
                                       SizedBox(
@@ -4467,7 +4482,7 @@ class _GroupChatPageState extends State<GroupChatPage>
                             ),
                             actions: [
                               Container(
-                                margin: EdgeInsets.only(right: 15, left: 15),
+                                margin: const EdgeInsets.only(right: 15, left: 15),
                                 width: 25,
                                 child: PopupMenuButton(
                                     icon: Padding(
@@ -4558,7 +4573,7 @@ class _GroupChatPageState extends State<GroupChatPage>
                                           showModalBottomSheet(
                                               isScrollControlled: true,
                                               context: context,
-                                              shape: RoundedRectangleBorder(
+                                              shape: const RoundedRectangleBorder(
                                                 borderRadius:
                                                     BorderRadius.vertical(
                                                         top: Radius.circular(
@@ -4577,7 +4592,7 @@ class _GroupChatPageState extends State<GroupChatPage>
                                                               .bottom),
                                                   child: Container(
                                                       padding:
-                                                          EdgeInsets.all(16),
+                                                          const EdgeInsets.all(16),
                                                       height:
                                                           MediaQuery.of(context)
                                                                   .size
@@ -4590,10 +4605,10 @@ class _GroupChatPageState extends State<GroupChatPage>
                                                               CrossAxisAlignment
                                                                   .stretch,
                                                           children: [
-                                                            SizedBox(
+                                                            const SizedBox(
                                                               height: 12,
                                                             ),
-                                                            SizedBox(
+                                                            const SizedBox(
                                                               height: 3,
                                                             ),
                                                             Padding(
@@ -4608,7 +4623,7 @@ class _GroupChatPageState extends State<GroupChatPage>
                                                                 textAlign:
                                                                     TextAlign
                                                                         .left,
-                                                                style: TextStyle(
+                                                                style: const TextStyle(
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .bold,
@@ -4616,15 +4631,15 @@ class _GroupChatPageState extends State<GroupChatPage>
                                                                         16.5),
                                                               ),
                                                             ),
-                                                            SizedBox(
+                                                            const SizedBox(
                                                               height: 10,
                                                             ),
                                                             Container(
-                                                              margin: EdgeInsets
+                                                              margin: const EdgeInsets
                                                                   .only(
                                                                       top: 10),
                                                               padding:
-                                                                  EdgeInsets
+                                                                  const EdgeInsets
                                                                       .fromLTRB(
                                                                           0,
                                                                           0,
@@ -4675,7 +4690,7 @@ class _GroupChatPageState extends State<GroupChatPage>
                                                                     getTranslated(
                                                                         context,
                                                                         'report'),
-                                                                    style: TextStyle(
+                                                                    style: const TextStyle(
                                                                         color: Colors
                                                                             .white,
                                                                         fontSize:
@@ -4728,7 +4743,7 @@ class _GroupChatPageState extends State<GroupChatPage>
                                                                         context:
                                                                             context,
                                                                         shape:
-                                                                            RoundedRectangleBorder(
+                                                                            const RoundedRectangleBorder(
                                                                           borderRadius:
                                                                               BorderRadius.vertical(top: Radius.circular(25.0)),
                                                                         ),
@@ -4745,7 +4760,7 @@ class _GroupChatPageState extends State<GroupChatPage>
                                                                                 mainAxisAlignment: MainAxisAlignment.center,
                                                                                 children: [
                                                                                   Icon(Icons.check, color: Colors.green[400], size: 40),
-                                                                                  SizedBox(
+                                                                                  const SizedBox(
                                                                                     height: 30,
                                                                                   ),
                                                                                   Text(
@@ -4768,7 +4783,7 @@ class _GroupChatPageState extends State<GroupChatPage>
                                                                             this
                                                                                 .context,
                                                                         shape:
-                                                                            RoundedRectangleBorder(
+                                                                            const RoundedRectangleBorder(
                                                                           borderRadius:
                                                                               BorderRadius.vertical(top: Radius.circular(25.0)),
                                                                         ),
@@ -4785,7 +4800,7 @@ class _GroupChatPageState extends State<GroupChatPage>
                                                                                 mainAxisAlignment: MainAxisAlignment.center,
                                                                                 children: [
                                                                                   Icon(Icons.check, color: Colors.green[400], size: 40),
-                                                                                  SizedBox(
+                                                                                  const SizedBox(
                                                                                     height: 30,
                                                                                   ),
                                                                                   Text(
@@ -4829,12 +4844,12 @@ class _GroupChatPageState extends State<GroupChatPage>
                             ],
                           ),
                           body: Stack(children: <Widget>[
-                            new Container(
-                              decoration: new BoxDecoration(
+                            Container(
+                              decoration: BoxDecoration(
                                 color: DESIGN_TYPE == Themetype.whatsapp
                                     ? fiberchatChatbackground
                                     : fiberchatChatbackground,
-                                image: new DecorationImage(
+                                image: const DecorationImage(
                                     image: AssetImage(
                                         "assets/images/background.png"),
                                     fit: BoxFit.cover),
@@ -4870,7 +4885,7 @@ class _GroupChatPageState extends State<GroupChatPage>
                                           )
                                         : Container(
                                             alignment: Alignment.center,
-                                            padding: EdgeInsets.fromLTRB(
+                                            padding: const EdgeInsets.fromLTRB(
                                                 14, 7, 14, 7),
                                             color: Colors.white,
                                             height: 70,
@@ -4881,7 +4896,7 @@ class _GroupChatPageState extends State<GroupChatPage>
                                               getTranslated(
                                                   context, 'onlyadminsend'),
                                               textAlign: TextAlign.center,
-                                              style: TextStyle(height: 1.3),
+                                              style: const TextStyle(height: 1.3),
                                             ),
                                           ),
                                   ])
@@ -4936,10 +4951,10 @@ class _GroupChatPageState extends State<GroupChatPage>
             graphicFit: BoxFit.contain,
             borderRadius: 5,
             showDomain: true,
-            titleStyle: TextStyle(
+            titleStyle: const TextStyle(
                 fontSize: 13, height: 1.4, fontWeight: FontWeight.bold),
             showBody: true,
-            bodyStyle: TextStyle(fontSize: 11.6, color: Colors.black45),
+            bodyStyle: const TextStyle(fontSize: 11.6, color: Colors.black45),
             placeholderWidget: SelectableLinkify(
               textAlign: textalign,
               style: TextStyle(fontSize: fontsize, color: Colors.black87),
@@ -4963,10 +4978,11 @@ class _GroupChatPageState extends State<GroupChatPage>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed)
+    if (state == AppLifecycleState.resumed) {
       setLastSeen(false, false);
-    else
+    } else {
       setLastSeen(false, false);
+    }
   }
 }
 
