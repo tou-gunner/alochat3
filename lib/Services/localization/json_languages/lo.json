@@ -374,6 +374,7 @@
 
     "selectlanguage": "ເລືອກພາສາ",
 
+    "tasks": "ວຽກງານ",
     "reply": "ຕອບກັບ",
     "addtask": "ເພີ່ມວຽກ",
     "task_ongoing": "ກຳລັງດຳເນີນການ",
@@ -384,5 +385,15 @@
     "task_overdue": "ເກີນເວລານັດໝາຍ",
     "task_next7days": "ອີກພາຍໃນ 7 ວັນ",
     "task_later": "ພາຍຫຼັງ ຫຼື ບໍ່ໄດ້ຕັ້ງເວລານັດໝາຍ",
-    "task_completedon": "ສຳເລັດໃນວັນທີ"
+    "task_completedon": "ສຳເລັດໃນວັນທີ",
+    "task_notask": "ບໍ່ມີວຽກທີ່ໄດ້ມອບຫມາຍ",
+    "task_nocompletedtask": "ບໍ່ມີວຽກທີ່ໄດ້ເຮັດສຳເລັດ",
+    "task_addtask": "ເພີ່ມວຽກ",
+    "task_addnotes": "ເພີ່ມລາຍລະອຽດ",
+    "task_addassignee": "ເພີ່ມຜູ້ເຂົ້າຮ່ວມ",
+    "task_addsubscribers": "ເພີ່ມຜູ້ຕິດຕາມ",
+    "tomorrow": "ມື້ອື່ນ",
+    "otherday": "ວັນອື່ນໆ",
+    "create": "ສ້າງ",
+    "creating": "ກຳລັງສ້າງ"
 }

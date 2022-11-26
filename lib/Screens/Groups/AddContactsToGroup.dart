@@ -20,7 +20,7 @@ import 'package:scoped_model/scoped_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AddContactsToGroup extends StatefulWidget {
-  const AddContactsToGroup({
+  const AddContactsToGroup({super.key,
     required this.currentUserNo,
     required this.model,
     required this.biometricEnabled,
@@ -36,21 +36,21 @@ class AddContactsToGroup extends StatefulWidget {
   final bool isAddingWhileCreatingGroup;
 
   @override
-  _AddContactsToGroupState createState() => new _AddContactsToGroupState();
+  _AddContactsToGroupState createState() => _AddContactsToGroupState();
 }
 
 class _AddContactsToGroupState extends State<AddContactsToGroup>
     with AutomaticKeepAliveClientMixin {
-  GlobalKey<ScaffoldState> _scaffold = new GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _scaffold = GlobalKey<ScaffoldState>();
   Map<String?, String?>? contacts;
-  List<Map<String, dynamic>> _selectedList = [];
+  final List<Map<String, dynamic>> _selectedList = [];
   List<String> targetUserNotificationTokens = [];
   @override
   bool get wantKeepAlive => true;
 
-  final TextEditingController _filter = new TextEditingController();
-  final TextEditingController groupname = new TextEditingController();
-  final TextEditingController groupdesc = new TextEditingController();
+  final TextEditingController _filter = TextEditingController();
+  final TextEditingController groupname = TextEditingController();
+  final TextEditingController groupdesc = TextEditingController();
   void setStateIfMounted(f) {
     if (mounted) setState(f);
   }
@@ -106,11 +106,11 @@ class _AddContactsToGroupState extends State<AddContactsToGroup>
                               ),
                             ),
                             backgroundColor: DESIGN_TYPE == Themetype.whatsapp
-                                ? fiberchatDeepGreen
+                                ? alochatMain
                                 : fiberchatWhite,
                             centerTitle: false,
                             // leadingWidth: 40,
-                            title: _selectedList.length == 0
+                            title: _selectedList.isEmpty
                                 ? Text(
                                     getTranslated(
                                         this.context, 'selectcontacts'),
@@ -138,7 +138,7 @@ class _AddContactsToGroupState extends State<AddContactsToGroup>
                                         ),
                                         textAlign: TextAlign.left,
                                       ),
-                                      SizedBox(
+                                      const SizedBox(
                                         height: 4,
                                       ),
                                       Text(
@@ -158,8 +158,8 @@ class _AddContactsToGroupState extends State<AddContactsToGroup>
                                     ],
                                   ),
                             actions: <Widget>[
-                              _selectedList.length == 0
-                                  ? SizedBox()
+                              _selectedList.isEmpty
+                                  ? const SizedBox()
                                   : IconButton(
                                       icon: Icon(
                                         Icons.check,
@@ -177,7 +177,7 @@ class _AddContactsToGroupState extends State<AddContactsToGroup>
                                                       isScrollControlled: true,
                                                       context: context,
                                                       shape:
-                                                          RoundedRectangleBorder(
+                                                          const RoundedRectangleBorder(
                                                         borderRadius:
                                                             BorderRadius.vertical(
                                                                 top: Radius
@@ -199,7 +199,7 @@ class _AddContactsToGroupState extends State<AddContactsToGroup>
                                                                   .bottom),
                                                           child: Container(
                                                               padding:
-                                                                  EdgeInsets
+                                                                  const EdgeInsets
                                                                       .all(16),
                                                               height: MediaQuery.of(
                                                                           context)
@@ -214,11 +214,11 @@ class _AddContactsToGroupState extends State<AddContactsToGroup>
                                                                       CrossAxisAlignment
                                                                           .stretch,
                                                                   children: [
-                                                                    SizedBox(
+                                                                    const SizedBox(
                                                                       height:
                                                                           12,
                                                                     ),
-                                                                    SizedBox(
+                                                                    const SizedBox(
                                                                       height: 3,
                                                                     ),
                                                                     Padding(
@@ -233,21 +233,21 @@ class _AddContactsToGroupState extends State<AddContactsToGroup>
                                                                             'setgroup'),
                                                                         textAlign:
                                                                             TextAlign.left,
-                                                                        style: TextStyle(
+                                                                        style: const TextStyle(
                                                                             fontWeight:
                                                                                 FontWeight.bold,
                                                                             fontSize: 16.5),
                                                                       ),
                                                                     ),
-                                                                    SizedBox(
+                                                                    const SizedBox(
                                                                       height:
                                                                           10,
                                                                     ),
                                                                     Container(
-                                                                      margin: EdgeInsets
+                                                                      margin: const EdgeInsets
                                                                           .only(
                                                                               top: 10),
-                                                                      padding: EdgeInsets
+                                                                      padding: const EdgeInsets
                                                                           .fromLTRB(
                                                                               0,
                                                                               0,
@@ -284,10 +284,10 @@ class _AddContactsToGroupState extends State<AddContactsToGroup>
                                                                       ),
                                                                     ),
                                                                     Container(
-                                                                      margin: EdgeInsets
+                                                                      margin: const EdgeInsets
                                                                           .only(
                                                                               top: 10),
-                                                                      padding: EdgeInsets
+                                                                      padding: const EdgeInsets
                                                                           .fromLTRB(
                                                                               0,
                                                                               0,
@@ -325,7 +325,7 @@ class _AddContactsToGroupState extends State<AddContactsToGroup>
                                                                         ),
                                                                       ),
                                                                     ),
-                                                                    SizedBox(
+                                                                    const SizedBox(
                                                                       height: 6,
                                                                     ),
                                                                     myElevatedButton(
@@ -343,7 +343,7 @@ class _AddContactsToGroupState extends State<AddContactsToGroup>
                                                                             getTranslated(this.context,
                                                                                 'creategroup'),
                                                                             style:
-                                                                                TextStyle(color: Colors.white, fontSize: 18),
+                                                                                const TextStyle(color: Colors.white, fontSize: 18),
                                                                           ),
                                                                         ),
                                                                         onPressed:
@@ -379,7 +379,7 @@ class _AddContactsToGroupState extends State<AddContactsToGroup>
                                                                               DateTime.now();
                                                                           DateTime
                                                                               time2 =
-                                                                              DateTime.now().add(Duration(seconds: 1));
+                                                                              DateTime.now().add(const Duration(seconds: 1));
                                                                           String
                                                                               groupID =
                                                                               '${widget.currentUserNo!.toString()}--${time.millisecondsSinceEpoch.toString()}';
@@ -587,15 +587,15 @@ class _AddContactsToGroupState extends State<AddContactsToGroup>
                                     )
                             ],
                           ),
-                          bottomSheet: _selectedList.length == 0
-                              ? SizedBox(
+                          bottomSheet: _selectedList.isEmpty
+                              ? const SizedBox(
                                   height: 0,
                                   width: 0,
                                 )
                               : Container(
-                                  padding: EdgeInsets.only(top: 6),
+                                  padding: const EdgeInsets.only(top: 6),
                                   width: MediaQuery.of(context).size.width,
-                                  height: 94,
+                                  height: 96,
                                   child: ListView.builder(
                                       scrollDirection: Axis.horizontal,
                                       itemCount: _selectedList.reversed
@@ -617,7 +617,7 @@ class _AddContactsToGroupState extends State<AddContactsToGroup>
                                                               .toList()[i]
                                                           [Dbkeys.photoUrl],
                                                       radius: 20),
-                                                  SizedBox(
+                                                  const SizedBox(
                                                     height: 7,
                                                   ),
                                                   Text(
@@ -634,22 +634,22 @@ class _AddContactsToGroupState extends State<AddContactsToGroup>
                                             Positioned(
                                               right: 17,
                                               top: 5,
-                                              child: new InkWell(
+                                              child: InkWell(
                                                 onTap: () {
                                                   setStateIfMounted(() {
                                                     _selectedList.removeAt(i);
                                                   });
                                                 },
-                                                child: new Container(
+                                                child: Container(
                                                   width: 20.0,
                                                   height: 20.0,
                                                   padding:
                                                       const EdgeInsets.all(2.0),
-                                                  decoration: new BoxDecoration(
+                                                  decoration: const BoxDecoration(
                                                     shape: BoxShape.circle,
                                                     color: Colors.black,
                                                   ),
-                                                  child: Icon(
+                                                  child: const Icon(
                                                     Icons.close,
                                                     size: 14,
                                                     color: Colors.white,
@@ -672,9 +672,7 @@ class _AddContactsToGroupState extends State<AddContactsToGroup>
                                       iscreatinggroup == true
                                   ? loading()
                                   : contactsProvider
-                                              .alreadyJoinedUsersPhoneNameAsInServer
-                                              .length ==
-                                          0
+                                              .alreadyJoinedUsersPhoneNameAsInServer.isEmpty
                                       ? ListView(shrinkWrap: true, children: [
                                           Padding(
                                               padding: EdgeInsets.only(
@@ -694,14 +692,14 @@ class _AddContactsToGroupState extends State<AddContactsToGroup>
                                         ])
                                       : Padding(
                                           padding: EdgeInsets.only(
-                                              bottom: _selectedList.length == 0
+                                              bottom: _selectedList.isEmpty
                                                   ? 0
                                                   : 80),
                                           child: Stack(
                                             children: [
                                               FutureBuilder(
                                                   future: Future.delayed(
-                                                      Duration(seconds: 2)),
+                                                      const Duration(seconds: 2)),
                                                   builder: (c, s) =>
                                                       s.connectionState ==
                                                               ConnectionState
@@ -712,7 +710,7 @@ class _AddContactsToGroupState extends State<AddContactsToGroup>
                                                                       .topCenter,
                                                               child: Padding(
                                                                 padding:
-                                                                    EdgeInsets
+                                                                    const EdgeInsets
                                                                         .all(
                                                                             30),
                                                                 child: Card(
@@ -723,7 +721,7 @@ class _AddContactsToGroupState extends State<AddContactsToGroup>
                                                                       100],
                                                                   child:
                                                                       Container(
-                                                                          padding: EdgeInsets.fromLTRB(
+                                                                          padding: const EdgeInsets.fromLTRB(
                                                                               8,
                                                                               10,
                                                                               8,
@@ -762,7 +760,7 @@ class _AddContactsToGroupState extends State<AddContactsToGroup>
                                                                       .topCenter,
                                                               child: Padding(
                                                                   padding:
-                                                                      EdgeInsets
+                                                                      const EdgeInsets
                                                                           .all(
                                                                               30),
                                                                   child:
@@ -774,8 +772,8 @@ class _AddContactsToGroupState extends State<AddContactsToGroup>
                                                             )),
                                               ListView.builder(
                                                 physics:
-                                                    AlwaysScrollableScrollPhysics(),
-                                                padding: EdgeInsets.all(10),
+                                                    const AlwaysScrollableScrollPhysics(),
+                                                padding: const EdgeInsets.all(10),
                                                 itemCount: contactsProvider
                                                     .alreadyJoinedUsersPhoneNameAsInServer
                                                     .length,
@@ -810,7 +808,7 @@ class _AddContactsToGroupState extends State<AddContactsToGroup>
                                                                       .groupADMINLIST]
                                                                   .contains(
                                                                       phone)
-                                                          ? SizedBox()
+                                                          ? const SizedBox()
                                                           : null;
                                                   return alreadyAddedUser ??
                                                       FutureBuilder<
@@ -888,7 +886,7 @@ class _AddContactsToGroupState extends State<AddContactsToGroup>
                                                                                   size: 19.0,
                                                                                   color: fiberchatLightGreen,
                                                                                 )
-                                                                              : Icon(
+                                                                              : const Icon(
                                                                                   Icons.check,
                                                                                   color: Colors.transparent,
                                                                                   size: 19.0,
@@ -903,7 +901,7 @@ class _AddContactsToGroupState extends State<AddContactsToGroup>
                                                                             phone,
                                                                             style:
                                                                                 TextStyle(color: fiberchatGrey)),
-                                                                        contentPadding: EdgeInsets.symmetric(
+                                                                        contentPadding: const EdgeInsets.symmetric(
                                                                             horizontal:
                                                                                 10.0,
                                                                             vertical:
@@ -922,11 +920,11 @@ class _AddContactsToGroupState extends State<AddContactsToGroup>
                                                                           }
                                                                         },
                                                                       ),
-                                                                      Divider()
+                                                                      const Divider()
                                                                     ],
                                                                   ));
                                                             }
-                                                            return SizedBox();
+                                                            return const SizedBox();
                                                           });
                                                 },
                                               ),

@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'dart:io';
+import 'package:alochat/Screens/task/create_task.dart';
 import 'package:alochat/Screens/task/task.dart';
 import 'package:alochat/Services/Providers/AvailableContactsProvider.dart';
 import 'package:alochat/Utils/custom_url_launcher.dart';
@@ -1108,7 +1109,14 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
         ),
         onTap: () {
           Navigator.pop(contextForDialog);
-          Navigator.push(contextForDialog, MaterialPageRoute(builder: (_) => TaskPage(currentUserNo: currentUserNo!)));
+          Navigator.push(contextForDialog, MaterialPageRoute(
+            builder: (_) => CreateTask(
+              currentUserNo: currentUserNo!,
+              model: widget.model,
+              prefs: widget.prefs,
+              taskName: mssgDoc[Dbkeys.content]
+            ))
+          );
         },
       ));
     }

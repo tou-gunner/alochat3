@@ -428,7 +428,7 @@ Widget groupMessageTile(
                                   width: lastMessage[Dbkeys.groupmsgSENDBY] ==
                                           currentUserNo
                                       ? MediaQuery.of(context).size.width / 2.7
-                                      : MediaQuery.of(context).size.width / 4.1,
+                                      : MediaQuery.of(context).size.width / 4.6,
                                   child: Text(
                                       lastMessage[Dbkeys.groupmsgCONTENT],
                                       maxLines: 1,

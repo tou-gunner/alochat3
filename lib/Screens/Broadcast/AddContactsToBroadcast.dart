@@ -20,7 +20,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:alochat/Configs/Enum.dart';
 
 class AddContactsToBroadcast extends StatefulWidget {
-  const AddContactsToBroadcast({
+  const AddContactsToBroadcast({super.key,
     this.blacklistedUsers,
     required this.currentUserNo,
     required this.model,
@@ -40,21 +40,21 @@ class AddContactsToBroadcast extends StatefulWidget {
 
   @override
   _AddContactsToBroadcastState createState() =>
-      new _AddContactsToBroadcastState();
+      _AddContactsToBroadcastState();
 }
 
 class _AddContactsToBroadcastState extends State<AddContactsToBroadcast>
     with AutomaticKeepAliveClientMixin {
-  GlobalKey<ScaffoldState> _scaffold = new GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _scaffold = GlobalKey<ScaffoldState>();
   Map<String?, String?>? contacts;
-  List<dynamic> _selectedList = [];
+  final List<dynamic> _selectedList = [];
 
   @override
   bool get wantKeepAlive => true;
 
-  final TextEditingController _filter = new TextEditingController();
-  final TextEditingController broadcastname = new TextEditingController();
-  final TextEditingController broadcastdesc = new TextEditingController();
+  final TextEditingController _filter = TextEditingController();
+  final TextEditingController broadcastname = TextEditingController();
+  final TextEditingController broadcastdesc = TextEditingController();
   void setStateIfMounted(f) {
     if (mounted) setState(f);
   }
@@ -112,7 +112,7 @@ class _AddContactsToBroadcastState extends State<AddContactsToBroadcast>
                                 ? fiberchatDeepGreen
                                 : fiberchatWhite,
                             centerTitle: false,
-                            title: _selectedList.length == 0
+                            title: _selectedList.isEmpty
                                 ? Text(
                                     getTranslated(
                                         this.context, 'selectcontacts'),
@@ -140,7 +140,7 @@ class _AddContactsToBroadcastState extends State<AddContactsToBroadcast>
                                         ),
                                         textAlign: TextAlign.left,
                                       ),
-                                      SizedBox(
+                                      const SizedBox(
                                         height: 4,
                                       ),
                                       Text(
@@ -160,8 +160,8 @@ class _AddContactsToBroadcastState extends State<AddContactsToBroadcast>
                                     ],
                                   ),
                             actions: <Widget>[
-                              _selectedList.length == 0
-                                  ? SizedBox()
+                              _selectedList.isEmpty
+                                  ? const SizedBox()
                                   : IconButton(
                                       icon: Icon(
                                         Icons.check,
@@ -179,7 +179,7 @@ class _AddContactsToBroadcastState extends State<AddContactsToBroadcast>
                                                       isScrollControlled: true,
                                                       context: context,
                                                       shape:
-                                                          RoundedRectangleBorder(
+                                                          const RoundedRectangleBorder(
                                                         borderRadius:
                                                             BorderRadius.vertical(
                                                                 top: Radius
@@ -201,7 +201,7 @@ class _AddContactsToBroadcastState extends State<AddContactsToBroadcast>
                                                                   .bottom),
                                                           child: Container(
                                                               padding:
-                                                                  EdgeInsets
+                                                                  const EdgeInsets
                                                                       .all(16),
                                                               height: MediaQuery.of(
                                                                           context)
@@ -216,11 +216,11 @@ class _AddContactsToBroadcastState extends State<AddContactsToBroadcast>
                                                                       CrossAxisAlignment
                                                                           .stretch,
                                                                   children: [
-                                                                    SizedBox(
+                                                                    const SizedBox(
                                                                       height:
                                                                           12,
                                                                     ),
-                                                                    SizedBox(
+                                                                    const SizedBox(
                                                                       height: 3,
                                                                     ),
                                                                     Padding(
@@ -235,21 +235,21 @@ class _AddContactsToBroadcastState extends State<AddContactsToBroadcast>
                                                                             'setbroadcastdetails'),
                                                                         textAlign:
                                                                             TextAlign.left,
-                                                                        style: TextStyle(
+                                                                        style: const TextStyle(
                                                                             fontWeight:
                                                                                 FontWeight.bold,
                                                                             fontSize: 16.5),
                                                                       ),
                                                                     ),
-                                                                    SizedBox(
+                                                                    const SizedBox(
                                                                       height:
                                                                           10,
                                                                     ),
                                                                     Container(
-                                                                      margin: EdgeInsets
+                                                                      margin: const EdgeInsets
                                                                           .only(
                                                                               top: 10),
-                                                                      padding: EdgeInsets
+                                                                      padding: const EdgeInsets
                                                                           .fromLTRB(
                                                                               0,
                                                                               0,
@@ -286,10 +286,10 @@ class _AddContactsToBroadcastState extends State<AddContactsToBroadcast>
                                                                       ),
                                                                     ),
                                                                     Container(
-                                                                      margin: EdgeInsets
+                                                                      margin: const EdgeInsets
                                                                           .only(
                                                                               top: 10),
-                                                                      padding: EdgeInsets
+                                                                      padding: const EdgeInsets
                                                                           .fromLTRB(
                                                                               0,
                                                                               0,
@@ -327,7 +327,7 @@ class _AddContactsToBroadcastState extends State<AddContactsToBroadcast>
                                                                         ),
                                                                       ),
                                                                     ),
-                                                                    SizedBox(
+                                                                    const SizedBox(
                                                                       height: 6,
                                                                     ),
                                                                     myElevatedButton(
@@ -345,7 +345,7 @@ class _AddContactsToBroadcastState extends State<AddContactsToBroadcast>
                                                                             getTranslated(context,
                                                                                 'createbroadcast'),
                                                                             style:
-                                                                                TextStyle(color: Colors.white, fontSize: 18),
+                                                                                const TextStyle(color: Colors.white, fontSize: 18),
                                                                           ),
                                                                         ),
                                                                         onPressed:
@@ -369,7 +369,7 @@ class _AddContactsToBroadcastState extends State<AddContactsToBroadcast>
                                                                               DateTime.now();
                                                                           DateTime
                                                                               time2 =
-                                                                              DateTime.now().add(Duration(seconds: 1));
+                                                                              DateTime.now().add(const Duration(seconds: 1));
                                                                           Map<String, dynamic>
                                                                               broadcastdata =
                                                                               {
@@ -532,13 +532,13 @@ class _AddContactsToBroadcastState extends State<AddContactsToBroadcast>
                                     )
                             ],
                           ),
-                          bottomSheet: _selectedList.length == 0
-                              ? SizedBox(
+                          bottomSheet: _selectedList.isEmpty
+                              ? const SizedBox(
                                   height: 0,
                                   width: 0,
                                 )
                               : Container(
-                                  padding: EdgeInsets.only(top: 6),
+                                  padding: const EdgeInsets.only(top: 6),
                                   width: MediaQuery.of(context).size.width,
                                   height: 97,
                                   child: ListView.builder(
@@ -562,7 +562,7 @@ class _AddContactsToBroadcastState extends State<AddContactsToBroadcast>
                                                               .toList()[i]
                                                           [Dbkeys.photoUrl],
                                                       radius: 20),
-                                                  SizedBox(
+                                                  const SizedBox(
                                                     height: 7,
                                                   ),
                                                   Text(
@@ -579,7 +579,7 @@ class _AddContactsToBroadcastState extends State<AddContactsToBroadcast>
                                             Positioned(
                                               right: 17,
                                               top: 5,
-                                              child: new InkWell(
+                                              child: InkWell(
                                                 onTap: () {
                                                   setStateIfMounted(() {
                                                     _selectedList.remove(
@@ -587,16 +587,16 @@ class _AddContactsToBroadcastState extends State<AddContactsToBroadcast>
                                                             .toList()[i]);
                                                   });
                                                 },
-                                                child: new Container(
+                                                child: Container(
                                                   width: 20.0,
                                                   height: 20.0,
                                                   padding:
                                                       const EdgeInsets.all(2.0),
-                                                  decoration: new BoxDecoration(
+                                                  decoration: const BoxDecoration(
                                                     shape: BoxShape.circle,
                                                     color: Colors.black,
                                                   ),
-                                                  child: Icon(
+                                                  child: const Icon(
                                                     Icons.close,
                                                     size: 14,
                                                     color: Colors.white,
@@ -619,9 +619,7 @@ class _AddContactsToBroadcastState extends State<AddContactsToBroadcast>
                                       iscreatingbroadcast == true
                                   ? loading()
                                   : contactsProvider
-                                              .alreadyJoinedUsersPhoneNameAsInServer
-                                              .length ==
-                                          0
+                                              .alreadyJoinedUsersPhoneNameAsInServer.isEmpty
                                       ? ListView(shrinkWrap: true, children: [
                                           Padding(
                                               padding: EdgeInsets.only(
@@ -641,14 +639,14 @@ class _AddContactsToBroadcastState extends State<AddContactsToBroadcast>
                                         ])
                                       : Padding(
                                           padding: EdgeInsets.only(
-                                              bottom: _selectedList.length == 0
+                                              bottom: _selectedList.isEmpty
                                                   ? 0
                                                   : 80),
                                           child: Stack(
                                             children: [
                                               FutureBuilder(
                                                   future: Future.delayed(
-                                                      Duration(seconds: 2)),
+                                                      const Duration(seconds: 2)),
                                                   builder: (c, s) =>
                                                       s.connectionState ==
                                                               ConnectionState
@@ -659,7 +657,7 @@ class _AddContactsToBroadcastState extends State<AddContactsToBroadcast>
                                                                       .topCenter,
                                                               child: Padding(
                                                                 padding:
-                                                                    EdgeInsets
+                                                                    const EdgeInsets
                                                                         .all(
                                                                             30),
                                                                 child: Card(
@@ -670,7 +668,7 @@ class _AddContactsToBroadcastState extends State<AddContactsToBroadcast>
                                                                       100],
                                                                   child:
                                                                       Container(
-                                                                          padding: EdgeInsets.fromLTRB(
+                                                                          padding: const EdgeInsets.fromLTRB(
                                                                               8,
                                                                               10,
                                                                               8,
@@ -709,7 +707,7 @@ class _AddContactsToBroadcastState extends State<AddContactsToBroadcast>
                                                                       .topCenter,
                                                               child: Padding(
                                                                   padding:
-                                                                      EdgeInsets
+                                                                      const EdgeInsets
                                                                           .all(
                                                                               30),
                                                                   child:
@@ -721,8 +719,8 @@ class _AddContactsToBroadcastState extends State<AddContactsToBroadcast>
                                                             )),
                                               ListView.builder(
                                                 physics:
-                                                    AlwaysScrollableScrollPhysics(),
-                                                padding: EdgeInsets.all(10),
+                                                    const AlwaysScrollableScrollPhysics(),
+                                                padding: const EdgeInsets.all(10),
                                                 itemCount: contactsProvider
                                                     .alreadyJoinedUsersPhoneNameAsInServer
                                                     .length,
@@ -745,7 +743,7 @@ class _AddContactsToBroadcastState extends State<AddContactsToBroadcast>
                                                               .docmap[Dbkeys
                                                                   .broadcastMEMBERSLIST]
                                                               .contains(phone)
-                                                          ? SizedBox()
+                                                          ? const SizedBox()
                                                           : null;
                                                   return alreadyAddedUser ??
                                                       FutureBuilder<
@@ -798,7 +796,7 @@ class _AddContactsToBroadcastState extends State<AddContactsToBroadcast>
                                                                                 size: 19.0,
                                                                                 color: fiberchatLightGreen,
                                                                               )
-                                                                            : Icon(
+                                                                            : const Icon(
                                                                                 Icons.check,
                                                                                 color: Colors.transparent,
                                                                                 size: 19.0,
@@ -813,7 +811,7 @@ class _AddContactsToBroadcastState extends State<AddContactsToBroadcast>
                                                                           phone,
                                                                           style:
                                                                               TextStyle(color: fiberchatGrey)),
-                                                                      contentPadding: EdgeInsets.symmetric(
+                                                                      contentPadding: const EdgeInsets.symmetric(
                                                                           horizontal:
                                                                               10.0,
                                                                           vertical:
@@ -837,12 +835,12 @@ class _AddContactsToBroadcastState extends State<AddContactsToBroadcast>
                                                                         }
                                                                       },
                                                                     ),
-                                                                    Divider()
+                                                                    const Divider()
                                                                   ],
                                                                 ),
                                                               );
                                                             }
-                                                            return SizedBox();
+                                                            return const SizedBox();
                                                           });
                                                 },
                                               ),

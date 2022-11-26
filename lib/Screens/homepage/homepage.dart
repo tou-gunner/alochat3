@@ -5,6 +5,7 @@ import 'dart:core';
 import 'dart:io';
 import 'package:alochat/Screens/alomall/alomall.dart';
 import 'package:alochat/Screens/alomall/alomall_setting.dart';
+import 'package:alochat/Screens/task/task.dart';
 // import 'package:alochat/Services/Alomall/auth.dart';
 // import 'package:android_id/android_id.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
@@ -59,7 +60,7 @@ import 'package:alochat/Configs/Enum.dart';
 import 'package:alochat/Utils/unawaited.dart';
 
 class Homepage extends StatefulWidget {
-  Homepage(
+  const Homepage(
       {required this.currentUserNo,
       required this.prefs,
       required this.doc,
@@ -71,7 +72,7 @@ class Homepage extends StatefulWidget {
   final bool? isShowOnlyCircularSpin;
   final SharedPreferences prefs;
   @override
-  State createState() => new HomepageState(doc: this.doc);
+  State createState() => HomepageState();
 }
 
 class HomepageState extends State<Homepage>
@@ -79,7 +80,7 @@ class HomepageState extends State<Homepage>
         WidgetsBindingObserver,
         AutomaticKeepAliveClientMixin,
         TickerProviderStateMixin {
-  HomepageState({Key? key, doc}) {
+  HomepageState({Key? key}) {
     _filter.addListener(() {
       _userQuery.add(_filter.text.isEmpty ? '' : _filter.text);
     });
@@ -96,14 +97,15 @@ class HomepageState extends State<Homepage>
   List phoneNumberVariants = [];
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed)
+    if (state == AppLifecycleState.resumed) {
       setIsActive();
-    else
+    } else {
       setLastSeen();
+    }
   }
 
   void setIsActive() async {
-    if (widget.currentUserNo != null)
+    if (widget.currentUserNo != null) {
       await FirebaseFirestore.instance
           .collection(DbPaths.collectionusers)
           .doc(widget.currentUserNo)
@@ -113,19 +115,21 @@ class HomepageState extends State<Homepage>
           Dbkeys.lastOnline: DateTime.now().millisecondsSinceEpoch
         },
       );
+    }
   }
 
   void setLastSeen() async {
-    if (widget.currentUserNo != null)
+    if (widget.currentUserNo != null) {
       await FirebaseFirestore.instance
           .collection(DbPaths.collectionusers)
           .doc(widget.currentUserNo)
           .update(
         {Dbkeys.lastSeen: DateTime.now().millisecondsSinceEpoch},
       );
+    }
   }
 
-  final TextEditingController _filter = new TextEditingController();
+  final TextEditingController _filter = TextEditingController();
   bool isAuthenticating = false;
 
   StreamSubscription? spokenSubscription;
@@ -156,9 +160,9 @@ class HomepageState extends State<Homepage>
     setdeviceinfo().then((value) => getSignedInUserOrRedirect());
     registerNotification();
 
-    controllerIfcallallowed = TabController(length: 5, vsync: this);
+    controllerIfcallallowed = TabController(length: 6, vsync: this);
     controllerIfcallallowed!.index = 0;
-    controllerIfcallNotallowed = TabController(length: 4, vsync: this);
+    controllerIfcallNotallowed = TabController(length: 5, vsync: this);
     controllerIfcallNotallowed!.index = 0;
 
     Fiberchat.internetLookUp();
@@ -247,13 +251,13 @@ class HomepageState extends State<Homepage>
                 ? {
                     Dbkeys.isNotificationStringsMulitilanguageEnabled: true,
                     Dbkeys.notificationStringsMap:
-                        getTranslateNotificationStringsMap(this.context),
+                        getTranslateNotificationStringsMap(context),
                     Dbkeys.totalvisitsANDROID: FieldValue.increment(1),
                   }
                 : {
                     Dbkeys.isNotificationStringsMulitilanguageEnabled: true,
                     Dbkeys.notificationStringsMap:
-                        getTranslateNotificationStringsMap(this.context),
+                        getTranslateNotificationStringsMap(context),
                     Dbkeys.totalvisitsIOS: FieldValue.increment(1),
                   },
             SetOptions(merge: true));
@@ -276,18 +280,18 @@ class HomepageState extends State<Homepage>
     //       myphone, contactsProvider.joinedUserPhoneStringAsInServer);
     statusProvider.triggerDeleteMyExpiredStatus(myphone);
     statusProvider.triggerDeleteOtherUsersExpiredStatus(myphone);
-    if (_sharedFiles!.length > 0 || _sharedText != null) {
+    if (_sharedFiles!.isNotEmpty || _sharedText != null) {
       triggerSharing();
     }
   }
 
   triggerSharing() {
-    final observer = Provider.of<Observer>(this.context, listen: false);
+    final observer = Provider.of<Observer>(context, listen: false);
     if (_sharedText != null) {
       Navigator.push(
           context,
-          new MaterialPageRoute(
-              builder: (context) => new SelectContactToShare(
+          MaterialPageRoute(
+              builder: (context) => SelectContactToShare(
                   prefs: widget.prefs,
                   model: _cachedModel!,
                   currentUserNo: widget.currentUserNo,
@@ -301,8 +305,8 @@ class HomepageState extends State<Homepage>
       } else {
         Navigator.push(
             context,
-            new MaterialPageRoute(
-                builder: (context) => new SelectContactToShare(
+            MaterialPageRoute(
+                builder: (context) => SelectContactToShare(
                     prefs: widget.prefs,
                     model: _cachedModel!,
                     currentUserNo: widget.currentUserNo,
@@ -353,7 +357,7 @@ class HomepageState extends State<Homepage>
       // await FirebaseMessaging.instance.unsubscribeFromTopic(
       //     '${userphone.replaceFirst(new RegExp(r'\+'), '')}');
       await awesomeFcm.unsubscribeToTopic(
-          '${userphone.replaceFirst(new RegExp(r'\+'), '')}');
+          '${userphone.replaceFirst(RegExp(r'\+'), '')}');
     }
 
     // await FirebaseMessaging.instance
@@ -454,7 +458,7 @@ class HomepageState extends State<Homepage>
 
     await widget.prefs.clear();
 
-    FlutterSecureStorage storage = new FlutterSecureStorage();
+    FlutterSecureStorage storage = const FlutterSecureStorage();
     // ignore: await_only_futures
     await storage.delete;
     if (widget.currentUserNo != null) {
@@ -469,7 +473,7 @@ class HomepageState extends State<Homepage>
     await widget.prefs.setBool(Dbkeys.isTokenGenerated, false);
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(
-        builder: (BuildContext context) => FiberchatWrapper(),
+        builder: (BuildContext context) => const FiberchatWrapper(),
       ),
       (Route route) => false,
     );
@@ -896,7 +900,7 @@ class HomepageState extends State<Homepage>
 
                 String btnLabel = getTranslated(context, 'updatnow');
 
-                return new WillPopScope(
+                return WillPopScope(
                     onWillPop: () async => false,
                     child: AlertDialog(
                       title: Text(
@@ -921,7 +925,7 @@ class HomepageState extends State<Homepage>
               },
             );
           } else {
-            final observer = Provider.of<Observer>(this.context, listen: false);
+            final observer = Provider.of<Observer>(context, listen: false);
 
             observer.setObserver(
               getuserAppSettingsDoc: widget.doc,
@@ -974,8 +978,8 @@ class HomepageState extends State<Homepage>
 
               unawaited(Navigator.pushReplacement(
                   context,
-                  new MaterialPageRoute(
-                      builder: (context) => new LoginScreen(
+                  MaterialPageRoute(
+                      builder: (context) => LoginScreen(
                             prefs: widget.prefs,
                             accountApprovalMessage: accountApprovalMessage,
                             isaccountapprovalbyadminneeded:
@@ -1033,7 +1037,7 @@ class HomepageState extends State<Homepage>
         }
       }
     } catch (e) {
-      showERRORSheet(this.context, "", message: e.toString());
+      showERRORSheet(context, "", message: e.toString());
     }
 
     // await FirebaseFirestore.instance
@@ -1278,11 +1282,9 @@ class HomepageState extends State<Homepage>
     // });}
   }
 
-  StreamController<String> _userQuery =
-      new StreamController<String>.broadcast();
+  final StreamController<String> _userQuery =
+      StreamController<String>.broadcast();
   Future<void> _changeLanguage(Language language) async {
-    Locale _locale = await setLocale(language.languageCode);
-    FiberchatWrapper.setLocale(context, _locale);
     if (widget.currentUserNo != null) {
       Future.delayed(const Duration(milliseconds: 800), () {
         FirebaseFirestore.instance
@@ -1290,10 +1292,12 @@ class HomepageState extends State<Homepage>
             .doc(widget.currentUserNo)
             .update({
           Dbkeys.notificationStringsMap:
-              getTranslateNotificationStringsMap(this.context),
+              getTranslateNotificationStringsMap(context),
         });
       });
     }
+    Locale _locale = await setLocale(language.languageCode);
+    FiberchatWrapper.setLocale(context, _locale);
     setState(() {
       // seletedlanguage = language;
     });
@@ -1307,7 +1311,7 @@ class HomepageState extends State<Homepage>
       return Future.value(true);
     }
     DateTime now = DateTime.now();
-    if (now.difference(currentBackPressTime!) > Duration(seconds: 3)) {
+    if (now.difference(currentBackPressTime!) > const Duration(seconds: 3)) {
       currentBackPressTime = now;
       Fiberchat.toast('Double Tap To Go Back');
       return Future.value(false);
@@ -1420,7 +1424,7 @@ class HomepageState extends State<Homepage>
                 builder: (context) {
                   return SimpleDialog(
                     contentPadding:
-                    EdgeInsets.all(20),
+                    const EdgeInsets.all(20),
                     children: <Widget>[
                       ListTile(
                         title: Text(
@@ -1429,7 +1433,7 @@ class HomepageState extends State<Homepage>
                               'swipeview'),
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       ListTile(
@@ -1437,7 +1441,7 @@ class HomepageState extends State<Homepage>
                             getTranslated(context,
                                 'swipehide'),
                           )),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       ListTile(
@@ -1455,7 +1459,7 @@ class HomepageState extends State<Homepage>
         ontap: () =>
             Navigator.push(
                 context,
-                new MaterialPageRoute(
+                MaterialPageRoute(
                     builder:
                         (context) =>
                         SettingsOption(
@@ -1470,7 +1474,7 @@ class HomepageState extends State<Homepage>
                               () {
                             Navigator.push(
                                 context,
-                                new MaterialPageRoute(
+                                MaterialPageRoute(
                                     builder: (context) => ProfileSetting(
                                       prefs: widget.prefs,
                                       biometricEnabled: biometricEnabled,
@@ -1503,7 +1507,7 @@ class HomepageState extends State<Homepage>
               ),
               body: Column(
                 children: [
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   Expanded(
@@ -1908,7 +1912,7 @@ class HomepageState extends State<Homepage>
                                               currentUserFullname: userFullname,
                                               currentUserPhotourl: userPhotourl,
                                               phoneNumberVariants:
-                                                  this.phoneNumberVariants,
+                                                  phoneNumberVariants,
                                               currentUserNo: widget.currentUserNo,
                                               model: _cachedModel,
                                               biometricEnabled: biometricEnabled,
@@ -1918,7 +1922,12 @@ class HomepageState extends State<Homepage>
                                             userphone: widget.currentUserNo,
                                             prefs: widget.prefs,
                                           ),
-                                          Alomall(),
+                                          const Alomall(),
+                                          TaskPage(
+                                            currentUserNo: widget.currentUserNo!,
+                                            model: _cachedModel,
+                                            prefs: widget.prefs,
+                                          ),
                                           SettingTab(items: settings),
                                         ]
                                       : <Widget>[
@@ -1938,12 +1947,17 @@ class HomepageState extends State<Homepage>
                                               currentUserFullname: userFullname,
                                               currentUserPhotourl: userPhotourl,
                                               phoneNumberVariants:
-                                                  this.phoneNumberVariants,
+                                                  phoneNumberVariants,
                                               currentUserNo: widget.currentUserNo,
                                               model: _cachedModel,
                                               biometricEnabled: biometricEnabled,
                                               prefs: widget.prefs),
-                                          Alomall(),
+                                          const Alomall(),
+                                          TaskPage(
+                                            currentUserNo: widget.currentUserNo!,
+                                            model: _cachedModel,
+                                            prefs: widget.prefs,
+                                          ),
                                           SettingTab(items: settings),
                                         ],
                                 ),
@@ -1971,7 +1985,7 @@ class _CustomBottomBarState extends State<_CustomBottomBar> {
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
-      selectedLabelStyle: TextStyle(
+      selectedLabelStyle: const TextStyle(
         fontWeight: FontWeight.bold,
         fontFamily: FONTFAMILY_NAME,
       ),
@@ -1979,42 +1993,50 @@ class _CustomBottomBarState extends State<_CustomBottomBar> {
           false
           ? [
         BottomNavigationBarItem(
-          icon: Icon(Icons.chat),
+          icon: const Icon(Icons.chat),
           label: getTranslated(context, 'chats'),
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.feed),
+          icon: const Icon(Icons.feed),
           label: getTranslated(context, 'status'),
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.call),
+          icon: const Icon(Icons.call),
           label: getTranslated(context, 'calls'),
         ),
-        BottomNavigationBarItem(
+        const BottomNavigationBarItem(
           icon: Icon(Icons.newspaper),
           label: 'Discovery',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.settings),
-          label: 'ຕັ້ງຄ່າ',
+          icon: const Icon(Icons.task),
+          label: getTranslated(context, 'tasks'),
+        ),
+        BottomNavigationBarItem(
+          icon: const Icon(Icons.settings),
+          label: getTranslated(context, 'settingsoption'),
         ),
       ]
           : [
         BottomNavigationBarItem(
-          icon: Icon(Icons.chat),
+          icon: const Icon(Icons.chat),
           label: getTranslated(context, 'chats'),
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.feed),
+          icon: const Icon(Icons.feed),
           label: getTranslated(context, 'status'),
         ),
-        BottomNavigationBarItem(
+        const BottomNavigationBarItem(
           icon: Icon(Icons.newspaper),
           label: 'Discovery',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.settings),
-          label: 'ຕັ້ງຄ່າ',
+          icon: const Icon(Icons.task),
+          label: getTranslated(context, 'tasks'),
+        ),
+        BottomNavigationBarItem(
+          icon: const Icon(Icons.settings),
+          label: getTranslated(context, 'settingsoption'),
         ),
       ],
       currentIndex: widget.tabController.index,
@@ -2190,12 +2212,12 @@ Widget errorScreen(String? title, String? subtitle) {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
+            const Icon(
               Icons.error_outline_outlined,
               size: 60,
               color: Colors.yellowAccent,
             ),
-            SizedBox(
+            const SizedBox(
               height: 30,
             ),
             Text(
@@ -2206,7 +2228,7 @@ Widget errorScreen(String? title, String? subtitle) {
                   color: fiberchatWhite,
                   fontWeight: FontWeight.w700),
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             Text(
@@ -2240,9 +2262,9 @@ class _SettingItem extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(icon, color: fiberchatgreen, size: 50),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Text(caption,
-                style: TextStyle(
+                style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 14
                 )

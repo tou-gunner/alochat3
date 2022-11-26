@@ -1,7 +1,7 @@
 name: alochat #changing it will force you to change appname in import statement inside every .dart file.
 description: Chats & Calling app
 
-version: 1.1.0+55
+version: 1.1.1+56
 publish_to: none
 
 environment:
@@ -137,7 +137,8 @@ dependencies:
   awesome_notifications: ^0.7.4+1
   awesome_notifications_fcm: ^0.7.4+1
   flutter_foreground_task: ^3.10.0
-  syncfusion_flutter_calendar: ^20.3.57
+  syncfusion_flutter_calendar: ^20.3.58
+  syncfusion_flutter_datepicker: ^20.3.58
 
   flutter:
     sdk: flutter
